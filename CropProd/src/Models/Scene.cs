@@ -11,6 +11,7 @@ namespace Models
     class Scene
     {
         List<Frame> frames = new List<Frame>();
+        Point leftTop = new Point(0, 0);
 
         public List<Frame> drawScene()
         {

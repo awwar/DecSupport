@@ -1,5 +1,6 @@
 ﻿using Models;
 using System;
+using System.Windows;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ namespace Controllers
     class SceneHandler
     {
         Scene scene;
+        Size first = new Size(0, 0);
 
         public SceneHandler()
         {
@@ -29,19 +31,21 @@ namespace Controllers
             }
         }
 
-        public void Scene_MouseLeave(object sender, EventArgs e)
+        public Point Scene_MouseLeave(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Point last = new Point(0,0);
+            return last - first;
         }
 
-        public void Scene_MouseUp(object sender, MouseEventArgs e)
+        public Point Scene_MouseUp(object sender, MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            Point last = new Point(e.X, e.Y);
+            return last - first;
         }
 
         public void Scene_MouseDown(object sender, MouseEventArgs e)
         {
-            throw new NotImplementedException();
+            first = new Size(e.X, e.Y);
         }
 
         public void addFrame(Point point, Image img)
