@@ -1,10 +1,7 @@
 ﻿using Controllers;
-using Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using System.Windows;
 using System.Windows.Forms;
 
 namespace CropProd
@@ -18,10 +15,10 @@ namespace CropProd
             ScenHand = new SceneHandler();
             ScenHand.form = this;
             //Handle draw calls
-            Scene.Paint += new PaintEventHandler(ScenHand.Draw);
-            Scene.MouseDown += new MouseEventHandler(ScenHand.Scene_MouseDown);
+            scene.Paint += new PaintEventHandler(ScenHand.Draw);
+            scene.MouseDown += new MouseEventHandler(ScenHand.Scene_MouseDown);
             //Scene.MouseUp += new MouseEventHandler(ScenHand.Scene_MouseUp);
-            Scene.MouseMove += new MouseEventHandler(ScenHand.Scene_MouseMoove);
+            scene.MouseMove += new MouseEventHandler(ScenHand.Scene_MouseMoove);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -47,12 +44,12 @@ namespace CropProd
                 }
             }
             ScenHand.addFrame(new Vector2(0, 0), Image.FromFile(filename));
-            Scene.Refresh();
+            scene.Refresh();
         }
 
         public void Redraw()
         {
-            Scene.Invalidate();
+            scene.Invalidate();
         }
     }
 }
