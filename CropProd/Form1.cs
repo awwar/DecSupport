@@ -3,6 +3,8 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace CropProd
@@ -14,11 +16,12 @@ namespace CropProd
         {
             InitializeComponent();
             ScenHand = new SceneHandler();
+            ScenHand.form = this;
             //Handle draw calls
             Scene.Paint += new PaintEventHandler(ScenHand.Draw);
             Scene.MouseDown += new MouseEventHandler(ScenHand.Scene_MouseDown);
-            Scene.MouseUp += new MouseEventHandler(ScenHand.Scene_MouseUp);
-            Scene.MouseLeave += new EventHandler(ScenHand.Scene_MouseLeave);
+            //Scene.MouseUp += new MouseEventHandler(ScenHand.Scene_MouseUp);
+            Scene.MouseMove += new MouseEventHandler(ScenHand.Scene_MouseMoove);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -43,8 +46,13 @@ namespace CropProd
                     label1.Text = "Открыт файл "+ filename;
                 }
             }
-            ScenHand.addFrame(new Point(0, 0), Image.FromFile(filename));
+            ScenHand.addFrame(new Vector2(0, 0), Image.FromFile(filename));
             Scene.Refresh();
+        }
+
+        public void Redraw()
+        {
+            Scene.Invalidate();
         }
     }
 }

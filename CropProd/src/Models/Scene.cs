@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 
 namespace Models
@@ -11,7 +13,7 @@ namespace Models
     class Scene
     {
         List<Frame> frames = new List<Frame>();
-        Point leftTop = new Point(0, 0);
+        Vector2 leftTop = new Vector2(0, 0);
 
         public List<Frame> drawScene()
         {
