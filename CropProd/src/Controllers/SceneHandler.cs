@@ -9,24 +9,24 @@ using System.Device;
 
 namespace Controllers
 {
-    class SceneHandler
+    static class SceneHandler
     {
-        Scene scene;
-        public Form1 form;
-        Vector2 first = new Vector2(0, 0);
-        Vector2 delta = new Vector2(0,0);
-        Vector2 last = new Vector2(0, 0);
+        static Scene scene;
+        public static Form1 form;
+        static Vector2 first = new Vector2(0, 0);
+        static Vector2 delta = new Vector2(0, 0);
+        static Vector2 last = new Vector2(0, 0);
 
-        public SceneHandler()
+        static SceneHandler()
         {
             scene = new Scene();
         }
 
-        public void Draw(object sender, PaintEventArgs e)
+        static public void Draw(object sender, PaintEventArgs e)
         {
             List<Frame> frames = scene.drawScene();
 
-            if(frames != null)
+            if (frames != null)
             {
                 frames.Sort((x, y) => x.zorder.CompareTo(y.zorder));
 
@@ -40,7 +40,7 @@ namespace Controllers
             }
         }
 
-        public void Scene_MouseMoove(object sender, MouseEventArgs e)
+        static public void Scene_MouseMoove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -49,22 +49,14 @@ namespace Controllers
                 last = first;
                 form.Redraw();
             }
-            
         }
 
-        public void Scene_MouseUp(object sender, MouseEventArgs e)
-        {
-            last = new Vector2(e.X, e.Y);
-            delta = Vector2.Subtract(last,first);
-            form.Redraw();
-        }
-
-        public void Scene_MouseDown(object sender, MouseEventArgs e)
+        static public void Scene_MouseDown(object sender, MouseEventArgs e)
         {
             last = new Vector2(e.X, e.Y);
         }
 
-        public void addFrame(Vector2 point, Image img)
+        static public void AddFrame(Vector2 point, Image img)
         {
             Frame frm = new Frame();
             frm.lefttop = point;

@@ -62,7 +62,7 @@
             this.scene.Location = new System.Drawing.Point(12, 45);
             this.scene.Margin = new System.Windows.Forms.Padding(0);
             this.scene.Name = "scene";
-            this.scene.Size = new System.Drawing.Size(499, 367);
+            this.scene.Size = new System.Drawing.Size(1263, 771);
             this.scene.TabIndex = 3;
             this.scene.TabStop = false;
             // 
@@ -70,7 +70,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 427);
+            this.ClientSize = new System.Drawing.Size(1291, 831);
             this.Controls.Add(this.scene);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
