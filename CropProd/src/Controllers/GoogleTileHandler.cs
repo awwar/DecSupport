@@ -49,8 +49,16 @@ namespace Controllers
                 for (int x = -width; x < width; x++)
                 {
                     string path = getimg(rez[0] + x, rez[1] + y, zoom);
-                    Image img = Image.FromFile(path);
-                    SceneHandler.AddFrame(new Vector2(x* tileSize, y*tileSize), img);
+                    try
+                    {
+                        Image img = Image.FromFile(path);
+                        SceneHandler.AddFrame(new Vector2(x * tileSize, y * tileSize), img);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }                   
+
                 }
             }
         }
@@ -103,13 +111,14 @@ namespace Controllers
             string twogis = "https://tile1.maps.2gis.com/tiles?x={0}&y={1}&z={2}&v=1.5&r=g&ts=online_sd";
             string google = "https://khms0.googleapis.com/kh?v=821&hl=ru&x={0}&y={1}&z={2}";
             string yandex = "https://sat04.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU";
+            string openstrmap = "https://a.tile.openstreetmap.org/{2}/{0}/{1}.png ";
             url = string.Format(yandex, tx, ty, zoom);
             string baseurl = Path.GetTempPath() + "CropPod\\";
             string filename = tx.ToString() + "_" + ty.ToString() + ".jpeg";
             string query = string.Format(@"{0}{1}\", baseurl, zoom);
             string fullpath = query + filename;
 
-            if (!Directory.Exists(query))
+            if (!Directory.Exists(fullpath))
             {
                 if (!File.Exists(fullpath))
                 {
@@ -125,7 +134,7 @@ namespace Controllers
                         }
                         catch (Exception e)
                         {
-                            //Console.Beep();
+                            Console.WriteLine(">>>>>>>>>>>"+e.Message);
                         }
 
                     }
