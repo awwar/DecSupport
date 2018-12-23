@@ -58,9 +58,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.scene.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.scene.Location = new System.Drawing.Point(16, 48);
+            this.scene.Cursor = System.Windows.Forms.Cursors.NoMove2D;
+            this.scene.Location = new System.Drawing.Point(12, 45);
+            this.scene.Margin = new System.Windows.Forms.Padding(0);
             this.scene.Name = "scene";
-            this.scene.Size = new System.Drawing.Size(499, 165);
+            this.scene.Size = new System.Drawing.Size(499, 367);
             this.scene.TabIndex = 3;
             this.scene.TabStop = false;
             // 
@@ -75,7 +77,6 @@
             this.DoubleBuffered = true;
             this.Name = "Form1";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.scene)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

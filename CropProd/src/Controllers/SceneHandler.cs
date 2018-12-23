@@ -1,9 +1,11 @@
 ﻿using CropProd;
 using Models;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
+using System.Device;
 
 namespace Controllers
 {
@@ -31,7 +33,9 @@ namespace Controllers
                 foreach (Frame frame in frames)
                 {
                     frame.lefttop = Vector2.Add(frame.lefttop, delta);
-                    e.Graphics.DrawImage(frame.image, frame.lefttop.X, frame.lefttop.Y);
+                    e.Graphics.DrawImage(frame.image, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
+                    Pen pen = new Pen(Color.Red, 1f);
+                    e.Graphics.DrawRectangle(pen, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
                 }
             }
         }
