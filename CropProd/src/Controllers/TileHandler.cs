@@ -41,9 +41,9 @@ namespace Controllers
         {
             CorrentZ = zoom;
             double[] rez = LatLonToMeters(lat, lon, zoom);
-            int width = (int)(Math.Floor(SceneHandler.form.Width / tileSize * 1f)+1) / 2;
-            int height = (int)(Math.Floor(SceneHandler.form.Height / tileSize * 1f)+1) / 2;
-            Console.WriteLine(width + " " + height);
+            int width = (int)(Math.Floor(SceneHandler.form.Width / tileSize * 1f) + 1) / 2;
+            int height = (int)(Math.Floor(SceneHandler.form.Height / tileSize * 1f) + 1) / 2;
+
             for (int y = -height; y < height; y++)
             {
                 for (int x = -width; x < width; x++)
@@ -57,13 +57,11 @@ namespace Controllers
                     catch (Exception)
                     {
                         continue;
-                    }                   
+                    }
 
                 }
             }
         }
-
-
 
         static private double[] LatLonToMeters(double lat, double lon, int zoom)
         {
@@ -74,9 +72,9 @@ namespace Controllers
 
             double[] rez = MetersToPixels(mx, my, zoom);
 
-            Console.WriteLine(string.Format("CLat: {0}, CLong: {1}",
+            /*Console.WriteLine(string.Format("CLat: {0}, CLong: {1}",
                 rez[0],
-                rez[1]));
+                rez[1]));*/
             return rez;
         }
 
@@ -134,7 +132,7 @@ namespace Controllers
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(">>>>>>>>>>>"+e.Message);
+                            Console.WriteLine(">>>>>>>>>>>" + e.Message);
                         }
 
                     }

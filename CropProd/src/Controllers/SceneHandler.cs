@@ -11,7 +11,7 @@ namespace Controllers
 {
     static class SceneHandler
     {
-        static Scene scene;
+        public static Scene scene;
         public static Form1 form;
         static Vector2 first = new Vector2(0, 0);
         static Vector2 delta = new Vector2(0, 0);
@@ -24,19 +24,33 @@ namespace Controllers
 
         static public void Draw(object sender, PaintEventArgs e)
         {
-            List<Frame> frames = scene.drawScene();
+            scene.size = new Vector2(
+                form.scene.Width,
+                form.scene.Height
+            );
+            List<Frame> frames = scene.drawScene(delta);
+
 
             if (frames != null)
             {
                 frames.Sort((x, y) => x.zorder.CompareTo(y.zorder));
 
+                Pen pen;
                 foreach (Frame frame in frames)
                 {
                     frame.lefttop = Vector2.Add(frame.lefttop, delta);
                     e.Graphics.DrawImage(frame.image, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
-                    Pen pen = new Pen(Color.Red, 1f);
+                    pen = new Pen(Color.Red, 1f);
                     e.Graphics.DrawRectangle(pen, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
                 }
+                //Рисуем центр сцены
+                pen = new Pen(Color.Orange, 4f);
+                e.Graphics.DrawLine(pen, scene.center.X - 10, scene.center.Y, scene.center.X + 10, scene.center.Y);
+                e.Graphics.DrawLine(pen, scene.center.X, scene.center.Y - 10, scene.center.X, scene.center.Y + 10);
+                //Рисуем центр экрана
+                pen = new Pen(Color.Red, 2f);
+                e.Graphics.DrawLine(pen, scene.camera.position.X - 10, scene.camera.position.Y, scene.camera.position.X + 10, scene.camera.position.Y);
+                e.Graphics.DrawLine(pen, scene.camera.position.X, scene.camera.position.Y - 10, scene.camera.position.X, scene.camera.position.Y + 10);
             }
         }
 

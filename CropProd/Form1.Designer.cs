@@ -54,8 +54,8 @@
             // 
             // scene
             // 
-            this.scene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.scene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.scene.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.scene.Cursor = System.Windows.Forms.Cursors.NoMove2D;
@@ -77,6 +77,7 @@
             this.DoubleBuffered = true;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.scene)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -86,7 +87,7 @@
         #endregion
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox scene;
+        public System.Windows.Forms.PictureBox scene;
     }
 }
 

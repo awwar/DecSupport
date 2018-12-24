@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Models
@@ -6,10 +7,21 @@ namespace Models
     class Scene
     {
         List<Frame> frames = new List<Frame>();
-        Vector2 leftTop = new Vector2(0, 0);
+        public Vector2 center = new Vector2(0, 0);
+        public Vector2 size = new Vector2(0, 0);
+        public Camera camera;
 
-        public List<Frame> drawScene()
+        public Scene()
         {
+            camera = new Camera();
+        }
+
+        public List<Frame> drawScene(Vector2 delta)
+        {
+
+            center = Vector2.Add(center, delta);
+            camera.position = size / 2;
+            Console.WriteLine(camera.position + " " + center);
             return frames;
         }
 

@@ -46,11 +46,10 @@ namespace CropProd
                 }
             }
             Image img = Image.FromFile(filename);
-            SceneHandler.AddFrame(new Vector2(0, 0), img);
-            SceneHandler.AddFrame(new Vector2(0, img.Width), img);
+            SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), img);
             scene.Refresh();
         }
-        
+
 
         public void Redraw()
         {
