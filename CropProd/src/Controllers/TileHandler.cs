@@ -11,38 +11,43 @@ using System.Threading.Tasks;
 
 namespace Controllers
 {
-    static class GoogleTileHandler
+    static class TileHandler
     {
         static int tileSize = 256;
         static double originShift = 2 * Math.PI * 6378137 / 2.0;
         public static double CurrentLat = 55.763582;
-        public static double CorrentLon = 37.663053;
-        public static int CorrentZ = 18;
+        public static double CurrentLon = 37.663053;
+        public static int CurrentZ = 18;
+
 
         static public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
         {
-            Console.WriteLine(string.Format("Lat: {0}, Long: {1}",
-                e.Position.Location.Latitude,
-                e.Position.Location.Longitude));
             CurrentLat = e.Position.Location.Latitude;
-            CorrentLon = e.Position.Location.Longitude;
+            CurrentLon = e.Position.Location.Longitude;
         }
 
         static public void GetTileAt(double lat, double lon, int zoom)
         {
-            CorrentZ = zoom;
+            CurrentZ = zoom;
             double[] rez = LatLonToMeters(lat, lon, zoom);
             string path = getimg(rez[0], rez[1], zoom);
             Image img = Image.FromFile(path);
-            SceneHandler.AddFrame(new Vector2(0, 0), img);
+            float camx = (int)SceneHandler.scene.camera.tileCenter.X;
+            float camy = (int)SceneHandler.scene.camera.tileCenter.Y;
+            SceneHandler.AddFrame(new Vector2(camx, camy), img, rez);
         }
 
         static public void GetScreenAt(double lat, double lon, int zoom)
         {
-            CorrentZ = zoom;
-            double[] rez = LatLonToMeters(lat, lon, zoom);
-            int width = (int)(Math.Floor(SceneHandler.form.Width / tileSize * 1f) + 1) / 2;
-            int height = (int)(Math.Floor(SceneHandler.form.Height / tileSize * 1f) + 1) / 2;
+            CurrentZ = zoom;
+            double[] rez = new double[2];
+            rez = LatLonToMeters(lat, lon, zoom);
+
+            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2) + 2;
+            int height = (int)((SceneHandler.form.Height / tileSize * 1f) / 2) + 1;
+
+            float camx = SceneHandler.scene.camera.tileCenter.X;
+            float camy = SceneHandler.scene.camera.tileCenter.Y;
 
             for (int y = -height; y < height; y++)
             {
@@ -52,13 +57,12 @@ namespace Controllers
                     try
                     {
                         Image img = Image.FromFile(path);
-                        SceneHandler.AddFrame(new Vector2(x * tileSize, y * tileSize), img);
+                        SceneHandler.AddFrame(new Vector2(camx + x * tileSize, camy + y * tileSize), img, new double[2] { rez[0] + x, rez[1] + y });
                     }
                     catch (Exception)
                     {
                         continue;
                     }
-
                 }
             }
         }
@@ -72,9 +76,6 @@ namespace Controllers
 
             double[] rez = MetersToPixels(mx, my, zoom);
 
-            /*Console.WriteLine(string.Format("CLat: {0}, CLong: {1}",
-                rez[0],
-                rez[1]));*/
             return rez;
         }
 
@@ -110,7 +111,7 @@ namespace Controllers
             string google = "https://khms0.googleapis.com/kh?v=821&hl=ru&x={0}&y={1}&z={2}";
             string yandex = "https://sat04.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU";
             string openstrmap = "https://a.tile.openstreetmap.org/{2}/{0}/{1}.png ";
-            url = string.Format(yandex, tx, ty, zoom);
+            url = string.Format(google, tx, ty, zoom);
             string baseurl = Path.GetTempPath() + "CropPod\\";
             string filename = tx.ToString() + "_" + ty.ToString() + ".jpeg";
             string query = string.Format(@"{0}{1}\", baseurl, zoom);
@@ -125,14 +126,14 @@ namespace Controllers
                     using (WebClient client = new WebClient())
                     {
                         client.Headers.Add("user-agent", " Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-                        try
-                        {
+                        
+                        try {
                             client.DownloadFile(new Uri(url), fullpath);
                             client.Dispose();
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(">>>>>>>>>>>" + e.Message);
+                            //Console.WriteLine(">>>>>>>>>>>" + e.Message);
                         }
 
                     }

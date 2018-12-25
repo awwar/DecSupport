@@ -14,14 +14,13 @@ namespace Models
         public Scene()
         {
             camera = new Camera();
+            camera.Moove(center, size);
         }
 
         public List<Frame> drawScene(Vector2 delta)
         {
-
             center = Vector2.Add(center, delta);
-            camera.position = size / 2;
-            Console.WriteLine(camera.position + " " + center);
+            camera.Moove(center, size);
             return frames;
         }
 
