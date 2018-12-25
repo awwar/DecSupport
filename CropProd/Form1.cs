@@ -15,7 +15,7 @@ namespace CropProd
         public Form1()
         {
             InitializeComponent();
-            SceneHandler.form = this;
+            SceneHandler.Initialization(this);
             //Handle draw calls
             scene.Paint += new PaintEventHandler(SceneHandler.Draw);
             scene.MouseDown += new MouseEventHandler(SceneHandler.Scene_MouseDown);
@@ -23,14 +23,13 @@ namespace CropProd
 
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
-            _geoWatcher.PositionChanged += GoogleTileHandler.GeoWatcherOnStatusChanged;
+            _geoWatcher.PositionChanged += TileHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
-
-            GoogleTileHandler.GetScreenAt(GoogleTileHandler.CurrentLat, GoogleTileHandler.CorrentLon, GoogleTileHandler.CorrentZ);
         }
         private void button1_Click(object sender, EventArgs e)
         {
+            SceneHandler.scene.clearImagePool();
             string filename = "";
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
@@ -46,7 +45,7 @@ namespace CropProd
                 }
             }
             Image img = Image.FromFile(filename);
-            SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), img);
+            SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), img,new double[2] {0,0});
             scene.Refresh();
         }
 
@@ -54,6 +53,13 @@ namespace CropProd
         public void Redraw()
         {
             scene.Invalidate();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SceneHandler.scene.clearImagePool();
+            TileHandler.GetScreenAt(TileHandler.CurrentLat, TileHandler.CurrentLon, TileHandler.CurrentZ);
+            scene.Refresh();
         }
     }
 }
