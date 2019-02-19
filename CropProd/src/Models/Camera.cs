@@ -12,6 +12,7 @@ namespace Models
         public Vector2 position = new Vector2(0, 0);
         public Vector2 center = new Vector2(0, 0);
         public Vector2 tileCenter = new Vector2(0, 0);
+        public Vector2 coordcenter = new Vector2(0, 0);
 
         public void Moove(Vector2 center,Vector2 size)
         {

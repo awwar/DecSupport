@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
 using System.Device;
+using System.Threading;
 
 namespace Controllers
 {
@@ -41,14 +42,19 @@ namespace Controllers
                 frames.Sort((x, y) => x.zorder.CompareTo(y.zorder));
 
                 Pen pen;
-                foreach (Frame frame in frames)
+                foreach (Frame frame in frames.ToArray())
                 {
+
                     frame.lefttop = Vector2.Add(frame.lefttop, delta);
+                    if (CutOut(frame))
+                    {
+                        continue;
+                    }
                     e.Graphics.DrawImage(frame.image, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
                     pen = new Pen(Color.Red, 1f);
                     e.Graphics.DrawRectangle(pen, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
 
-                    e.Graphics.DrawString(frame.cardX + " " + frame.cardY, new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X, frame.lefttop.Y);
+                    e.Graphics.DrawString(frame.lefttop.ToString(), new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X, frame.lefttop.Y);
                 }
                 //Рисуем центр сцены
                 pen = new Pen(Color.Orange, 4f);
@@ -62,6 +68,7 @@ namespace Controllers
                 e.Graphics.DrawString("Center: " + SceneHandler.scene.camera.center.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 0);
                 e.Graphics.DrawString("Position: " + SceneHandler.scene.camera.position.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 20);
                 e.Graphics.DrawString("Tile Center: " + SceneHandler.scene.camera.tileCenter.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 40);
+                e.Graphics.DrawString("Size: " + SceneHandler.scene.size.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 60);
             }
             delta = new Vector2(0, 0);
         }
@@ -90,6 +97,40 @@ namespace Controllers
             frm.cardX = latlon[0];
             frm.cardY = latlon[1];
             scene.addImage(frm);
+        }
+
+        static public void Refresh()
+        {
+            form.Redraw();
+        }
+
+        static private bool CutOut(Frame frame)
+        {
+            if(frame.lefttop.Y < -frame.image.Size.Height || frame.lefttop.Y > scene.size.Y)
+            {
+                scene.removeImage(frame);
+                TileHandler.GetTileAt(new Vector2(
+                    (frame.lefttop.Y > 0)
+                        ? frame.lefttop.Y + scene.size.Y
+                        : frame.lefttop.Y - scene.size.Y,
+                    frame.lefttop.X
+                    )
+                );
+                return true;
+            }
+            else if (frame.lefttop.X < -frame.image.Size.Width || frame.lefttop.X > scene.size.X)
+            {
+                scene.removeImage(frame);
+                TileHandler.GetTileAt(new Vector2(
+                    (frame.lefttop.X < 0)
+                        ? frame.lefttop.X + scene.size.X
+                        : frame.lefttop.X - scene.size.X,
+                    frame.lefttop.Y
+                    )
+                );
+                return true;
+            }
+            return false;
         }
     }
 }

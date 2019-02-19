@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Controllers
@@ -18,6 +19,9 @@ namespace Controllers
         public static double CurrentLat = 55.763582;
         public static double CurrentLon = 37.663053;
         public static int CurrentZ = 18;
+        private static float deltax = 0;
+        private static float deltay = 0;
+
 
 
         static public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
@@ -26,15 +30,12 @@ namespace Controllers
             CurrentLon = e.Position.Location.Longitude;
         }
 
-        static public void GetTileAt(double lat, double lon, int zoom)
+        static public void GetTileAt(Vector2 leftop, int zoom = 18)
         {
             CurrentZ = zoom;
-            double[] rez = LatLonToMeters(lat, lon, zoom);
-            string path = getimg(rez[0], rez[1], zoom);
+            string path = getimg(156480,80537, zoom);
             Image img = Image.FromFile(path);
-            float camx = (int)SceneHandler.scene.camera.tileCenter.X;
-            float camy = (int)SceneHandler.scene.camera.tileCenter.Y;
-            SceneHandler.AddFrame(new Vector2(camx, camy), img, rez);
+            SceneHandler.AddFrame(leftop, img, new double[2]);
         }
 
         static public void GetScreenAt(double lat, double lon, int zoom)
@@ -43,21 +44,30 @@ namespace Controllers
             double[] rez = new double[2];
             rez = LatLonToMeters(lat, lon, zoom);
 
-            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2) + 2;
-            int height = (int)((SceneHandler.form.Height / tileSize * 1f) / 2) + 1;
-
+            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2)+2;
+            int height = (int)((SceneHandler.form.Height / tileSize * 1f) / 2)+1;
             float camx = SceneHandler.scene.camera.tileCenter.X;
             float camy = SceneHandler.scene.camera.tileCenter.Y;
+            Thread th3 = new Thread(() => readimg(width, height, rez, zoom));
+            th3.Start();
+            
+        }
+
+        static void readimg(int width , int height, double[] rez,int zoom)
+        {
 
             for (int y = -height; y < height; y++)
             {
                 for (int x = -width; x < width; x++)
                 {
-                    string path = getimg(rez[0] + x, rez[1] + y, zoom);
+                    string path = getimg(rez[0] + x + deltax, rez[1] + y + deltay, zoom);
                     try
                     {
+                        float camx = SceneHandler.scene.camera.tileCenter.X;
+                        float camy = SceneHandler.scene.camera.tileCenter.Y;
                         Image img = Image.FromFile(path);
-                        SceneHandler.AddFrame(new Vector2(camx + x * tileSize, camy + y * tileSize), img, new double[2] { rez[0] + x, rez[1] + y });
+                        SceneHandler.AddFrame(new Vector2(camx + x * tileSize, camy + y * tileSize), img, new double[2] { rez[0] + x + deltax, rez[1] + y + deltay });
+                        SceneHandler.Refresh();
                     }
                     catch (Exception)
                     {
@@ -126,8 +136,9 @@ namespace Controllers
                     using (WebClient client = new WebClient())
                     {
                         client.Headers.Add("user-agent", " Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-                        
-                        try {
+
+                        try
+                        {
                             client.DownloadFile(new Uri(url), fullpath);
                             client.Dispose();
                         }

@@ -5,6 +5,8 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CropProd
@@ -44,9 +46,9 @@ namespace CropProd
                     label1.Text = "Открыт файл " + filename;
                 }
             }
-            Image img = Image.FromFile(filename);
-            SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), img,new double[2] {0,0});
-            scene.Refresh();
+
+            Thread th2 = new Thread(() => readimg(filename));
+            th2.Start();
         }
 
 
@@ -61,5 +63,49 @@ namespace CropProd
             TileHandler.GetScreenAt(TileHandler.CurrentLat, TileHandler.CurrentLon, TileHandler.CurrentZ);
             scene.Refresh();
         }
+        private void readimg(string filename)
+        {
+            try
+            {
+                Bitmap image1;
+                // Retrieve the image.
+                image1 = new Bitmap(@filename, true);
+
+                int x, y;
+
+                // Loop through the images pixels to reset color.
+                for (x = 0; x < image1.Width; x++)
+                {
+                    for (y = 0; y < image1.Height; y++)
+                    {
+                        Color pixelColor = image1.GetPixel(x, y);
+                        Color newColor;
+                        if (pixelColor.R > 100 && pixelColor.R < 150)
+                        {
+                            newColor = Color.FromArgb(pixelColor.R, 0, 0);
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            int g = pixelColor.G;
+                            int b = pixelColor.B;
+                            newColor = Color.FromArgb(0, g, b);
+                        }
+                        image1.SetPixel(x, y, newColor);
+                    }
+                }
+
+                // Set the PictureBox to display the image.
+                SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1, new double[2] { 0, 0 });
+
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show("There was an error." +
+                    "Check the path to the image file.");
+            }
+            SceneHandler.Refresh();
+        }
     }
+    
 }
