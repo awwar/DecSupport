@@ -34,7 +34,7 @@ namespace Controllers
                 form.scene.Width,
                 form.scene.Height
             );
-            List<Frame> frames = scene.drawScene(delta);
+            List<Frame> frames = scene.DrawScene(delta);
 
 
             if (frames != null)
@@ -44,17 +44,15 @@ namespace Controllers
                 Pen pen;
                 foreach (Frame frame in frames.ToArray())
                 {
-
-                    frame.lefttop = Vector2.Add(frame.lefttop, delta);
-                    if (CutOut(frame))
+                    /*if (CutOut(frame))
                     {
                         continue;
-                    }
-                    e.Graphics.DrawImage(frame.image, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
+                    }*/
+                    e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y);
                     pen = new Pen(Color.Red, 1f);
-                    e.Graphics.DrawRectangle(pen, frame.lefttop.X, frame.lefttop.Y, frame.image.Width, frame.image.Height);
+                    e.Graphics.DrawRectangle(pen, frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y, frame.image.Width, frame.image.Height);
 
-                    e.Graphics.DrawString(frame.lefttop.ToString(), new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X, frame.lefttop.Y);
+                    e.Graphics.DrawString(frame.lefttop.ToString(), new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y);
                 }
                 //Рисуем центр сцены
                 pen = new Pen(Color.Orange, 4f);
@@ -69,6 +67,7 @@ namespace Controllers
                 e.Graphics.DrawString("Position: " + SceneHandler.scene.camera.position.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 20);
                 e.Graphics.DrawString("Tile Center: " + SceneHandler.scene.camera.tileCenter.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 40);
                 e.Graphics.DrawString("Size: " + SceneHandler.scene.size.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 60);
+                e.Graphics.DrawString("Scene center: " + SceneHandler.scene.center.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 80);
             }
             delta = new Vector2(0, 0);
         }
@@ -91,46 +90,17 @@ namespace Controllers
 
         static public void AddFrame(Vector2 point, Image img, double[] latlon)
         {
-            Frame frm = new Frame();
-            frm.lefttop = point;
-            frm.image = img;
-            frm.cardX = latlon[0];
-            frm.cardY = latlon[1];
-            scene.addImage(frm);
+            Frame frm = new Frame
+            {
+                lefttop = point,
+                image = img
+            };
+            scene.AddImage(frm);
         }
 
         static public void Refresh()
         {
             form.Redraw();
-        }
-
-        static private bool CutOut(Frame frame)
-        {
-            if(frame.lefttop.Y < -frame.image.Size.Height || frame.lefttop.Y > scene.size.Y)
-            {
-                scene.removeImage(frame);
-                TileHandler.GetTileAt(new Vector2(
-                    (frame.lefttop.Y > 0)
-                        ? frame.lefttop.Y + scene.size.Y
-                        : frame.lefttop.Y - scene.size.Y,
-                    frame.lefttop.X
-                    )
-                );
-                return true;
-            }
-            else if (frame.lefttop.X < -frame.image.Size.Width || frame.lefttop.X > scene.size.X)
-            {
-                scene.removeImage(frame);
-                TileHandler.GetTileAt(new Vector2(
-                    (frame.lefttop.X < 0)
-                        ? frame.lefttop.X + scene.size.X
-                        : frame.lefttop.X - scene.size.X,
-                    frame.lefttop.Y
-                    )
-                );
-                return true;
-            }
-            return false;
-        }
+        }        
     }
 }

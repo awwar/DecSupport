@@ -21,8 +21,8 @@ namespace Models
             position = -(center - (size / 2));
 
             tileCenter = new Vector2(
-                (float)(center.X + Math.Floor(this.position.X / 256) * 256),
-                (float)(center.Y + Math.Floor(this.position.Y / 256) * 256)
+                (float)(Math.Floor(this.position.X / 256) * 256),
+                (float)(Math.Floor(this.position.Y / 256) * 256)
             );
         }
     }

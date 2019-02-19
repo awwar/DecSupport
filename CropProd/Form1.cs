@@ -31,7 +31,7 @@ namespace CropProd
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            SceneHandler.scene.clearImagePool();
+            SceneHandler.scene.ClearImagePool();
             string filename = "";
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
@@ -59,7 +59,7 @@ namespace CropProd
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SceneHandler.scene.clearImagePool();
+            SceneHandler.scene.ClearImagePool();
             TileHandler.GetScreenAt(TileHandler.CurrentLat, TileHandler.CurrentLon, TileHandler.CurrentZ);
             scene.Refresh();
         }

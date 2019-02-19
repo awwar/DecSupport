@@ -44,10 +44,8 @@ namespace Controllers
             double[] rez = new double[2];
             rez = LatLonToMeters(lat, lon, zoom);
 
-            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2)+2;
-            int height = (int)((SceneHandler.form.Height / tileSize * 1f) / 2)+1;
-            float camx = SceneHandler.scene.camera.tileCenter.X;
-            float camy = SceneHandler.scene.camera.tileCenter.Y;
+            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2)+1;
+            int height = (int)((SceneHandler.form.Height / tileSize * 1f) / 2);
             Thread th3 = new Thread(() => readimg(width, height, rez, zoom));
             th3.Start();
             
