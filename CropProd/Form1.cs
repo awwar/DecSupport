@@ -47,7 +47,7 @@ namespace CropProd
                 }
             }
 
-            Thread th2 = new Thread(() => readimg(filename));
+            Thread th2 = new Thread(() => Readimg(filename));
             th2.Start();
         }
 
@@ -63,7 +63,7 @@ namespace CropProd
             TileHandler.GetScreenAt(TileHandler.CurrentLat, TileHandler.CurrentLon, TileHandler.CurrentZ);
             scene.Refresh();
         }
-        private void readimg(string filename)
+        private void Readimg(string filename)
         {
             try
             {
@@ -72,21 +72,20 @@ namespace CropProd
                 image1 = new Bitmap(@filename, true);
 
                 int x, y;
-
+                Color pixelColor;
+                Color newColor;
                 // Loop through the images pixels to reset color.
                 for (x = 0; x < image1.Width; x++)
                 {
                     for (y = 0; y < image1.Height; y++)
                     {
-                        Color pixelColor = image1.GetPixel(x, y);
-                        Color newColor;
+                        pixelColor = image1.GetPixel(x, y);
                         if (pixelColor.R > 100 && pixelColor.R < 150)
                         {
                             newColor = Color.FromArgb(pixelColor.R, 0, 0);
                         }
                         else
                         {
-                            Random rnd = new Random();
                             int g = pixelColor.G;
                             int b = pixelColor.B;
                             newColor = Color.FromArgb(0, g, b);
@@ -96,7 +95,7 @@ namespace CropProd
                 }
 
                 // Set the PictureBox to display the image.
-                SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1, new double[2] { 0, 0 });
+                SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
 
             }
             catch (ArgumentException)

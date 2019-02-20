@@ -39,23 +39,26 @@ namespace Controllers
 
             if (frames != null)
             {
-                frames.Sort((x, y) => x.zorder.CompareTo(y.zorder));
+                //frames.Sort((x, y) => x.zorder.CompareTo(y.zorder));
 
-                Pen pen;
+                Pen pen = new Pen(Color.Red, 1f);
                 foreach (Frame frame in frames.ToArray())
                 {
-                    /*if (CutOut(frame))
+                    if (!CutOut(frame))
+                    {
+                        frame.scenecoord = Vector2.Add(frame.lefttop, scene.center);
+                    } else
                     {
                         continue;
-                    }*/
-                    e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y);
-                    pen = new Pen(Color.Red, 1f);
-                    e.Graphics.DrawRectangle(pen, frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y, frame.image.Width, frame.image.Height);
+                    }
+                    e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y,frame.image.Width, frame.image.Height);
+                    //e.Graphics.DrawRectangle(pen, frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y, frame.image.Width, frame.image.Height);
 
-                    e.Graphics.DrawString(frame.lefttop.ToString(), new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y);
+                    //e.Graphics.DrawString(frame.scenecoord.ToString(), new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y);
                 }
+                e.Graphics.DrawString("Scene center: " + SceneHandler.scene.center.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 80);
                 //Рисуем центр сцены
-                pen = new Pen(Color.Orange, 4f);
+                /*pen = new Pen(Color.Orange, 4f);
                 e.Graphics.DrawLine(pen, scene.center.X - 10, scene.center.Y, scene.center.X + 10, scene.center.Y);
                 e.Graphics.DrawLine(pen, scene.center.X, scene.center.Y - 10, scene.center.X, scene.center.Y + 10);
                 //Рисуем центр экрана
@@ -63,11 +66,10 @@ namespace Controllers
                 e.Graphics.DrawLine(pen, scene.camera.center.X - 10, scene.camera.center.Y, scene.camera.center.X + 10, scene.camera.center.Y);
                 e.Graphics.DrawLine(pen, scene.camera.center.X, scene.camera.center.Y - 10, scene.camera.center.X, scene.camera.center.Y + 10);
 
-                e.Graphics.DrawString("Center: " + SceneHandler.scene.camera.center.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 0);
+                e.Graphics.DrawString("Item Count: " + SceneHandler.scene.itemCount.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 0);
                 e.Graphics.DrawString("Position: " + SceneHandler.scene.camera.position.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 20);
                 e.Graphics.DrawString("Tile Center: " + SceneHandler.scene.camera.tileCenter.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 40);
-                e.Graphics.DrawString("Size: " + SceneHandler.scene.size.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 60);
-                e.Graphics.DrawString("Scene center: " + SceneHandler.scene.center.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 80);
+                e.Graphics.DrawString("Size: " + SceneHandler.scene.size.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 60);*/
             }
             delta = new Vector2(0, 0);
         }
@@ -88,19 +90,47 @@ namespace Controllers
             last = new Vector2(e.X, e.Y);
         }
 
-        static public void AddFrame(Vector2 point, Image img, double[] latlon)
+        static public void AddFrame(Vector2 point, Image img)
         {
-            Frame frm = new Frame
-            {
-                lefttop = point,
-                image = img
-            };
+            Frame frm = new Frame(
+                    img,
+                    point
+                );
             scene.AddImage(frm);
         }
 
         static public void Refresh()
         {
             form.Redraw();
-        }        
+        }
+
+        static private bool CutOut(Frame frame)
+        {
+            if (frame.scenecoord.Y < -frame.image.Size.Height || frame.scenecoord.Y > scene.size.Y)
+            {
+                scene.RemoveImage(frame);
+                TileHandler.GetTileAt(new Vector2(
+                    frame.coord.X,
+                    (frame.scenecoord.Y - 256 < 0)
+                        ? frame.coord.Y + (float)(Math.Floor(scene.size.Y / 256) + 2)
+                        : frame.coord.Y - (float)(Math.Floor(scene.size.Y / 256) + 2)
+                    )
+                );
+                return true;
+            }
+            else if (frame.scenecoord.X < -frame.image.Size.Width || frame.scenecoord.X  > scene.size.X)
+            {
+                scene.RemoveImage(frame);
+                TileHandler.GetTileAt(new Vector2(
+                    (frame.scenecoord.X - 256 < 0)
+                        ? frame.coord.X + (float)(Math.Floor(scene.size.X / 256) + 2)
+                        : frame.coord.X - (float)(Math.Floor(scene.size.X / 256) + 2),
+                    frame.coord.Y
+                    )
+                );
+                return true;
+            }
+            return false;
+        }
     }
 }
