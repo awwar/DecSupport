@@ -39,7 +39,6 @@ namespace Controllers
 
             if (frames != null)
             {
-                //frames.Sort((x, y) => x.zorder.CompareTo(y.zorder));
 
                 Pen pen = new Pen(Color.Red, 1f);
                 foreach (Frame frame in frames.ToArray())
@@ -90,11 +89,16 @@ namespace Controllers
             last = new Vector2(e.X, e.Y);
         }
 
-        static public void AddFrame(Vector2 point, Image img)
+        static public void AddFrame(Frame frame)
+        {
+            scene.AddImage(frame);
+        }
+
+        static public void AddFrame(Vector2 point, Image image)
         {
             Frame frm = new Frame(
-                    img,
-                    point
+                    point,
+                    image
                 );
             scene.AddImage(frm);
         }
@@ -106,7 +110,7 @@ namespace Controllers
 
         static private bool CutOut(Frame frame)
         {
-            if (frame.scenecoord.Y < -frame.image.Size.Height || frame.scenecoord.Y > scene.size.Y)
+            if (frame.scenecoord.Y < -256 || frame.scenecoord.Y > scene.size.Y)
             {
                 scene.RemoveImage(frame);
                 TileHandler.GetTileAt(new Vector2(
@@ -118,7 +122,7 @@ namespace Controllers
                 );
                 return true;
             }
-            else if (frame.scenecoord.X < -frame.image.Size.Width || frame.scenecoord.X  > scene.size.X)
+            else if (frame.scenecoord.X < -256 || frame.scenecoord.X  > scene.size.X)
             {
                 scene.RemoveImage(frame);
                 TileHandler.GetTileAt(new Vector2(

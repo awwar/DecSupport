@@ -28,6 +28,7 @@ namespace CropProd
             _geoWatcher.PositionChanged += TileHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
+            TileHandler.Initialization();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -60,7 +61,7 @@ namespace CropProd
         private void button2_Click(object sender, EventArgs e)
         {
             SceneHandler.scene.ClearImagePool();
-            TileHandler.GetScreenAt(TileHandler.CurrentLat, TileHandler.CurrentLon, TileHandler.CurrentZ);
+            TileHandler.GetScreenAt(TileHandler.CurrentZ);
             scene.Refresh();
         }
         private void Readimg(string filename)
@@ -95,7 +96,7 @@ namespace CropProd
                 }
 
                 // Set the PictureBox to display the image.
-                SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
+                //SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
 
             }
             catch (ArgumentException)

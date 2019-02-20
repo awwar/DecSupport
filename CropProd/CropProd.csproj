@@ -56,6 +56,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Controllers\LoaderHandler.cs" />
     <Compile Include="src\Controllers\TileHandler.cs" />
     <Compile Include="src\Controllers\SceneHandler.cs" />
     <Compile Include="src\Models\Camera.cs" />

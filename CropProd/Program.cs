@@ -16,14 +16,6 @@ namespace CropProd
         static void Main()
         {
 
-            Thread thread = new Thread(Start);
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            thread.Join();
-        }
-        [STAThread]
-        static void Start()
-        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
