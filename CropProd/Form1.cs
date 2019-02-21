@@ -28,7 +28,12 @@ namespace CropProd
             _geoWatcher.PositionChanged += TileHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
-            TileHandler.Initialization();
+            //TileHandler.Initialization();
+            Thread TilerThread = new Thread(TileHandler.Initialization)
+            {
+                IsBackground = true
+            };
+            TilerThread.Start();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -48,7 +53,10 @@ namespace CropProd
                 }
             }
 
-            Thread th2 = new Thread(() => Readimg(filename));
+            Thread th2 = new Thread(() => Readimg(filename))
+            {
+                IsBackground = false
+            };
             th2.Start();
         }
 

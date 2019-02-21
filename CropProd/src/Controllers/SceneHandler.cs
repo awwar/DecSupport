@@ -34,23 +34,24 @@ namespace Controllers
                 form.scene.Width,
                 form.scene.Height
             );
-            List<Frame> frames = scene.DrawScene(delta);
+            Frame[] frames = scene.DrawScene(delta).ToArray();
 
 
             if (frames != null)
             {
 
                 Pen pen = new Pen(Color.Red, 1f);
-                foreach (Frame frame in frames.ToArray())
+                foreach (Frame frame in frames)
                 {
                     if (!CutOut(frame))
                     {
                         frame.scenecoord = Vector2.Add(frame.lefttop, scene.center);
-                    } else
+                    }
+                    else
                     {
                         continue;
                     }
-                    e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y,frame.image.Width, frame.image.Height);
+                    e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y, frame.image.Width, frame.image.Height);
                     //e.Graphics.DrawRectangle(pen, frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y, frame.image.Width, frame.image.Height);
 
                     //e.Graphics.DrawString(frame.scenecoord.ToString(), new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y);
@@ -72,7 +73,7 @@ namespace Controllers
             }
             delta = new Vector2(0, 0);
         }
-        
+
         static public void Scene_MouseMoove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -110,7 +111,7 @@ namespace Controllers
 
         static private bool CutOut(Frame frame)
         {
-            if (frame.scenecoord.Y < -256 || frame.scenecoord.Y > scene.size.Y)
+            if (frame.scenecoord.Y < -frame.image.Height || frame.scenecoord.Y > scene.size.Y)
             {
                 scene.RemoveImage(frame);
                 TileHandler.GetTileAt(new Vector2(
@@ -122,7 +123,7 @@ namespace Controllers
                 );
                 return true;
             }
-            else if (frame.scenecoord.X < -256 || frame.scenecoord.X  > scene.size.X)
+            else if (frame.scenecoord.X < -frame.image.Height || frame.scenecoord.X  > scene.size.X)
             {
                 scene.RemoveImage(frame);
                 TileHandler.GetTileAt(new Vector2(
