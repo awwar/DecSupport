@@ -12,11 +12,10 @@ namespace Models
         public Camera camera;
         public int itemCount = 0;
 
-        public Scene()
+        public Scene(Vector2 size)
         {
             camera = new Camera();
             camera.Moove(center, size);
-            center = Vector2.Add(center, camera.center);
         }
 
         public List<Tile> DrawScene(Vector2 delta)

@@ -16,14 +16,17 @@ namespace Controllers
         public bool block = false;
         WebClient client;
 
-        public async void Start()
+        public LoaderHandler()
         {
             client = new WebClient
             {
                 Proxy = null
             };
-            
-            
+        }
+
+        public async void Start()
+        {
+           
             while (true)
             {
                 if (count > 0 && block == false)
@@ -84,9 +87,6 @@ namespace Controllers
                 //SceneHandler.Refresh();
             }
             Console.WriteLine("Вызвана загрузка {0} тайлов", frames.Length);
-            GC.Collect();
-
-            SceneHandler.Refresh();
         }
     }
 }

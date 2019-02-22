@@ -16,9 +16,10 @@ namespace CropProd
             InitializeComponent();
             SceneHandler.Initialization(this);
             //Handle draw calls
-            scene.Paint += new PaintEventHandler(SceneHandler.Draw);
+            scene.Paint += new PaintEventHandler(SceneHandler.Scene_Draw);
             scene.MouseDown += new MouseEventHandler(SceneHandler.Scene_MouseDown);
             scene.MouseMove += new MouseEventHandler(SceneHandler.Scene_MouseMoove);
+            scene.Resize += new EventHandler(SceneHandler.Scene_Resize);
 
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
@@ -32,6 +33,9 @@ namespace CropProd
             };
             TilerThread.Start();
         }
+
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             SceneHandler.scene.ClearImagePool();
@@ -67,7 +71,6 @@ namespace CropProd
         {
             SceneHandler.scene.ClearImagePool();
             TileHandler.GetScreenAt(TileHandler.CurrentZ);
-            scene.Refresh();
         }
         private void Readimg(string filename)
         {

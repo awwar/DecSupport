@@ -10,14 +10,13 @@ namespace Controllers
 {
     static class TileHandler
     {
-        public static readonly int tileSize = 64;
+        public static readonly int tileSize = 256;
         static readonly double originShift = 2 * Math.PI * 6378137 / 2.0;
         public static double CurrentLat = 55.763582;
         public static double CurrentLon = 37.663053;
         public static int CurrentZ = 18;
         public static string name = "twogis";
         static Image img;
-        static int ct;
         public static LoaderHandler Loader;
         static Dictionary<string, string> distrib = new Dictionary<string, string>
         {
@@ -72,18 +71,18 @@ namespace Controllers
                     Console.WriteLine("11");
                 }
             }
-            Console.WriteLine("вызвана отрисовка тайлов {0}", ct);
-            ct++;
         }
+        
 
         static public void GetScreenAt(int zoom)
         {
-            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2) + 4;
+            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2) + 2;
             int height = (int)((SceneHandler.form.Height / tileSize * 1f) / 2) + 2;
+            Console.WriteLine("width {0}, heigth {1}", width, height);
             Loader.block = true;
-            for (int y = -height; y < height; y++)
+            for (int y = -height; y <= height; y++)
             {
-                for (int x = -width; x < width; x++)
+                for (int x = -width; x <= width; x++)
                 {
                     GetTileAt(new Vector2(x, y), zoom);
                 }
