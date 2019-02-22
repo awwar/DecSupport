@@ -58,7 +58,6 @@
             this.scene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.scene.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.scene.Cursor = System.Windows.Forms.Cursors.NoMove2D;
             this.scene.Location = new System.Drawing.Point(12, 45);
             this.scene.Margin = new System.Windows.Forms.Padding(0);

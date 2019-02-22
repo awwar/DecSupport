@@ -1,13 +1,11 @@
-﻿using Controllers;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 
 namespace Models
 {
     class Scene
     {
-        List<Frame> frames = new List<Frame>();
+        List<Tile> frames = new List<Tile>();
         public Vector2 center = new Vector2(0, 0);
         public Vector2 size = new Vector2(0, 0);
         public Vector2 coord = new Vector2(0, 0);
@@ -21,7 +19,7 @@ namespace Models
             center = Vector2.Add(center, camera.center);
         }
 
-        public List<Frame> DrawScene(Vector2 delta)
+        public List<Tile> DrawScene(Vector2 delta)
         {
             center = Vector2.Add(center, delta);
             camera.Moove(center, size);
@@ -29,13 +27,13 @@ namespace Models
             return frames;
         }
 
-        public void AddImage(Frame item)
+        public void AddImage(Tile item)
         {
             itemCount++;
             frames.Add(item);
         }
 
-        public void RemoveImage(Frame item)
+        public void RemoveImage(Tile item)
         {
             itemCount--;
             frames.Remove(item);
@@ -46,8 +44,5 @@ namespace Models
             itemCount = 0;
             frames.Clear();
         }
-
-
-        
     }
 }

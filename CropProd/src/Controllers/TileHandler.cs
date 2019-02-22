@@ -5,28 +5,28 @@ using System.Device.Location;
 using System.Drawing;
 using System.IO;
 using System.Numerics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Controllers
 {
     static class TileHandler
     {
-        static readonly int tileSize = 256;
+        public static readonly int tileSize = 64;
         static readonly double originShift = 2 * Math.PI * 6378137 / 2.0;
         public static double CurrentLat = 55.763582;
         public static double CurrentLon = 37.663053;
         public static int CurrentZ = 18;
-        public static string name = "yandex";
+        public static string name = "twogis";
         static Image img;
-        static LoaderHandler Loader;
+        static int ct;
+        public static LoaderHandler Loader;
         static Dictionary<string, string> distrib = new Dictionary<string, string>
         {
             {"twogis" ,"https://tile1.maps.2gis.com/tiles?x={0}&y={1}&z={2}&v=1.5&r=g&ts=online_sd" },
-            {"google" ,"https://khms1.googleapis.com/kh?v=821&hl=ru&x={0}&y={1}&z={2}"},
-            {"yandex" ,"https://sat02.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU"},
+            {"google" ,"https://khms1.googleapis.com/kh?v=821&x={0}&y={1}&z={2}"},
+            {"yandex" ,"https://sat01.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU"},
             {"openstrmap" ,"https://a.tile.openstreetmap.org/{2}/{0}/{1}.png "},
-            {"PaintMap", "http://c.tile.stamen.com/watercolor/{2}/{0}/{1}.jpg" }
+            {"PaintMap", "http://c.tile.stamen.com/watercolor/{2}/{0}/{1}.jpg" },
+            {"googleS", "http://mt2.google.com/vt/lyrs=s&x={0}&y={1}&z={2}" }
 
         };
 
@@ -49,14 +49,15 @@ namespace Controllers
             double tx = SceneHandler.scene.coord.X + leftop.X;
             double ty = SceneHandler.scene.coord.Y + leftop.Y;
             string url = "";
-            url = string.Format(distrib[name], tx, ty, zoom);
+            Random rnd = new Random();
+            url = string.Format(distrib[name], tx, ty, zoom,rnd.Next(1,3));
             string baseurl = Path.GetTempPath() + "CropPod";
             string filename = tx.ToString() + "_" + ty.ToString() + ".jpeg";
-            string query = string.Format(@"{0}\\{1}\\{2}\", baseurl, name, zoom);
+            string query = string.Format(@"{0}\{1}\{2}\", baseurl, name, zoom);
             string fullpath = query + filename;
             if (!File.Exists(fullpath))
             {
-                Frame frame = new Frame(fullpath, url, leftop);
+                Tile frame = new Tile(fullpath, url, leftop);
                 Loader.AddPath(frame);
             }
             else
@@ -64,14 +65,15 @@ namespace Controllers
                 try
                 {
                     img = Image.FromFile(fullpath);
-                    SceneHandler.AddFrame(leftop, img);
+                    SceneHandler.AddTile(leftop, img);
                 }
                 catch (Exception)
                 {
                     Console.WriteLine("11");
                 }
             }
-           
+            Console.WriteLine("вызвана отрисовка тайлов {0}", ct);
+            ct++;
         }
 
         static public void GetScreenAt(int zoom)
@@ -87,7 +89,6 @@ namespace Controllers
                 }
             }
             Loader.block = false;
-
         }
 
         static private double[] LatLonToMeters(double lat, double lon, int zoom)

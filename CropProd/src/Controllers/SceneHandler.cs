@@ -1,12 +1,9 @@
 ﻿using CropProd;
 using Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
-using System.Device;
-using System.Threading;
 
 namespace Controllers
 {
@@ -34,29 +31,18 @@ namespace Controllers
                 form.scene.Width,
                 form.scene.Height
             );
-            Frame[] frames = scene.DrawScene(delta).ToArray();
+            Tile[] tiles = scene.DrawScene(delta).ToArray();
 
 
-            if (frames != null)
+            if (tiles != null)
             {
-
                 Pen pen = new Pen(Color.Red, 1f);
-                foreach (Frame frame in frames)
+                UpdateTiles(tiles);
+                foreach (Tile frame in tiles)
                 {
-                    if (!CutOut(frame))
-                    {
-                        frame.scenecoord = Vector2.Add(frame.lefttop, scene.center);
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                    e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y, frame.image.Width, frame.image.Height);
-                    //e.Graphics.DrawRectangle(pen, frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y, frame.image.Width, frame.image.Height);
-
-                    //e.Graphics.DrawString(frame.scenecoord.ToString(), new Font("Arial", 15), new SolidBrush(Color.White), frame.lefttop.X + scene.center.X, frame.lefttop.Y + scene.center.Y);
+                    e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y, 256, 256);
                 }
-                e.Graphics.DrawString("Scene center: " + SceneHandler.scene.center.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 80);
+                //e.Graphics.DrawString("Scene center: " + scene.center.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 80);
                 //Рисуем центр сцены
                 /*pen = new Pen(Color.Orange, 4f);
                 e.Graphics.DrawLine(pen, scene.center.X - 10, scene.center.Y, scene.center.X + 10, scene.center.Y);
@@ -90,18 +76,18 @@ namespace Controllers
             last = new Vector2(e.X, e.Y);
         }
 
-        static public void AddFrame(Frame frame)
+        static public void AddTile(Tile frame)
         {
             scene.AddImage(frame);
         }
 
-        static public void AddFrame(Vector2 point, Image image)
+        static public void AddTile(Vector2 point, Image image)
         {
-            Frame frm = new Frame(
+            Tile tile = new Tile(
                     point,
                     image
                 );
-            scene.AddImage(frm);
+            scene.AddImage(tile);
         }
 
         static public void Refresh()
@@ -109,33 +95,39 @@ namespace Controllers
             form.Redraw();
         }
 
-        static private bool CutOut(Frame frame)
+        static private void UpdateTiles(Tile[] frame)
         {
-            if (frame.scenecoord.Y < -frame.image.Height || frame.scenecoord.Y > scene.size.Y)
+            TileHandler.Loader.block = true;
+            foreach (Tile frames in frame)
             {
-                scene.RemoveImage(frame);
-                TileHandler.GetTileAt(new Vector2(
-                    frame.coord.X,
-                    (frame.scenecoord.Y - 256 < 0)
-                        ? frame.coord.Y + (float)(Math.Floor(scene.size.Y / 256) + 2)
-                        : frame.coord.Y - (float)(Math.Floor(scene.size.Y / 256) + 2)
-                    )
-                );
-                return true;
+                if (frames.scenecoord.Y < -256 || frames.scenecoord.Y > scene.size.Y)
+                {
+                    scene.RemoveImage(frames);
+                    TileHandler.GetTileAt(new Vector2(
+                        frames.coord.X,
+                        (frames.scenecoord.Y - 256 < 0)
+                            ? frames.coord.Y + (float)(Math.Floor(scene.size.Y / 256) + 2)
+                            : frames.coord.Y - (float)(Math.Floor(scene.size.Y / 256) + 2)
+                        )
+                    );
+                }
+                else if (frames.scenecoord.X < -256 || frames.scenecoord.X > scene.size.X)
+                {
+                    scene.RemoveImage(frames);
+                    TileHandler.GetTileAt(new Vector2(
+                        (frames.scenecoord.X - 256 < 0)
+                            ? frames.coord.X + (float)(Math.Floor(scene.size.X / 256) + 2)
+                            : frames.coord.X - (float)(Math.Floor(scene.size.X / 256) + 2),
+                        frames.coord.Y
+                        )
+                    );
+                }
+                else
+                {
+                    frames.scenecoord = Vector2.Add(frames.lefttop, scene.center);
+                }
             }
-            else if (frame.scenecoord.X < -frame.image.Height || frame.scenecoord.X  > scene.size.X)
-            {
-                scene.RemoveImage(frame);
-                TileHandler.GetTileAt(new Vector2(
-                    (frame.scenecoord.X - 256 < 0)
-                        ? frame.coord.X + (float)(Math.Floor(scene.size.X / 256) + 2)
-                        : frame.coord.X - (float)(Math.Floor(scene.size.X / 256) + 2),
-                    frame.coord.Y
-                    )
-                );
-                return true;
-            }
-            return false;
+            TileHandler.Loader.block = false;
         }
     }
 }

@@ -2,11 +2,8 @@
 using System;
 using System.Device.Location;
 using System.Drawing;
-using System.IO;
-using System.Net;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CropProd
@@ -28,7 +25,7 @@ namespace CropProd
             _geoWatcher.PositionChanged += TileHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
-            //TileHandler.Initialization();
+
             Thread TilerThread = new Thread(TileHandler.Initialization)
             {
                 IsBackground = true
@@ -102,9 +99,8 @@ namespace CropProd
                         image1.SetPixel(x, y, newColor);
                     }
                 }
-
-                // Set the PictureBox to display the image.
-                //SceneHandler.AddFrame(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
+                
+                SceneHandler.AddTile(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
 
             }
             catch (ArgumentException)
