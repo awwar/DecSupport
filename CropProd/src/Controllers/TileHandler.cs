@@ -15,7 +15,7 @@ namespace Controllers
         public static double CurrentLat = 55.763582;
         public static double CurrentLon = 37.663053;
         public static int CurrentZ = 18;
-        public static string name = "twogis";
+        public static string name = "google";
         static Image img;
         public static LoaderHandler Loader;
         static Dictionary<string, string> distrib = new Dictionary<string, string>
@@ -43,16 +43,16 @@ namespace Controllers
             SceneHandler.scene.coord = new Vector2((float)rez[0], (float)rez[1]);
         }
 
-        static public void GetTileAt(Vector2 leftop, int zoom = 18)
+        static public void GetTileAt(Vector2 leftop)
         {
             double tx = SceneHandler.scene.coord.X + leftop.X;
-            double ty = SceneHandler.scene.coord.Y + leftop.Y;
+            double ty =  SceneHandler.scene.coord.Y + leftop.Y;
             string url = "";
             Random rnd = new Random();
-            url = string.Format(distrib[name], tx, ty, zoom,rnd.Next(1,3));
+            url = string.Format(distrib[name], tx, ty, CurrentZ, rnd.Next(1,3));
             string baseurl = Path.GetTempPath() + "CropPod";
             string filename = tx.ToString() + "_" + ty.ToString() + ".jpeg";
-            string query = string.Format(@"{0}\{1}\{2}\", baseurl, name, zoom);
+            string query = string.Format(@"{0}\{1}\{2}\", baseurl, name, CurrentZ);
             string fullpath = query + filename;
             if (!File.Exists(fullpath))
             {
@@ -72,19 +72,25 @@ namespace Controllers
                 }
             }
         }
-        
 
-        static public void GetScreenAt(int zoom)
+        static public void Clear()
         {
-            int width = (int)((SceneHandler.form.Width / tileSize * 1f) / 2) + 2;
-            int height = (int)((SceneHandler.form.Height / tileSize * 1f) / 2) + 2;
-            Console.WriteLine("width {0}, heigth {1}", width, height);
+            SceneHandler.scene.ClearImagePool();
+            Loader.ClearPath();
+        }
+
+        static public void GetScreenAt()
+        {
+            double[] rez = LatLonToMeters(CurrentLat, CurrentLon, CurrentZ);
+            SceneHandler.scene.coord = new Vector2((float)rez[0], (float)rez[1]);
+            int width = (int)SceneHandler.scene.camera.tileCenter.X + (int)((SceneHandler.form.Width / tileSize * 1f) / 2) + 1;
+            int height = (int)SceneHandler.scene.camera.tileCenter.Y + (int)((SceneHandler.form.Height / tileSize * 1f) / 2) + 1;
             Loader.block = true;
             for (int y = -height; y <= height; y++)
             {
                 for (int x = -width; x <= width; x++)
                 {
-                    GetTileAt(new Vector2(x, y), zoom);
+                    GetTileAt(new Vector2(x, y));
                 }
             }
             Loader.block = false;

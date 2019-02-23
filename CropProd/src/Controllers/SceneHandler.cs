@@ -1,7 +1,6 @@
 ﻿using CropProd;
 using Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
@@ -15,7 +14,8 @@ namespace Controllers
         static Vector2 first = new Vector2(0, 0);
         static Vector2 delta = new Vector2(0, 0);
         static Vector2 last = new Vector2(0, 0);
-        
+        static int zoom = 18;
+
         static public void Initialization(Form1 getform)
         {
             form = getform;
@@ -37,15 +37,12 @@ namespace Controllers
 
         static public void Scene_Draw(object sender, PaintEventArgs e)
         {
-            
-
             Tile[] tiles = scene.DrawScene(delta).ToArray();
-
 
             if (tiles != null)
             {
                 Pen pen = new Pen(Color.Red, 1f);
-                tiles = UpdateTiles(tiles);
+                UpdateTiles(tiles);
                 foreach (Tile frame in tiles)
                 {
                     e.Graphics.DrawImage(frame.image, frame.scenecoord.X, frame.scenecoord.Y, 256, 256);
@@ -60,9 +57,11 @@ namespace Controllers
                 pen = new Pen(Color.Red, 2f);
                 e.Graphics.DrawLine(pen, scene.camera.center.X - 10, scene.camera.center.Y, scene.camera.center.X + 10, scene.camera.center.Y);
                 e.Graphics.DrawLine(pen, scene.camera.center.X, scene.camera.center.Y - 10, scene.camera.center.X, scene.camera.center.Y + 10);
-                
+
                 e.Graphics.DrawString("Item Count: " + tiles.Length, new Font("Arial", 16), new SolidBrush(Color.Black), 0, 0);
-                
+                e.Graphics.DrawString("Scene: " + scene.size.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), 0, 20);
+                e.Graphics.DrawString("Zoom: " + TileHandler.CurrentZ, new Font("Arial", 16), new SolidBrush(Color.Black), 0, 40);
+
             }
             delta = new Vector2(0, 0);
         }
@@ -83,6 +82,15 @@ namespace Controllers
             last = new Vector2(e.X, e.Y);
         }
 
+        static public void Zoom(int zoomed)
+        {
+            zoom += zoomed;
+            zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
+            TileHandler.CurrentZ = zoom;
+            TileHandler.Clear();
+            TileHandler.GetScreenAt();
+        }
+
         static public void AddTile(Vector2 point, Image image)
         {
             Tile tile = new Tile(
@@ -98,46 +106,43 @@ namespace Controllers
             Refresh();
         }
 
-
         static public void Refresh()
         {
             form.Redraw();
         }
 
-        static private Tile[] UpdateTiles(Tile[] frames)
+        static private void UpdateTiles(Tile[] frames)
         {
-            TileHandler.Loader.block = true;
             foreach (Tile frame in frames)
             {
-                if (frame.scenecoord.Y < 0 || frame.scenecoord.Y + 256> scene.size.Y)
+                if (frame.scenecoord.Y < -256 || frame.scenecoord.Y > scene.size.Y)
                 {
+                    scene.RemoveImage(frame);
                     TileHandler.GetTileAt(new Vector2(
                         frame.coord.X,
-                        (frame.scenecoord.Y < 0)
-                            ? frame.coord.Y + (float)(Math.Floor(scene.size.Y / 256))
-                            : frame.coord.Y - (float)(Math.Floor(scene.size.Y / 256))
+                        (frame.scenecoord.Y - 256 < 0)
+                            ? frame.coord.Y + (float)(Math.Floor(scene.size.Y / 256) + 2)
+                            : frame.coord.Y - (float)(Math.Floor(scene.size.Y / 256) + 2)
                         )
                     );
-                    scene.RemoveImage(frame);
                 }
-                /*else if (frame.scenecoord.X < -256 || frame.scenecoord.X > scene.size.X + 256)
+                else if (frame.scenecoord.X < -256 || frame.scenecoord.X > scene.size.X)
                 {
-                    /*TileHandler.GetTileAt(new Vector2(
-                        (frame.scenecoord.X  < 0)
-                            ? frame.coord.X + (float)(Math.Floor(scene.size.X / 256) + 1)
-                            : frame.coord.X - (float)(Math.Floor(scene.size.X / 256) + 1),
+                    scene.RemoveImage(frame);
+                    TileHandler.GetTileAt(new Vector2(
+                        (frame.scenecoord.X - 256 < 0)
+                            ? frame.coord.X + (float)(Math.Floor(scene.size.X / 256) + 2)
+                            : frame.coord.X - (float)(Math.Floor(scene.size.X / 256) + 2),
                         frame.coord.Y
                         )
                     );
-                    scene.RemoveImage(frame);
-                }*/
+                }
                 else
                 {
                     frame.scenecoord = Vector2.Add(frame.lefttop, scene.center);
                 }
             }
-            TileHandler.Loader.block = false;
-            return frames;
+
         }
     }
 }

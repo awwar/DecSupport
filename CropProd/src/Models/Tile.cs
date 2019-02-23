@@ -12,7 +12,7 @@ namespace Models
         public Vector2 scenecoord = new Vector2(0, 0);//координаты на сцене
         public Vector2 coord = new Vector2(0, 0);//координаты на сцене
 
-        public Tile(Vector2 coord,Image image)
+        public Tile(Vector2 coord, Image image)
         {
             this.image = image;
             this.coord = coord;

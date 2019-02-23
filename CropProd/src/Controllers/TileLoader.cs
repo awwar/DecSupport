@@ -53,6 +53,19 @@ namespace Controllers
             }
         }
 
+        public void ClearPath()
+        {
+            try
+            {
+                data.Clear();
+                count = 0;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("22");
+            }
+        }
+
         private async Task Getimg(Tile[] frames)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(frames[0].path));
@@ -65,7 +78,7 @@ namespace Controllers
                         client.Headers.Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36");
                         await client.DownloadFileTaskAsync(new Uri(frame.url), @frame.path);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         Console.WriteLine("Проблемма с загрузкой тайла");
                         continue;

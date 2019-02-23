@@ -20,6 +20,7 @@ namespace CropProd
             scene.MouseDown += new MouseEventHandler(SceneHandler.Scene_MouseDown);
             scene.MouseMove += new MouseEventHandler(SceneHandler.Scene_MouseMoove);
             scene.Resize += new EventHandler(SceneHandler.Scene_Resize);
+            scene.MouseWheel += Scene_MouseWheel;
 
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
@@ -34,7 +35,18 @@ namespace CropProd
             TilerThread.Start();
         }
 
-
+        private void Scene_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if(e.Delta > 0)
+            {
+                //UP
+                SceneHandler.Zoom(1);
+            } else
+            {
+                //down
+                SceneHandler.Zoom(-1);
+            }
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -70,7 +82,7 @@ namespace CropProd
         private void button2_Click(object sender, EventArgs e)
         {
             SceneHandler.scene.ClearImagePool();
-            TileHandler.GetScreenAt(TileHandler.CurrentZ);
+            TileHandler.GetScreenAt();
         }
         private void Readimg(string filename)
         {
@@ -102,7 +114,7 @@ namespace CropProd
                         image1.SetPixel(x, y, newColor);
                     }
                 }
-                
+
                 SceneHandler.AddTile(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
 
             }
@@ -114,5 +126,5 @@ namespace CropProd
             SceneHandler.Refresh();
         }
     }
-    
+
 }

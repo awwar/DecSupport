@@ -14,6 +14,7 @@ namespace Models
 
         public Scene(Vector2 size)
         {
+            this.size = size;
             camera = new Camera();
             camera.Moove(center, size);
         }
@@ -22,7 +23,7 @@ namespace Models
         {
             center = Vector2.Add(center, delta);
             camera.Moove(center, size);
-            
+
             return frames;
         }
 
