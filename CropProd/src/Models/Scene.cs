@@ -5,44 +5,50 @@ namespace Models
 {
     class Scene
     {
-        List<Tile> frames = new List<Tile>();
-        public Vector2 center = new Vector2(0, 0);
         public Vector2 size = new Vector2(0, 0);
-        public Vector2 coord = new Vector2(0, 0);
-        public Camera camera;
-        public int itemCount = 0;
+        public Vector2 position = new Vector2(0, 0);
+        public Vector2 coordinate = new Vector2(0, 0);
+
+        private List<Tile> frames = new List<Tile>();
+
+        public void update(Vector2 delta)
+        {
+            position = Vector2.Add(position, delta);
+        }
 
         public Scene(Vector2 size)
         {
-            this.size = size;
-            camera = new Camera();
-            camera.Moove(center, size);
+            this.size = size / 2;
+            position = Vector2.Add(position, this.size);
         }
 
-        public List<Tile> DrawScene(Vector2 delta)
+        public List<Tile> drawScene()
         {
-            center = Vector2.Add(center, delta);
-            camera.Moove(center, size);
-
             return frames;
         }
 
-        public void AddImage(Tile item)
+        public void addFrame(Tile item)
         {
-            itemCount++;
             frames.Add(item);
         }
 
-        public void RemoveImage(Tile item)
+        public void removeFrame(Tile item)
         {
-            itemCount--;
             frames.Remove(item);
         }
 
-        public void ClearImagePool()
+        public void clearFramePool()
         {
-            itemCount = 0;
+            foreach (Tile item in frames)
+            {
+                item.image.Dispose();
+            }
             frames.Clear();
+        }
+
+        public void setTileCenter(Vector2 center)
+        {
+            coordinate = center;
         }
     }
 }

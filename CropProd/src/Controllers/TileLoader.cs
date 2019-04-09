@@ -11,7 +11,7 @@ namespace Controllers
 {
     class LoaderHandler
     {
-        List<Tile> data = new List<Tile>();
+        List<Frame> data = new List<Frame>();
         int count;
         public bool block = false;
         WebClient client;
@@ -26,21 +26,19 @@ namespace Controllers
 
         public async void Start()
         {
-           
             while (true)
             {
-                if (count > 0 && block == false)
+                if (count > 0 && !block)
                 {
-                    Tile[] frms = data.ToArray();
+                    Frame[] frms = data.ToArray();
                     data.Clear();
                     count = 0;
                     await Getimg(frms);
-                    //Thread.Sleep(200);
                 }
             }
         }
         
-        public void AddPath(Tile frame)
+        public void AddPath(Frame frame)
         {
             try
             {
@@ -66,10 +64,10 @@ namespace Controllers
             }
         }
 
-        private async Task Getimg(Tile[] frames)
+        private async Task Getimg(Frame[] frames)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(frames[0].path));
-            foreach (Tile frame in frames)
+            foreach (Frame frame in frames)
             {
                 if (!File.Exists(@frame.path))
                 {
@@ -91,13 +89,10 @@ namespace Controllers
                     }
                     catch (Exception)
                     {
-
-                        //AddPath(frame);
                         Console.WriteLine("Проблемма с скачиваннии тайла из папки");
                     }
                 }
-
-                //SceneHandler.Refresh();
+               
             }
             Console.WriteLine("Вызвана загрузка {0} тайлов", frames.Length);
         }

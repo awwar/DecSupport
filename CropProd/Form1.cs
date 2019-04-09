@@ -3,7 +3,6 @@ using System;
 using System.Device.Location;
 using System.Drawing;
 using System.Numerics;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace CropProd
@@ -15,24 +14,19 @@ namespace CropProd
         {
             InitializeComponent();
             SceneHandler.Initialization(this);
+
             //Handle draw calls
-            scene.Paint += new PaintEventHandler(SceneHandler.Scene_Draw);
-            scene.MouseDown += new MouseEventHandler(SceneHandler.Scene_MouseDown);
-            scene.MouseMove += new MouseEventHandler(SceneHandler.Scene_MouseMoove);
-            scene.Resize += new EventHandler(SceneHandler.Scene_Resize);
-            scene.MouseWheel += Scene_MouseWheel;
+            scene.MouseMove     += new MouseEventHandler(SceneHandler.Scene_MouseMoove);
+            scene.MouseDown     += new MouseEventHandler(SceneHandler.Scene_MouseDown);
+            scene.Paint         += new PaintEventHandler(SceneHandler.Scene_Draw);
+            scene.Resize        += new EventHandler(SceneHandler.Scene_Resize);
+            scene.MouseWheel    += Scene_MouseWheel;
 
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
             _geoWatcher.PositionChanged += TileHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
-
-            Thread TilerThread = new Thread(TileHandler.Initialization)
-            {
-                IsBackground = true
-            };
-            TilerThread.Start();
         }
 
         private void Scene_MouseWheel(object sender, MouseEventArgs e)
@@ -50,7 +44,7 @@ namespace CropProd
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SceneHandler.scene.ClearImagePool();
+            //SceneHandler.scene.ClearImagePool();
             string filename = "";
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
@@ -66,11 +60,11 @@ namespace CropProd
                 }
             }
 
-            Thread th2 = new Thread(() => Readimg(filename))
+            /*Thread th2 = new Thread(() => Readimg(filename))
             {
                 IsBackground = false
             };
-            th2.Start();
+            th2.Start();*/
         }
 
 
@@ -81,7 +75,8 @@ namespace CropProd
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SceneHandler.scene.ClearImagePool();
+            SceneHandler.scene.clearFramePool();
+            scene.InitialImage = null;
             TileHandler.GetScreenAt();
         }
         private void Readimg(string filename)
@@ -115,7 +110,7 @@ namespace CropProd
                     }
                 }
 
-                SceneHandler.AddTile(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
+                //SceneHandler.AddTile(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
 
             }
             catch (ArgumentException)
