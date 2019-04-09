@@ -10,9 +10,9 @@ namespace Models
         public Vector2 position { get; set; }
         public Vector2 size { get; set; }
         public Vector2 screenposition { get; set; }
+        public Image   image { get; set; }
 
         public Vector2 coordinate = new Vector2(0, 0); // это положение тайла не умножанное на размер
-        public Image image = null;
         public string url = "";
         public string path = "";
 

@@ -10,21 +10,22 @@ namespace CropProd
     public partial class Form1 : Form
     {
 
+        SceneHandler sceneHandler;
+
         public Form1()
         {
             InitializeComponent();
-            SceneHandler.Initialization(this);
-
+            sceneHandler = new SceneHandler(this);
             //Handle draw calls
-            scene.MouseMove     += new MouseEventHandler(SceneHandler.Scene_MouseMoove);
-            scene.MouseDown     += new MouseEventHandler(SceneHandler.Scene_MouseDown);
-            scene.Paint         += new PaintEventHandler(SceneHandler.Scene_Draw);
-            scene.Resize        += new EventHandler(SceneHandler.Scene_Resize);
+            scene.MouseMove     += new MouseEventHandler(sceneHandler.Scene_MouseMoove);
+            scene.MouseDown     += new MouseEventHandler(sceneHandler.Scene_MouseDown);
+            scene.Paint         += new PaintEventHandler(sceneHandler.Scene_Draw);
+            scene.Resize        += new EventHandler(sceneHandler.Scene_Resize);
             scene.MouseWheel    += Scene_MouseWheel;
 
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
-            _geoWatcher.PositionChanged += TileHandler.GeoWatcherOnStatusChanged;
+            _geoWatcher.PositionChanged += sceneHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
         }
@@ -34,11 +35,11 @@ namespace CropProd
             if(e.Delta > 0)
             {
                 //UP
-                SceneHandler.Zoom(1);
+                sceneHandler.Zoom(1);
             } else
             {
                 //down
-                SceneHandler.Zoom(-1);
+                sceneHandler.Zoom(-1);
             }
         }
 
@@ -75,10 +76,11 @@ namespace CropProd
 
         private void button2_Click(object sender, EventArgs e)
         {
-            SceneHandler.scene.clearFramePool();
+            sceneHandler.scene.clearFramePool();
             scene.InitialImage = null;
-            TileHandler.GetScreenAt();
+            sceneHandler.tileHandler.GetScreenAt();
         }
+
         private void Readimg(string filename)
         {
             try
@@ -118,7 +120,7 @@ namespace CropProd
                 MessageBox.Show("There was an error." +
                     "Check the path to the image file.");
             }
-            SceneHandler.Refresh();
+            sceneHandler.Refresh();
         }
     }
 

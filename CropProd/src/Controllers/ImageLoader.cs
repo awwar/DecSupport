@@ -87,7 +87,6 @@ namespace Controllers
         private void ImageLoaded(Image img, string path)
         {
             onImageLoad(this, new ImageLoadArgs(img, path));
-            SceneHandler.Refresh();
         }
 
         private Tile DictPop()
