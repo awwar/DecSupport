@@ -2,6 +2,6 @@
 {
     interface IDrawable
     {
-        IFrame draw();
+        IFrame[] draw();
     }
 }

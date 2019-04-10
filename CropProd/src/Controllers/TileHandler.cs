@@ -34,7 +34,7 @@ namespace Controllers
             {"yandex"       ,"https://sat01.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU"}
         };
 
-        public TileHandler(ref Scene scene)
+        public TileHandler(Scene scene)
         {
             this.scene = scene;
             rnd = new Random();
@@ -43,9 +43,16 @@ namespace Controllers
             originShift = 2 * Math.PI * 6378137 / 2.0;
         }
 
-        public IFrame draw()
+        public IFrame[] draw()
         {
-            throw new NotImplementedException();
+            Tile[] tileA = tiles.ToArray();
+            foreach (Tile tile in tileA)
+            {
+                tile.draw();
+                UpdateTile(tile);
+            }
+            Console.WriteLine(tileA.Length);
+            return tileA;
         }
 
         public void GetTileAt(Vector2 leftop)
@@ -68,11 +75,11 @@ namespace Controllers
                     ref scene
                 );
                 Loader.AddFrame(tile);
-                tiles.Add(tile);
+                addTile(tile);
                 Loader.onImageLoad += new ImageLoadHandler(tile.ImageLoaded);
             }
             else
-            {
+            {                
                 try
                 {
                     img = Image.FromFile(fullpath);
@@ -81,7 +88,7 @@ namespace Controllers
                 {
                     img = null;
                 }
-                tiles.Add(new Tile(
+                addTile(new Tile(
                     leftop,
                     img,
                     ref scene
@@ -91,7 +98,7 @@ namespace Controllers
 
         public void GetScreenAt()
         {
-            tiles.Clear();
+            clearTilePool();
             int width   = (int) scene.size.X / (256 * 2) + 2;
 
             int height  = (int) scene.size.Y / (256 * 2) + 2;
@@ -111,29 +118,61 @@ namespace Controllers
             GetScreenAt();
         }
 
-        private void UpdateFrame(Tile frame)
+        public void addTile(Tile tile)
         {
-            if (frame.screenposition.Y < -256 * 2 || frame.screenposition.Y > scene.size.Y + 256)
+            tiles.Add(tile);
+        }
+
+        public void removeTile(Tile tile)
+        {
+            //tile.image.Dispose();
+            /*if(tile.path != null)
             {
-                scene.removeFrame(frame);
-                GetTileAt(new Vector2(
-                    frame.coordinate.X,
-                    (frame.screenposition.Y < -256 * 2)
-                        ? frame.coordinate.Y + (int) scene.size.Y / (256) + 3
-                        : frame.coordinate.Y - (int) scene.size.Y / (256) - 3
+                Loader.DeleteFrame(tile);
+                Loader.onImageLoad -= new ImageLoadHandler(tile.ImageLoaded);
+            }*/
+            tiles.Remove(tile);
+        }
+
+        public void clearTilePool()
+        {
+            foreach (Tile tile in tiles)
+            {
+                tile.image.Dispose();
+                if (tile.path != null)
+                {
+                    Loader.DeleteFrame(tile);
+                    Loader.onImageLoad -= new ImageLoadHandler(tile.ImageLoaded);
+                }
+            }
+            tiles.Clear();
+        }
+
+        private void UpdateTile(Tile tile)
+        {
+            if (tile.screenposition.Y < -256 * 2 || tile.screenposition.Y > scene.size.Y + 256)
+            {
+                removeTile(tile);
+                GetTileAt(
+                    new Vector2(
+                        tile.coordinate.X,
+                        (tile.screenposition.Y < -256 * 2)
+                            ? tile.coordinate.Y + (int) scene.size.Y / (256) + 3
+                            : tile.coordinate.Y - (int) scene.size.Y / (256) - 3
                     )
                 );
             }
-            else if (frame.screenposition.X < -256 * 2 || frame.screenposition.X > scene.size.X + 256)
+            else if (tile.screenposition.X < -256 * 2 || tile.screenposition.X > scene.size.X + 256)
             {
-                scene.removeFrame(frame);
+                removeTile(tile);
                 GetTileAt(
                     new Vector2(
-                        (frame.screenposition.X < -256 * 2)
-                            ? frame.coordinate.X + (int) scene.size.X / (256) + 3
-                            : frame.coordinate.X - (int) scene.size.X / (256) - 3,
-                    frame.coordinate.Y
-                ));
+                        (tile.screenposition.X < -256 * 2)
+                            ? tile.coordinate.X + (int) scene.size.X / (256) + 3
+                            : tile.coordinate.X - (int) scene.size.X / (256) - 3,
+                        tile.coordinate.Y
+                    )
+                );
             }
         }
 

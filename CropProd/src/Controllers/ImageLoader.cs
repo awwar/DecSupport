@@ -16,7 +16,7 @@ namespace Controllers
         public delegate void ImageLoadHandler(object sender, ImageLoadArgs e);
         public event ImageLoadHandler onImageLoad;
 
-        private Dictionary<string, Tile> data = new Dictionary<string, Tile>();
+        private List<Tile> data = new List<Tile>();
         private bool isLoading = false;
 
 
@@ -47,25 +47,18 @@ namespace Controllers
         /*
          *  Добавляем изображение в пулл    
          */
-        public void AddFrame(Tile frame)
+        public void AddFrame(Tile tile)
         {
-            data[frame.path] = frame;
+            data.Add(tile);
             Load();
         }
 
         /*
          *  Удаления изображение из пула      
          */
-        public void DeleteFrame(string path)
+        public void DeleteFrame(Tile tile)
         {
-            if (data[path] != null)
-            {
-                data.Remove(path);
-            }
-            else
-            {
-                throw new Exception("Path not found");
-            }
+            data.Remove(tile);           
         }
 
         /*
@@ -73,10 +66,11 @@ namespace Controllers
          */
         public void ClearPool()
         {
-            foreach (KeyValuePair<string, Tile> item in data)
+            isLoading = false;
+            foreach (Tile item in data)
             {
-                onImageLoad -= item.Value.ImageLoaded;
-                item.Value.image.Dispose();
+                onImageLoad -= item.ImageLoaded;
+                item.image.Dispose();
             }
             data.Clear();
         }
@@ -91,16 +85,13 @@ namespace Controllers
 
         private Tile DictPop()
         {
-            Tile tile = null;
-            KeyValuePair<string, Tile> last = data.Last();
-            tile = last.Value;
-            data.Remove(last.Key);
-            if (tile == null)
+            Tile last = data.Last();
+            data.RemoveAt(data.Count - 1);
+            if (last == null)
             {
                 throw new Exception("Path not found");
             }
-            return tile;
-
+            return last;
         }
 
         private async void Load()
@@ -130,7 +121,6 @@ namespace Controllers
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
                     return;
                 }
                 try

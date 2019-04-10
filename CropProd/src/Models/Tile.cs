@@ -13,8 +13,8 @@ namespace Models
         public Image   image { get; set; }
 
         public Vector2 coordinate = new Vector2(0, 0); // это положение тайла не умножанное на размер
-        public string url = "";
-        public string path = "";
+        public string url = null;
+        public string path = null;
 
         private Scene scene; // Это ссылка на изображение
 
@@ -32,11 +32,13 @@ namespace Models
         private void setTile(Vector2 position, string url, string path, ref Scene scene, Image image = null)
         {
             size = new Vector2(256, 256);
-            this.image = image;
             this.scene = scene;
-            if (this.image == null)
+            if (image == null)
             {
                 this.image = Image.FromFile("Default.JPG");
+            } else
+            {
+                this.image = image;
             }
             coordinate = position;
             this.url = url;

@@ -76,8 +76,6 @@ namespace CropProd
 
         private void button2_Click(object sender, EventArgs e)
         {
-            sceneHandler.scene.clearFramePool();
-            scene.InitialImage = null;
             sceneHandler.tileHandler.GetScreenAt();
         }
 

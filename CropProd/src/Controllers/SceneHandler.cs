@@ -1,4 +1,5 @@
 ﻿using CropProd;
+using Interfaces;
 using Models;
 using System;
 using System.Device.Location;
@@ -26,12 +27,7 @@ namespace Controllers
         {
             form = getform;
             scene = new Scene(new Vector2(getform.Size.Width, getform.Size.Height));
-            tileHandler = new TileHandler(ref scene);
-            /*TilerThread = new Thread(tileHandler.Initialization)
-            {
-                IsBackground = true
-            };
-            TilerThread.Start();*/
+            tileHandler = new TileHandler(scene);
         }
 
         public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
@@ -64,25 +60,47 @@ namespace Controllers
             e.Graphics.Clear(Color.Black);
             e.Graphics.DrawLine(pen, scene.position.X - 10, scene.position.Y, scene.position.X + 10, scene.position.Y);
             e.Graphics.DrawLine(pen, scene.position.X, scene.position.Y - 10, scene.position.X, scene.position.Y + 10);
-            Tile[] frames = scene.drawScene().ToArray();
-
+            IFrame[] frames = tileHandler.draw();
             if (frames != null)
             {
-                foreach (Tile frame in frames)
+                foreach (IFrame frame in frames)
                 {
-
-                    e.Graphics.DrawImage(frame.image, frame.draw().X, frame.draw().Y, 256, 256);
-                    e.Graphics.DrawRectangle(pen, frame.draw().X, frame.draw().Y, 256, 256);
-                    e.Graphics.DrawString(
+                    try
+                    {
+                        e.Graphics.DrawImage(
+                            frame.image,
+                            frame.screenposition.X,
+                            frame.screenposition.Y,
+                            256,
+                            256
+                        );
+                    }
+                    catch (Exception)
+                    {
+                        //Console.WriteLine(frame);
+                    }
+                    e.Graphics.DrawRectangle(pen,
+                        frame.screenposition.X,
+                        frame.screenposition.Y,
+                        256,
+                        256
+                    );
+                    /*e.Graphics.DrawString(
                         "X: " + frame.screenposition.X + " Y: " + frame.screenposition.Y,
                         new Font("Arial", 15),
                         new SolidBrush(Color.White),
                         frame.position.X + scene.position.X,
                         frame.position.Y + scene.position.Y
-                    );
+                    );*/
                     //UpdateFrame(frame);
                 }
-
+                e.Graphics.DrawString(
+                    scene.size.ToString(),
+                    new Font("Arial", 15),
+                    new SolidBrush(Color.White),
+                    0,
+                    0
+                );
             }
             delta = new Vector2(0, 0);
         }
@@ -107,7 +125,6 @@ namespace Controllers
         {
             zoom += zoomed;
             scene.zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
-            scene.clearFramePool();
             GC.Collect();
             tileHandler.Zoom();
         }
