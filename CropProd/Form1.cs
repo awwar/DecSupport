@@ -118,7 +118,7 @@ namespace CropProd
                 MessageBox.Show("There was an error." +
                     "Check the path to the image file.");
             }
-            sceneHandler.Refresh();
+            SceneHandler.Refresh();
         }
     }
 

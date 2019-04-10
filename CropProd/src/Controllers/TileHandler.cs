@@ -34,7 +34,7 @@ namespace Controllers
             {"yandex"       ,"https://sat01.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU"}
         };
 
-        public TileHandler(Scene scene)
+        public TileHandler(ref Scene scene)
         {
             this.scene = scene;
             rnd = new Random();
@@ -51,7 +51,6 @@ namespace Controllers
                 tile.draw();
                 UpdateTile(tile);
             }
-            Console.WriteLine(tileA.Length);
             return tileA;
         }
 
@@ -125,12 +124,10 @@ namespace Controllers
 
         public void removeTile(Tile tile)
         {
-            //tile.image.Dispose();
-            /*if(tile.path != null)
+            if(tile.path != null)
             {
-                Loader.DeleteFrame(tile);
-                Loader.onImageLoad -= new ImageLoadHandler(tile.ImageLoaded);
-            }*/
+                Loader.DeleteFrame(tile.path);
+            }
             tiles.Remove(tile);
         }
 
@@ -138,11 +135,10 @@ namespace Controllers
         {
             foreach (Tile tile in tiles)
             {
-                tile.image.Dispose();
+                //tile.image.Dispose();
                 if (tile.path != null)
                 {
-                    Loader.DeleteFrame(tile);
-                    Loader.onImageLoad -= new ImageLoadHandler(tile.ImageLoaded);
+                    Loader.DeleteFrame(tile.path);
                 }
             }
             tiles.Clear();

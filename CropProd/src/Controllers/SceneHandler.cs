@@ -13,7 +13,7 @@ namespace Controllers
     class SceneHandler
     {
         public Scene scene;
-        public Form1 form;
+        static public Form1 form;
         public TileHandler tileHandler;
 
         private Vector2 first = new Vector2(0, 0);
@@ -27,7 +27,7 @@ namespace Controllers
         {
             form = getform;
             scene = new Scene(new Vector2(getform.Size.Width, getform.Size.Height));
-            tileHandler = new TileHandler(scene);
+            tileHandler = new TileHandler(ref scene);
         }
 
         public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
@@ -61,47 +61,44 @@ namespace Controllers
             e.Graphics.DrawLine(pen, scene.position.X - 10, scene.position.Y, scene.position.X + 10, scene.position.Y);
             e.Graphics.DrawLine(pen, scene.position.X, scene.position.Y - 10, scene.position.X, scene.position.Y + 10);
             IFrame[] frames = tileHandler.draw();
+            /*
+             * Вызвать ВСЕ ТАЙЛЫ НА ОТРИСОВКУ!
+             * **/
             if (frames != null)
             {
-                foreach (IFrame frame in frames)
+                /*
+                 * Можно сипользовать for next (и даже лучше)
+                 * **/
+                foreach (Tile frame in frames)
                 {
-                    try
-                    {
-                        e.Graphics.DrawImage(
-                            frame.image,
-                            frame.screenposition.X,
-                            frame.screenposition.Y,
-                            256,
-                            256
-                        );
-                    }
-                    catch (Exception)
-                    {
-                        //Console.WriteLine(frame);
-                    }
+
+                    e.Graphics.DrawImage(
+                        frame.image,
+                        frame.screenposition.X,
+                        frame.screenposition.Y,
+                        frame.size.X,
+                        frame.size.Y
+                    );
+
                     e.Graphics.DrawRectangle(pen,
                         frame.screenposition.X,
                         frame.screenposition.Y,
                         256,
                         256
                     );
-                    /*e.Graphics.DrawString(
-                        "X: " + frame.screenposition.X + " Y: " + frame.screenposition.Y,
+                    e.Graphics.DrawString(
+                        frame.coordinate.ToString(),
                         new Font("Arial", 15),
                         new SolidBrush(Color.White),
                         frame.position.X + scene.position.X,
                         frame.position.Y + scene.position.Y
-                    );*/
+                    );
                     //UpdateFrame(frame);
                 }
-                e.Graphics.DrawString(
-                    scene.size.ToString(),
-                    new Font("Arial", 15),
-                    new SolidBrush(Color.White),
-                    0,
-                    0
-                );
             }
+            /*
+             * ВЫЗВАТЬ TILEUPDATE!
+             * **/
             delta = new Vector2(0, 0);
         }
 
@@ -129,7 +126,7 @@ namespace Controllers
             tileHandler.Zoom();
         }
 
-        public void Refresh()
+        public static  void Refresh()
         {
             form.Redraw();
         }

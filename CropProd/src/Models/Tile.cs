@@ -35,7 +35,7 @@ namespace Models
             this.scene = scene;
             if (image == null)
             {
-                this.image = Image.FromFile("Default.JPG");
+                this.image = Image.FromFile("def.png");
             } else
             {
                 this.image = image;
@@ -51,15 +51,14 @@ namespace Models
         {
             if (e.path == path)
             {
-                image = e.image;
+                this.image = e.image;
 
             }
         }
 
-        public Vector2 draw()
+        public void draw()
         {
             screenposition = Vector2.Add(position, scene.position);
-            return screenposition;
         }
     }
 }

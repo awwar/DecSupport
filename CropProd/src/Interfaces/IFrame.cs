@@ -16,6 +16,6 @@ namespace Interfaces
 
         Image image { get; set; }
 
-        Vector2 draw();
+        void draw();
     }
 }

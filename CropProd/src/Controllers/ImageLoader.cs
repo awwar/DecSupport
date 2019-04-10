@@ -1,4 +1,5 @@
-﻿using Events;
+﻿   
+using Events;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Controllers
         public delegate void ImageLoadHandler(object sender, ImageLoadArgs e);
         public event ImageLoadHandler onImageLoad;
 
-        private List<Tile> data = new List<Tile>();
+        private Dictionary<string, Tile> data = new Dictionary<string, Tile>();
         private bool isLoading = false;
 
 
@@ -47,18 +48,26 @@ namespace Controllers
         /*
          *  Добавляем изображение в пулл    
          */
-        public void AddFrame(Tile tile)
+        public void AddFrame(Tile frame)
         {
-            data.Add(tile);
+            data[frame.path] = frame;
             Load();
         }
 
         /*
          *  Удаления изображение из пула      
          */
-        public void DeleteFrame(Tile tile)
+        public void DeleteFrame(string path)
         {
-            data.Remove(tile);           
+            try
+            {
+                data.Remove(path);
+            }
+            catch (Exception)
+            {
+                
+            }
+            
         }
 
         /*
@@ -66,11 +75,10 @@ namespace Controllers
          */
         public void ClearPool()
         {
-            isLoading = false;
-            foreach (Tile item in data)
+            foreach (KeyValuePair<string, Tile> item in data)
             {
-                onImageLoad -= item.ImageLoaded;
-                item.image.Dispose();
+                onImageLoad -= item.Value.ImageLoaded;
+                item.Value.image.Dispose();
             }
             data.Clear();
         }
@@ -81,17 +89,21 @@ namespace Controllers
         private void ImageLoaded(Image img, string path)
         {
             onImageLoad(this, new ImageLoadArgs(img, path));
+            SceneHandler.Refresh();
         }
 
         private Tile DictPop()
         {
-            Tile last = data.Last();
-            data.RemoveAt(data.Count - 1);
-            if (last == null)
+            Tile tile = null;
+            KeyValuePair<string, Tile> last = data.Last();
+            tile = last.Value;
+            data.Remove(last.Key);
+            if (tile == null)
             {
                 throw new Exception("Path not found");
             }
-            return last;
+            return tile;
+
         }
 
         private async void Load()
@@ -121,6 +133,7 @@ namespace Controllers
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     return;
                 }
                 try
