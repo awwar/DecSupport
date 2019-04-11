@@ -75,7 +75,7 @@
     <Compile Include="src\Controllers\TileHandler.cs" />
     <Compile Include="src\Controllers\SceneHandler.cs" />
     <Compile Include="src\Events\ImageLoadArgs.cs" />
-    <Compile Include="src\Interfaces\IDrawable.cs" />
+    <Compile Include="src\Interfaces\IHandler.cs" />
     <Compile Include="src\Interfaces\IFrame.cs" />
     <Compile Include="src\Models\Tile.cs" />
     <Compile Include="src\Models\Scene.cs" />

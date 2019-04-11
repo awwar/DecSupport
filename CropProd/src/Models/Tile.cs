@@ -33,13 +33,7 @@ namespace Models
         {
             size = new Vector2(256, 256);
             this.scene = scene;
-            if (image == null)
-            {
-                this.image = Image.FromFile("def.png");
-            } else
-            {
-                this.image = image;
-            }
+            setImage(image);
             coordinate = position;
             this.url = url;
             this.path = path;
@@ -51,14 +45,25 @@ namespace Models
         {
             if (e.path == path)
             {
-                this.image = e.image;
-
+                setImage(e.image);
             }
         }
 
         public void draw()
         {
             screenposition = Vector2.Add(position, scene.position);
+        }
+
+        private void setImage(Image image)
+        {
+            if (image == null)
+            {
+                this.image = Image.FromFile("def.png");
+            }
+            else
+            {
+                this.image = image;
+            }
         }
     }
 }

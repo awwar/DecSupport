@@ -59,15 +59,12 @@ namespace Controllers
          */
         public void DeleteFrame(string path)
         {
-            try
+            Tile tile;
+            if(data.TryGetValue(path, out tile))
             {
+                onImageLoad -= tile.ImageLoaded;
                 data.Remove(path);
-            }
-            catch (Exception)
-            {
-                
-            }
-            
+            }            
         }
 
         /*
@@ -114,6 +111,7 @@ namespace Controllers
             }
             isLoading = true;
             Tile frame;
+            Image img = null;
             try
             {
                 frame = DictPop();
@@ -133,19 +131,21 @@ namespace Controllers
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine("LOad {0}",e);
+                    File.Delete(@frame.path);
                     return;
                 }
                 try
                 {
-                    Image img = Image.FromFile(@frame.path);
-                    ImageLoaded(img, frame.path);
+                    img = Image.FromFile(@frame.path);
                 }
-                catch (Exception)
+                catch
                 {
                     Console.WriteLine("Filetaker error!");
+                    File.Delete(@frame.path);
                     return;
                 }
+                ImageLoaded(img, frame.path);
             }
         }
     }

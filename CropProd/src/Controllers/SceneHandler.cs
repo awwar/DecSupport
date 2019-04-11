@@ -2,6 +2,7 @@
 using Interfaces;
 using Models;
 using System;
+using System.Collections.Generic;
 using System.Device.Location;
 using System.Drawing;
 using System.Numerics;
@@ -10,10 +11,10 @@ using System.Windows.Forms;
 
 namespace Controllers
 {
-    class SceneHandler
+    internal class SceneHandler
     {
         public Scene scene;
-        static public Form1 form;
+        public static Form1 form;
         public TileHandler tileHandler;
 
         private Vector2 first = new Vector2(0, 0);
@@ -60,7 +61,7 @@ namespace Controllers
             e.Graphics.Clear(Color.Black);
             e.Graphics.DrawLine(pen, scene.position.X - 10, scene.position.Y, scene.position.X + 10, scene.position.Y);
             e.Graphics.DrawLine(pen, scene.position.X, scene.position.Y - 10, scene.position.X, scene.position.Y + 10);
-            IFrame[] frames = tileHandler.draw();
+            List<IFrame> frames = tileHandler.draw();
             /*
              * Вызвать ВСЕ ТАЙЛЫ НА ОТРИСОВКУ!
              * **/
@@ -71,14 +72,21 @@ namespace Controllers
                  * **/
                 foreach (Tile frame in frames)
                 {
+                    try
+                    {
+                        e.Graphics.DrawImage(
+                            frame.image,
+                            frame.screenposition.X,
+                            frame.screenposition.Y,
+                            frame.size.X,
+                            frame.size.Y
+                        );
 
-                    e.Graphics.DrawImage(
-                        frame.image,
-                        frame.screenposition.X,
-                        frame.screenposition.Y,
-                        frame.size.X,
-                        frame.size.Y
-                    );
+                    }
+                    catch (Exception)
+                    {
+                        
+                    }
 
                     e.Graphics.DrawRectangle(pen,
                         frame.screenposition.X,
@@ -87,7 +95,7 @@ namespace Controllers
                         256
                     );
                     e.Graphics.DrawString(
-                        frame.coordinate.ToString(),
+                        scene.zoom.ToString(),
                         new Font("Arial", 15),
                         new SolidBrush(Color.White),
                         frame.position.X + scene.position.X,
@@ -99,6 +107,7 @@ namespace Controllers
             /*
              * ВЫЗВАТЬ TILEUPDATE!
              * **/
+            tileHandler.handle();
             delta = new Vector2(0, 0);
         }
 
@@ -122,15 +131,16 @@ namespace Controllers
         {
             zoom += zoomed;
             scene.zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
-            GC.Collect();
+            recalculateSceneTilePosition();
+            //GC.Collect();
             tileHandler.Zoom();
         }
 
-        public static  void Refresh()
+        public static void Refresh()
         {
             form.Redraw();
         }
 
- 
+
     }
 }

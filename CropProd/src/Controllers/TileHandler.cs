@@ -10,18 +10,18 @@ using static Controllers.ImageLoader;
 
 namespace Controllers
 {
-    class TileHandler : IDrawable
+    class TileHandler : IHandler
     {
+        public string basePath = "";
         public string name = "google";
         public readonly int tileSize = 256;
-        public string basePath = "";
         
         private Random rnd;
-        public ImageLoader Loader;
         private Scene scene;
         private double originShift;
+        public  ImageLoader Loader;
 
-        private List<Tile> tiles = new List<Tile>();
+        private List<IFrame> tiles = new List<IFrame>();
 
 
         private readonly Dictionary<string, string> distrib = new Dictionary<string, string>
@@ -43,20 +43,26 @@ namespace Controllers
             originShift = 2 * Math.PI * 6378137 / 2.0;
         }
 
-        public IFrame[] draw()
+        public List<IFrame> draw()
         {
-            Tile[] tileA = tiles.ToArray();
-            foreach (Tile tile in tileA)
+            foreach (IFrame tile in tiles)
             {
                 tile.draw();
-                UpdateTile(tile);
             }
-            return tileA;
+            return tiles;
+        }
+
+        public void handle()
+        {
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                UpdateTile(tiles[i] as Tile);
+            }
         }
 
         public void GetTileAt(Vector2 leftop)
         {
-            Image img;
+            Image img = null;
             double tx = leftop.X + scene.coordinate.X;
             double ty = leftop.Y + scene.coordinate.Y;
 
@@ -81,9 +87,9 @@ namespace Controllers
             {                
                 try
                 {
-                    img = Image.FromFile(fullpath);
+                    img = Image.FromFile(@fullpath);
                 }
-                catch (Exception)
+                catch
                 {
                     img = null;
                 }
@@ -124,9 +130,13 @@ namespace Controllers
 
         public void removeTile(Tile tile)
         {
-            if(tile.path != null)
+            if (tile.path != null)
             {
                 Loader.DeleteFrame(tile.path);
+            }
+            else
+            {
+                tile.image.Dispose();
             }
             tiles.Remove(tile);
         }
@@ -135,10 +145,13 @@ namespace Controllers
         {
             foreach (Tile tile in tiles)
             {
-                //tile.image.Dispose();
                 if (tile.path != null)
                 {
                     Loader.DeleteFrame(tile.path);
+                }
+                else
+                {
+                    tile.image.Dispose();
                 }
             }
             tiles.Clear();
@@ -208,7 +221,6 @@ namespace Controllers
         {
             return new double[2] { tx, (Math.Pow(2, zoom) - 1) - ty };
         }
-
 
     }
 }
