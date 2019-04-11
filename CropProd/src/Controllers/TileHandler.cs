@@ -21,7 +21,7 @@ namespace Controllers
         private double originShift;
         public  ImageLoader Loader;
 
-        private List<IFrame> tiles = new List<IFrame>();
+        private List<Tile> tiles = new List<Tile>();
 
 
         private readonly Dictionary<string, string> distrib = new Dictionary<string, string>
@@ -43,26 +43,21 @@ namespace Controllers
             originShift = 2 * Math.PI * 6378137 / 2.0;
         }
 
-        public List<IFrame> draw()
+        public IFrame[] handle()
         {
-            foreach (IFrame tile in tiles)
+            Tile[] tileA = tiles.ToArray();
+            foreach (Tile tile in tileA)
             {
                 tile.draw();
+                UpdateTile(tile);
             }
-            return tiles;
-        }
-
-        public void handle()
-        {
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                UpdateTile(tiles[i] as Tile);
-            }
+            return tileA;
         }
 
         public void GetTileAt(Vector2 leftop)
         {
-            Image img = null;
+
+            Image img;
             double tx = leftop.X + scene.coordinate.X;
             double ty = leftop.Y + scene.coordinate.Y;
 
@@ -84,12 +79,16 @@ namespace Controllers
                 Loader.onImageLoad += new ImageLoadHandler(tile.ImageLoaded);
             }
             else
-            {                
+            {
+
                 try
                 {
-                    img = Image.FromFile(@fullpath);
+                    using (FileStream myStream = new FileStream(fullpath, FileMode.Open, FileAccess.Read))
+                    {
+                        img = Image.FromStream(myStream);
+                    }
                 }
-                catch
+                catch (Exception)
                 {
                     img = null;
                 }
@@ -120,12 +119,14 @@ namespace Controllers
         public void Zoom()
         {
             Loader.ClearPool();
+            clearTilePool();
+            GC.Collect();
             GetScreenAt();
         }
 
         public void addTile(Tile tile)
         {
-            tiles.Add(tile);
+           tiles.Add(tile);
         }
 
         public void removeTile(Tile tile)
@@ -134,10 +135,8 @@ namespace Controllers
             {
                 Loader.DeleteFrame(tile.path);
             }
-            else
-            {
-                tile.image.Dispose();
-            }
+            /* !! Если пытаться сделать Dispose здесь то память перестанет течь, но будут возникать тормоза! */
+            //tile.image.Dispose();
             tiles.Remove(tile);
         }
 

@@ -4,7 +4,6 @@ namespace Interfaces
 {
     interface IHandler
     {
-        List<IFrame> draw();
-        void handle();
+        IFrame[] handle();
     }
 }

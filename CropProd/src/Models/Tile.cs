@@ -33,7 +33,11 @@ namespace Models
         {
             size = new Vector2(256, 256);
             this.scene = scene;
-            setImage(image);
+            this.image = image;
+            if (this.image == null)
+            {
+                this.image = Image.FromFile("def.png");
+            }
             coordinate = position;
             this.url = url;
             this.path = path;
@@ -45,7 +49,7 @@ namespace Models
         {
             if (e.path == path)
             {
-                setImage(e.image);
+                this.image = e.image;
             }
         }
 

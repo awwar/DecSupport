@@ -61,15 +61,12 @@ namespace Controllers
             e.Graphics.Clear(Color.Black);
             e.Graphics.DrawLine(pen, scene.position.X - 10, scene.position.Y, scene.position.X + 10, scene.position.Y);
             e.Graphics.DrawLine(pen, scene.position.X, scene.position.Y - 10, scene.position.X, scene.position.Y + 10);
-            List<IFrame> frames = tileHandler.draw();
-            /*
-             * Вызвать ВСЕ ТАЙЛЫ НА ОТРИСОВКУ!
-             * **/
+
+            IFrame[] frames = tileHandler.handle();
+
             if (frames != null)
             {
-                /*
-                 * Можно сипользовать for next (и даже лучше)
-                 * **/
+
                 foreach (Tile frame in frames)
                 {
                     try
@@ -83,9 +80,9 @@ namespace Controllers
                         );
 
                     }
-                    catch (Exception)
+                    catch
                     {
-                        
+                        Console.WriteLine("image error");
                     }
 
                     e.Graphics.DrawRectangle(pen,
@@ -95,19 +92,15 @@ namespace Controllers
                         256
                     );
                     e.Graphics.DrawString(
-                        scene.zoom.ToString(),
+                        frame.coordinate.ToString(),
                         new Font("Arial", 15),
                         new SolidBrush(Color.White),
                         frame.position.X + scene.position.X,
                         frame.position.Y + scene.position.Y
                     );
-                    //UpdateFrame(frame);
                 }
             }
-            /*
-             * ВЫЗВАТЬ TILEUPDATE!
-             * **/
-            tileHandler.handle();
+
             delta = new Vector2(0, 0);
         }
 
@@ -132,7 +125,6 @@ namespace Controllers
             zoom += zoomed;
             scene.zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
             recalculateSceneTilePosition();
-            //GC.Collect();
             tileHandler.Zoom();
         }
 

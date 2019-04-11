@@ -12,7 +12,7 @@ namespace Controllers
 {
     class ImageLoader
     {
-        private WebClient client;
+        private readonly WebClient client;
 
         public delegate void ImageLoadHandler(object sender, ImageLoadArgs e);
         public event ImageLoadHandler onImageLoad;
@@ -63,8 +63,9 @@ namespace Controllers
             if(data.TryGetValue(path, out tile))
             {
                 onImageLoad -= tile.ImageLoaded;
-                data.Remove(path);
-            }            
+                tile.image.Dispose();
+            }  
+            data.Remove(path);
         }
 
         /*
@@ -137,7 +138,11 @@ namespace Controllers
                 }
                 try
                 {
-                    img = Image.FromFile(@frame.path);
+                    using (FileStream myStream = new FileStream(frame.path, FileMode.Open, FileAccess.Read))
+                    {
+                        img = Image.FromStream(myStream);
+                    }
+                    ImageLoaded(img, frame.path);
                 }
                 catch
                 {
@@ -145,7 +150,7 @@ namespace Controllers
                     File.Delete(@frame.path);
                     return;
                 }
-                ImageLoaded(img, frame.path);
+                
             }
         }
     }
