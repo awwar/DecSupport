@@ -1,4 +1,4 @@
-﻿   
+﻿
 using Events;
 using Models;
 using System;
@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Controllers
 {
-    class ImageLoader
+    internal class ImageLoader
     {
         private readonly WebClient client;
 
@@ -59,12 +59,11 @@ namespace Controllers
          */
         public void DeleteFrame(string path)
         {
-            Tile tile;
-            if(data.TryGetValue(path, out tile))
+            if (data.TryGetValue(path, out Tile tile))
             {
                 onImageLoad -= tile.ImageLoaded;
                 tile.image.Dispose();
-            }  
+            }
             data.Remove(path);
         }
 
@@ -132,7 +131,7 @@ namespace Controllers
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("LOad {0}",e);
+                    Console.WriteLine("LOad {0}", e);
                     File.Delete(@frame.path);
                     return;
                 }
@@ -150,7 +149,7 @@ namespace Controllers
                     File.Delete(@frame.path);
                     return;
                 }
-                
+
             }
         }
     }

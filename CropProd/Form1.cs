@@ -3,6 +3,7 @@ using System;
 using System.Device.Location;
 using System.Drawing;
 using System.Numerics;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace CropProd
@@ -17,11 +18,11 @@ namespace CropProd
             InitializeComponent();
             sceneHandler = new SceneHandler(this);
             //Handle draw calls
-            scene.MouseMove     += new MouseEventHandler(sceneHandler.Scene_MouseMoove);
-            scene.MouseDown     += new MouseEventHandler(sceneHandler.Scene_MouseDown);
-            scene.Paint         += new PaintEventHandler(sceneHandler.Scene_Draw);
-            scene.Resize        += new EventHandler(sceneHandler.Scene_Resize);
-            scene.MouseWheel    += Scene_MouseWheel;
+            scene.MouseMove += new MouseEventHandler(sceneHandler.Scene_MouseMoove);
+            scene.MouseDown += new MouseEventHandler(sceneHandler.Scene_MouseDown);
+            scene.Paint += new PaintEventHandler(sceneHandler.Scene_Draw);
+            scene.Resize += new EventHandler(sceneHandler.Scene_Resize);
+            scene.MouseWheel += Scene_MouseWheel;
 
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
@@ -61,11 +62,6 @@ namespace CropProd
                 }
             }
 
-            /*Thread th2 = new Thread(() => Readimg(filename))
-            {
-                IsBackground = false
-            };
-            th2.Start();*/
         }
 
 

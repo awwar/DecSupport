@@ -27,5 +27,12 @@ namespace Models
         {
             coordinate = center;
         }
+
+        public void resize(Vector2 size)
+        {
+            position = Vector2.Subtract(position, this.size);
+            this.size = size / 2;
+            position = Vector2.Add(position, this.size);
+        }
     }
 }

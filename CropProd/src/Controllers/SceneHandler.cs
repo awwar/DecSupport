@@ -28,6 +28,17 @@ namespace Controllers
         {
             form = getform;
             scene = new Scene(new Vector2(getform.Size.Width, getform.Size.Height));
+           
+
+            Thread th2 = new Thread(startTiles)
+            {
+                IsBackground = false
+            };
+            th2.Start();
+        }
+
+        private void startTiles()
+        {
             tileHandler = new TileHandler(ref scene);
         }
 
@@ -48,10 +59,10 @@ namespace Controllers
 
         public void Scene_Resize(object sender, EventArgs e)
         {
-            scene.size = new Vector2(
+            scene.resize(new Vector2(
                 form.scene.Width,
                 form.scene.Height
-            );
+            ));
             Refresh();
         }
 
