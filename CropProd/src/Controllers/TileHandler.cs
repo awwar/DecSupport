@@ -1,14 +1,14 @@
 ﻿using Interfaces;
+using LatLonToTile;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Device.Location;
 using System.Drawing;
 using System.IO;
 using System.Numerics;
 using System.Threading;
 using static Controllers.ImageLoader;
-using LatLonToTile;
-using System.Device.Location;
 
 namespace Controllers
 {
@@ -59,7 +59,39 @@ namespace Controllers
             return tileA;
         }
 
-        public void GetTileAt(Vector2 leftop)
+        public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
+        {
+            scene.Lat = e.Position.Location.Latitude;
+            scene.Lon = e.Position.Location.Longitude;
+            recalculateSceneTilePosition();
+        }
+
+        public void update()
+        {
+            recalculateSceneTilePosition();
+            Loader.ClearPool();
+            clearTilePool();
+            GC.Collect();
+            GetScreenAt();
+        }
+
+        private void GetScreenAt()
+        {
+            clearTilePool();
+            int width   = (int) scene.size.X / (256 * 2) + 2;
+
+            int height  = (int) scene.size.Y / (256 * 2) + 2;
+
+            for (int y = -height; y <= height; y++)
+            {
+                for (int x = -width; x <= width; x++)
+                {
+                    GetTileAt(new Vector2(x, y));
+                }
+            }
+        }
+
+        private void GetTileAt(Vector2 leftop)
         {
             Image img;
             double tx = leftop.X + scene.coordinate.X;
@@ -104,37 +136,12 @@ namespace Controllers
             }
         }
 
-        public void GetScreenAt()
-        {
-            clearTilePool();
-            int width   = (int) scene.size.X / (256 * 2) + 2;
-
-            int height  = (int) scene.size.Y / (256 * 2) + 2;
-
-            for (int y = -height; y <= height; y++)
-            {
-                for (int x = -width; x <= width; x++)
-                {
-                    GetTileAt(new Vector2(x, y));
-                }
-            }
-        }
-
-        public void Zoom()
-        {
-            recalculateSceneTilePosition();
-            Loader.ClearPool();
-            clearTilePool();
-            GC.Collect();
-            GetScreenAt();
-        }
-
-        public void addTile(Tile tile)
+        private void addTile(Tile tile)
         {
            tiles.Add(tile);
         }
 
-        public void removeTile(Tile tile)
+        private void removeTile(Tile tile)
         {
             if (tile.path != null)
             {
@@ -145,7 +152,7 @@ namespace Controllers
             tiles.Remove(tile);
         }
 
-        public void clearTilePool()
+        private void clearTilePool()
         {
             foreach (Tile tile in tiles)
             {
@@ -187,13 +194,6 @@ namespace Controllers
                     )
                 );
             }
-        }
-
-        public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
-        {
-            scene.Lat = e.Position.Location.Latitude;
-            scene.Lon = e.Position.Location.Longitude;
-            recalculateSceneTilePosition();
         }
 
         private void recalculateSceneTilePosition()

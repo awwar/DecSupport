@@ -20,15 +20,10 @@ namespace CropProd
             //Handle draw calls
             scene.MouseMove += new MouseEventHandler(sceneHandler.Scene_MouseMoove);
             scene.MouseDown += new MouseEventHandler(sceneHandler.Scene_MouseDown);
-            scene.Paint += new PaintEventHandler(sceneHandler.Scene_Draw);
-            scene.Resize += new EventHandler(sceneHandler.Scene_Resize);
-            scene.MouseWheel += Scene_MouseWheel;
+            scene.Paint     += new PaintEventHandler(sceneHandler.Scene_Draw);
+            scene.Resize    += new EventHandler(sceneHandler.Scene_Resize);
+            scene.MouseWheel += Scene_MouseWheel;          
 
-            GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
-
-            _geoWatcher.PositionChanged += sceneHandler.tileHandler.GeoWatcherOnStatusChanged;
-
-            _geoWatcher.Start();
         }
 
         private void Scene_MouseWheel(object sender, MouseEventArgs e)
@@ -64,7 +59,6 @@ namespace CropProd
 
         }
 
-
         public void Redraw()
         {
             scene.Invalidate();
@@ -72,7 +66,7 @@ namespace CropProd
 
         private void button2_Click(object sender, EventArgs e)
         {
-            sceneHandler.tileHandler.GetScreenAt();
+            sceneHandler.tileHandler.update();
         }
 
         private void Readimg(string filename)

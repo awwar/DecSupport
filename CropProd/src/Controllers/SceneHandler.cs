@@ -12,28 +12,39 @@ namespace Controllers
 {
     internal class SceneHandler
     {
-        public Scene scene;
-        private static Form1 form;
         public TileHandler tileHandler;
 
-        private Vector2 first = new Vector2(0, 0);
-        private Vector2 delta = new Vector2(0, 0);
-        private Vector2 last = new Vector2(0, 0);
+        Scene scene;
+        static Form1 form;
 
-        private readonly Thread TilerThread;
-        private readonly Pen pen = new Pen(Color.Red, 1f);
+        Vector2 first = new Vector2(0, 0);
+        Vector2 delta = new Vector2(0, 0);
+        Vector2 last = new Vector2(0, 0);
+
+        Thread TileThread;
+        Pen pen = new Pen(Color.Red, 1f);
 
         public SceneHandler(Form1 getform)
         {
             form = getform;
             scene = new Scene(new Vector2(getform.Size.Width, getform.Size.Height));
-           
 
-            TilerThread = new Thread(() => { tileHandler = new TileHandler(ref scene); })
+
+            TileThread = new Thread(startTileHandler)
             {
                 IsBackground = false
             };
-            TilerThread.Start();
+            TileThread.Start();
+        }
+
+        void startTileHandler()
+        {
+            tileHandler = new TileHandler(ref scene);
+            GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
+
+            _geoWatcher.PositionChanged += tileHandler.GeoWatcherOnStatusChanged;
+
+            _geoWatcher.Start();
         }
 
         public void Scene_Resize(object sender, EventArgs e)
@@ -51,6 +62,12 @@ namespace Controllers
             e.Graphics.Clear(Color.Black);
             e.Graphics.DrawLine(pen, scene.position.X - 10, scene.position.Y, scene.position.X + 10, scene.position.Y);
             e.Graphics.DrawLine(pen, scene.position.X, scene.position.Y - 10, scene.position.X, scene.position.Y + 10);
+
+            //Если поток не 
+            if (tileHandler == null)
+            {
+                return;
+            }
 
             IFrame[] frames = tileHandler.handle();
 
@@ -114,14 +131,12 @@ namespace Controllers
         {
             int zoom = scene.zoom + zoomed;
             scene.zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
-            tileHandler.Zoom();
+            tileHandler.update();
         }
 
         public static void Refresh()
         {
             form.Redraw();
         }
-
-
     }
 }

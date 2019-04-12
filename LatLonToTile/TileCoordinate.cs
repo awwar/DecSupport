@@ -4,9 +4,9 @@ namespace LatLonToTile
 {
     public class TileCoordinate
     {
-        int     zoom { set; get; }
-        int     tileSize { set; get; }
-        private double originShift;
+        int     zoom;
+        int     tileSize;
+        double  originShift;
 
         public TileCoordinate(int zoom, int tileSize)
         {
