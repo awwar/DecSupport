@@ -26,7 +26,7 @@ namespace CropProd
 
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
-            _geoWatcher.PositionChanged += sceneHandler.GeoWatcherOnStatusChanged;
+            _geoWatcher.PositionChanged += sceneHandler.tileHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
         }

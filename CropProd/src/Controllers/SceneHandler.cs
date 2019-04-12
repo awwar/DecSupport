@@ -2,7 +2,6 @@
 using Interfaces;
 using Models;
 using System;
-using System.Collections.Generic;
 using System.Device.Location;
 using System.Drawing;
 using System.Numerics;
@@ -14,13 +13,13 @@ namespace Controllers
     internal class SceneHandler
     {
         public Scene scene;
-        public static Form1 form;
+        private static Form1 form;
         public TileHandler tileHandler;
 
         private Vector2 first = new Vector2(0, 0);
         private Vector2 delta = new Vector2(0, 0);
         private Vector2 last = new Vector2(0, 0);
-        private int zoom = 18;
+
         private readonly Thread TilerThread;
         private readonly Pen pen = new Pen(Color.Red, 1f);
 
@@ -30,31 +29,11 @@ namespace Controllers
             scene = new Scene(new Vector2(getform.Size.Width, getform.Size.Height));
            
 
-            Thread th2 = new Thread(startTiles)
+            TilerThread = new Thread(() => { tileHandler = new TileHandler(ref scene); })
             {
                 IsBackground = false
             };
-            th2.Start();
-        }
-
-        private void startTiles()
-        {
-            tileHandler = new TileHandler(ref scene);
-        }
-
-        public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
-        {
-            scene.Lat = e.Position.Location.Latitude;
-            scene.Lon = e.Position.Location.Longitude;
-            recalculateSceneTilePosition();
-        }
-
-        private void recalculateSceneTilePosition()
-        {
-            double[] rez = tileHandler.LatLonToMeters(scene.Lat, scene.Lon, scene.zoom);
-            scene.setTileCenter(
-                new Vector2((float) rez[0], (float) rez[1])
-            );
+            TilerThread.Start();
         }
 
         public void Scene_Resize(object sender, EventArgs e)
@@ -133,9 +112,8 @@ namespace Controllers
 
         public void Zoom(int zoomed)
         {
-            zoom += zoomed;
+            int zoom = scene.zoom + zoomed;
             scene.zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
-            recalculateSceneTilePosition();
             tileHandler.Zoom();
         }
 

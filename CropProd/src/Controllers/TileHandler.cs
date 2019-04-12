@@ -2,11 +2,13 @@
 using Models;
 using System;
 using System.Collections.Generic;
-using System.Device.Location;
 using System.Drawing;
 using System.IO;
 using System.Numerics;
+using System.Threading;
 using static Controllers.ImageLoader;
+using LatLonToTile;
+using System.Device.Location;
 
 namespace Controllers
 {
@@ -14,14 +16,13 @@ namespace Controllers
     {
         public string basePath = "";
         public string name = "google";
-        public readonly int tileSize = 256;
         
         private Random rnd;
         private Scene scene;
-        private double originShift;
         public  ImageLoader Loader;
-
-        private List<Tile> tiles = new List<Tile>();
+        public TileCoordinate TileCoordinateConverter;
+        private readonly Thread ImgLoader;
+        public List<Tile> tiles = new List<Tile>();
 
 
         private readonly Dictionary<string, string> distrib = new Dictionary<string, string>
@@ -38,9 +39,13 @@ namespace Controllers
         {
             this.scene = scene;
             rnd = new Random();
-            Loader = new ImageLoader();
+            TileCoordinateConverter = new TileCoordinate(18, 256);
             basePath = Path.GetTempPath() + "CropPod";
-            originShift = 2 * Math.PI * 6378137 / 2.0;
+            ImgLoader = new Thread(() => { Loader = new ImageLoader(); })
+            {
+                IsBackground = false
+            };
+            ImgLoader.Start();
         }
 
         public IFrame[] handle()
@@ -56,7 +61,6 @@ namespace Controllers
 
         public void GetTileAt(Vector2 leftop)
         {
-
             Image img;
             double tx = leftop.X + scene.coordinate.X;
             double ty = leftop.Y + scene.coordinate.Y;
@@ -118,6 +122,7 @@ namespace Controllers
 
         public void Zoom()
         {
+            recalculateSceneTilePosition();
             Loader.ClearPool();
             clearTilePool();
             GC.Collect();
@@ -184,42 +189,19 @@ namespace Controllers
             }
         }
 
-        public double[] LatLonToMeters(double lat, double lon, int zoom)
+        public void GeoWatcherOnStatusChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
         {
-            double mx = lon * originShift / 180.0;
-            double my = Math.Log(Math.Tan((90 + lat) * Math.PI / 360.0)) / (Math.PI / 180.0);
-
-            my = my * originShift / 180.0;
-
-            double[] rez = MetersToPixels(mx, my, zoom);
-
-            return rez;
+            scene.Lat = e.Position.Location.Latitude;
+            scene.Lon = e.Position.Location.Longitude;
+            recalculateSceneTilePosition();
         }
 
-        private double[] MetersToPixels(double mx, double my, int zoom)
+        private void recalculateSceneTilePosition()
         {
-            double res = Resolution(zoom);
-            double px = (mx + originShift) / res;
-            double py = (my + originShift) / res;
-            return PixelsToTile(px, py, zoom);
+            double[] rez = TileCoordinateConverter.Convert(scene.Lat, scene.Lon, scene.zoom);
+            scene.setTileCenter(
+                new Vector2((float) rez[0], (float) rez[1])
+            );
         }
-
-        private double[] PixelsToTile(double px, double py, int zoom)
-        {
-            double tx = Math.Ceiling(px / tileSize) - 1;
-            double ty = Math.Ceiling(py / tileSize) - 1;
-            return GoogleTile(tx, ty, zoom);
-        }
-
-        private double Resolution(int zoom)
-        {
-            return (2 * Math.PI * 6378137 / tileSize) / Math.Pow(2, zoom);
-        }
-
-        private double[] GoogleTile(double tx, double ty, int zoom)
-        {
-            return new double[2] { tx, (Math.Pow(2, zoom) - 1) - ty };
-        }
-
     }
 }

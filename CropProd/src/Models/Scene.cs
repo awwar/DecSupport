@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Models
 {
@@ -31,8 +30,8 @@ namespace Models
         public void resize(Vector2 size)
         {
             position = Vector2.Subtract(position, this.size);
-            this.size = size / 2;
-            position = Vector2.Add(position, this.size);
+            this.size = size;
+            position = Vector2.Add(position, size/2);
         }
     }
 }
