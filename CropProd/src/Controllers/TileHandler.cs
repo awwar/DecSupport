@@ -12,17 +12,17 @@ using static Controllers.ImageLoader;
 
 namespace Controllers
 {
-    class TileHandler : IHandler
+    internal class TileHandler : IHandler
     {
-        public string basePath = "";
-        public string name = "google";
-        
-        private Random rnd;
+        private string basePath = "";
+        private string name = "google";
+
+        private readonly Random rnd;
         private Scene scene;
-        public  ImageLoader Loader;
-        public TileCoordinate TileCoordinateConverter;
+        private ImageLoader Loader;
+        private TileCoordinate TileCoordinateConverter;
         private readonly Thread ImgLoader;
-        public List<Tile> tiles = new List<Tile>();
+        private List<Tile> tiles = new List<Tile>();
 
 
         private readonly Dictionary<string, string> distrib = new Dictionary<string, string>
@@ -39,7 +39,7 @@ namespace Controllers
         {
             this.scene = scene;
             rnd = new Random();
-            TileCoordinateConverter = new TileCoordinate(18, 256);
+            TileCoordinateConverter = new TileCoordinate(256);
             basePath = Path.GetTempPath() + "CropPod";
             ImgLoader = new Thread(() => { Loader = new ImageLoader(); })
             {
@@ -48,12 +48,12 @@ namespace Controllers
             ImgLoader.Start();
         }
 
-        public IFrame[] handle()
+        public Frame[] Handle()
         {
             Tile[] tileA = tiles.ToArray();
             foreach (Tile tile in tileA)
             {
-                tile.draw();
+                tile.Draw();
                 UpdateTile(tile);
             }
             return tileA;
@@ -63,24 +63,23 @@ namespace Controllers
         {
             scene.Lat = e.Position.Location.Latitude;
             scene.Lon = e.Position.Location.Longitude;
-            recalculateSceneTilePosition();
+            //RecalculateSceneTilePosition();
         }
 
-        public void update()
+        public void Update()
         {
-            recalculateSceneTilePosition();
+            RecalculateSceneTilePosition();
             Loader.ClearPool();
-            clearTilePool();
+            ClearTilePool();
             GC.Collect();
             GetScreenAt();
         }
 
         private void GetScreenAt()
         {
-            clearTilePool();
-            int width   = (int) scene.size.X / (256 * 2) + 2;
+            int width = (int)scene.size.X / (256 * 2) + 2;
 
-            int height  = (int) scene.size.Y / (256 * 2) + 2;
+            int height = (int)scene.size.Y / (256 * 2) + 2;
 
             for (int y = -height; y <= height; y++)
             {
@@ -111,8 +110,8 @@ namespace Controllers
                     ref scene
                 );
                 Loader.AddFrame(tile);
-                addTile(tile);
-                Loader.onImageLoad += new ImageLoadHandler(tile.ImageLoaded);
+                AddTile(tile);
+                Loader.OnImageLoad += new ImageLoadHandler(tile.ImageLoaded);
             }
             else
             {
@@ -128,7 +127,7 @@ namespace Controllers
                 {
                     img = null;
                 }
-                addTile(new Tile(
+                AddTile(new Tile(
                     leftop,
                     img,
                     ref scene
@@ -136,71 +135,73 @@ namespace Controllers
             }
         }
 
-        private void addTile(Tile tile)
+        private void AddTile(Tile tile)
         {
-           tiles.Add(tile);
+            if(!tiles.Exists(x => Vector2.Equals(x.Position , tile.Position))) {
+                tiles.Add(tile);
+            }
         }
 
-        private void removeTile(Tile tile)
+        private void RemoveTile(Tile tile)
+        {
+            DisposeImg(tile);
+            tiles.Remove(tile);
+        }
+
+        private void ClearTilePool()
+        {
+            foreach (Tile tile in tiles)
+            {
+                DisposeImg(tile);
+            }
+            tiles.Clear();
+        }
+
+        private void DisposeImg(Tile tile)
         {
             if (tile.path != null)
             {
                 Loader.DeleteFrame(tile.path);
             }
-            /* !! Если пытаться сделать Dispose здесь то память перестанет течь, но будут возникать тормоза! */
-            //tile.image.Dispose();
-            tiles.Remove(tile);
-        }
-
-        private void clearTilePool()
-        {
-            foreach (Tile tile in tiles)
+            else
             {
-                if (tile.path != null)
-                {
-                    Loader.DeleteFrame(tile.path);
-                }
-                else
-                {
-                    tile.image.Dispose();
-                }
+                tile.Image.Dispose();
             }
-            tiles.Clear();
         }
 
         private void UpdateTile(Tile tile)
         {
-            if (tile.screenposition.Y < -256 * 2 || tile.screenposition.Y > scene.size.Y + 256)
+            if (tile.Screenposition.Y < -256 * 2 || tile.Screenposition.Y > scene.size.Y + 256)
             {
-                removeTile(tile);
                 GetTileAt(
                     new Vector2(
                         tile.coordinate.X,
-                        (tile.screenposition.Y < -256 * 2)
-                            ? tile.coordinate.Y + (int) scene.size.Y / (256) + 3
-                            : tile.coordinate.Y - (int) scene.size.Y / (256) - 3
+                        (tile.Screenposition.Y < -256 * 2)
+                            ? tile.coordinate.Y + (int)scene.size.Y / (256) + 3
+                            : tile.coordinate.Y - (int)scene.size.Y / (256) - 3
                     )
                 );
+                RemoveTile(tile);
             }
-            else if (tile.screenposition.X < -256 * 2 || tile.screenposition.X > scene.size.X + 256)
+            else if (tile.Screenposition.X < -256 * 2 || tile.Screenposition.X > scene.size.X + 256)
             {
-                removeTile(tile);
                 GetTileAt(
                     new Vector2(
-                        (tile.screenposition.X < -256 * 2)
-                            ? tile.coordinate.X + (int) scene.size.X / (256) + 3
-                            : tile.coordinate.X - (int) scene.size.X / (256) - 3,
+                        (tile.Screenposition.X < -256 * 2)
+                            ? tile.coordinate.X + (int)scene.size.X / (256) + 3
+                            : tile.coordinate.X - (int)scene.size.X / (256) - 3,
                         tile.coordinate.Y
                     )
                 );
+                RemoveTile(tile);
             }
         }
 
-        private void recalculateSceneTilePosition()
+        private void RecalculateSceneTilePosition()
         {
             double[] rez = TileCoordinateConverter.Convert(scene.Lat, scene.Lon, scene.zoom);
-            scene.setTileCenter(
-                new Vector2((float) rez[0], (float) rez[1])
+            scene.SetTileCenter(
+                new Vector2((float)rez[0], (float)rez[1])
             );
         }
     }

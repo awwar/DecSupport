@@ -15,7 +15,7 @@ namespace Controllers
         private readonly WebClient client;
 
         public delegate void ImageLoadHandler(object sender, ImageLoadArgs e);
-        public event ImageLoadHandler onImageLoad;
+        public event ImageLoadHandler OnImageLoad;
 
         private Dictionary<string, Tile> data = new Dictionary<string, Tile>();
         private bool isLoading = false;
@@ -61,8 +61,8 @@ namespace Controllers
         {
             if (data.TryGetValue(path, out Tile tile))
             {
-                onImageLoad -= tile.ImageLoaded;
-                tile.image.Dispose();
+                OnImageLoad -= tile.ImageLoaded;
+                tile.Image.Dispose();
             }
             data.Remove(path);
         }
@@ -74,8 +74,8 @@ namespace Controllers
         {
             foreach (KeyValuePair<string, Tile> item in data)
             {
-                onImageLoad -= item.Value.ImageLoaded;
-                item.Value.image.Dispose();
+                OnImageLoad -= item.Value.ImageLoaded;
+                item.Value.Image.Dispose();
             }
             data.Clear();
         }
@@ -85,15 +85,14 @@ namespace Controllers
         */
         private void ImageLoaded(Image img, string path)
         {
-            onImageLoad(this, new ImageLoadArgs(img, path));
+            OnImageLoad(this, new ImageLoadArgs(img, path));
             SceneHandler.Refresh();
         }
 
         private Tile DictPop()
         {
-            Tile tile = null;
             KeyValuePair<string, Tile> last = data.Last();
-            tile = last.Value;
+            Tile tile = last.Value;
             data.Remove(last.Key);
             if (tile == null)
             {

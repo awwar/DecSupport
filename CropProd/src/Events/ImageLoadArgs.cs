@@ -2,16 +2,16 @@
 
 namespace Events
 {
-    class ImageLoadArgs
+    internal class ImageLoadArgs
     {
         // Сообщение
-        public Image image { get; }
-        public string path { get; }
+        public Image Image { get; }
+        public string Path { get; }
 
         public ImageLoadArgs(Image image, string path)
         {
-            this.image = image;
-            this.path = path;
+            this.Image = image;
+            this.Path = path;
         }
     }
 }

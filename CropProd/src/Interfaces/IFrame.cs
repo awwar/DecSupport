@@ -1,21 +1,11 @@
-﻿using System.Drawing;
+﻿using Models;
+using System.Drawing;
 using System.Numerics;
 
 namespace Interfaces
 {
-    interface IFrame
+    internal interface IFrame
     {
-        // положение относительно центра сцены
-        Vector2 position { get; set; }
-        
-        // положение на экране
-        Vector2 screenposition {get;set;}
-
-        // размер
-        Vector2 size { get; set; }
-
-        Image image { get; set; }
-
-        void draw();
+        void Draw();
     }
 }

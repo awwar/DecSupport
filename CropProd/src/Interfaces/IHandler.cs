@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Models;
 
 namespace Interfaces
 {
-    interface IHandler
+    internal interface IHandler
     {
-        IFrame[] handle();
+        Frame[] Handle();
     }
 }

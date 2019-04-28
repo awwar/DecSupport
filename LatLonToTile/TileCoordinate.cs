@@ -4,20 +4,37 @@ namespace LatLonToTile
 {
     public class TileCoordinate
     {
-        int     zoom;
-        int     tileSize;
-        double  originShift;
+        private readonly int tileSize;
+        private readonly double originShift;
 
-        public TileCoordinate(int zoom, int tileSize)
+        public TileCoordinate(int tileSize)
         {
-            this.zoom           = zoom;
-            this.tileSize       = tileSize;
-            this.originShift    = 2 * Math.PI * 6378137 / 2.0;
+            this.tileSize = tileSize;
+            originShift = 2 * Math.PI * 6378137 / 2.0;
         }
 
         public double[] Convert(double lat, double lon, int zoom)
         {
             return LatLonToMeters(lat, lon, zoom);
+        }
+
+        private double Clip(double n, double minValue, double maxValue)
+        {
+            return Math.Min(Math.Max(n, minValue), maxValue);
+        }
+        public uint MapSize(int levelOfDetail)
+        {
+            return (uint)256 << levelOfDetail;
+        }
+
+        public void PixelXYToLatLong(float pixelX, float pixelY, out double latitude, out double longitude)
+        {
+            double mapSize = MapSize(10);
+            double x = (Clip(pixelX, 0, mapSize - 1) / mapSize) - 0.5;
+            double y = 0.5 - (Clip(pixelY, 0, mapSize - 1) / mapSize);
+
+            latitude = 90 - 360 * Math.Atan(Math.Exp(-y * 2 * Math.PI)) / Math.PI;
+            longitude = 360 * x;
         }
 
         private double[] LatLonToMeters(double lat, double lon, int zoom)

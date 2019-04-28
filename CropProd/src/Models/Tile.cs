@@ -5,69 +5,50 @@ using System.Numerics;
 
 namespace Models
 {
-    class Tile : IFrame
+    internal class Tile: Frame
     {
-        public Vector2 position { get; set; }
-        public Vector2 size { get; set; }
-        public Vector2 screenposition { get; set; }
-        public Image   image { get; set; }
-
         public Vector2 coordinate = new Vector2(0, 0); // это положение тайла не умножанное на размер
         public string url = null;
         public string path = null;
 
-        private Scene scene; // Это ссылка на изображение
-
 
         public Tile(Vector2 position, Image image, ref Scene scene)
         {
-            setTile(position, "", "", ref scene, image);
+            SetTile(position, "", "", ref scene, image);
         }
 
         public Tile(Vector2 position, string url, string path, ref Scene scene)
         {
-            setTile(position, url, path, ref scene, null);
+            SetTile(position, url, path, ref scene, null);
         }
 
-        private void setTile(Vector2 position, string url, string path, ref Scene scene, Image image = null)
+        private void SetTile(Vector2 position, string url, string path, ref Scene scene, Image image = null)
         {
-            size = new Vector2(256, 256);
-            this.scene = scene;
-            this.image = image;
-            if (this.image == null)
+            Size = new Vector2(256, 256);
+            this.Scene = scene;
+            this.Image = image;
+            if (this.Image == null)
             {
-                this.image = Image.FromFile("def.png");
+                this.Image = CropProd.Properties.Resources.def;
             }
             coordinate = position;
             this.url = url;
             this.path = path;
-            this.position = Vector2.Multiply(coordinate, size);
-            screenposition = Vector2.Add(position, scene.position);
+            this.Position = Vector2.Multiply(coordinate, Size);
+            Screenposition = Vector2.Add(position, scene.position);
         }
 
         public void ImageLoaded(object sender, ImageLoadArgs e)
         {
-            if (e.path == path)
+            if (e.Path == path)
             {
-                this.image = e.image;
+                Image = e.Image;
             }
         }
 
-        public void draw()
+        public override void Draw()
         {
-            screenposition = Vector2.Add(position, scene.position);
-        }
-
-        private void setImage(Image image)
-        {
-            if (image == null)
-            {
-                this.image = Image.FromFile("def.png");
-            }
-            else
-            {
-                this.image = image;
-            }
+            Screenposition = Vector2.Add(Position, Scene.position);
         }
     }
 }

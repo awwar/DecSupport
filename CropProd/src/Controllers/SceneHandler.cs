@@ -1,5 +1,6 @@
 ﻿using CropProd;
 using Interfaces;
+using LatLonToTile;
 using Models;
 using System;
 using System.Device.Location;
@@ -12,44 +13,45 @@ namespace Controllers
 {
     internal class SceneHandler
     {
-        public TileHandler tileHandler;
+        public TileHandler TileHandler { get; private set; }
+        public DataHandler DataHandler { get; private set; }
 
-        Scene scene;
-        static Form1 form;
-
-        Vector2 first = new Vector2(0, 0);
-        Vector2 delta = new Vector2(0, 0);
-        Vector2 last = new Vector2(0, 0);
-
-        Thread TileThread;
-        Pen pen = new Pen(Color.Red, 1f);
+        private Scene scene;
+        private static Form1 form;
+        private Vector2 first = new Vector2(0, 0);
+        private Vector2 delta = new Vector2(0, 0);
+        private Vector2 last = new Vector2(0, 0);
+        private readonly Thread TileThread;
+        private readonly Pen pen = new Pen(Color.Red, 1f);
 
         public SceneHandler(Form1 getform)
         {
             form = getform;
-            scene = new Scene(new Vector2(getform.Size.Width, getform.Size.Height));
+            scene = new Scene(new Vector2(getform.Size.Height));
 
 
-            TileThread = new Thread(startTileHandler)
+            TileThread = new Thread(StartTileHandler)
             {
                 IsBackground = false
             };
             TileThread.Start();
         }
 
-        void startTileHandler()
+        private void StartTileHandler()
         {
-            tileHandler = new TileHandler(ref scene);
+            TileHandler = new TileHandler(ref scene);
+            DataHandler = new DataHandler(ref scene);
+
             GeoCoordinateWatcher _geoWatcher = new GeoCoordinateWatcher();
 
-            _geoWatcher.PositionChanged += tileHandler.GeoWatcherOnStatusChanged;
+            _geoWatcher.PositionChanged += TileHandler.GeoWatcherOnStatusChanged;
 
             _geoWatcher.Start();
         }
 
         public void Scene_Resize(object sender, EventArgs e)
         {
-            scene.resize(new Vector2(
+            scene.Resize(new Vector2(
                 form.scene.Width,
                 form.scene.Height
             ));
@@ -58,18 +60,19 @@ namespace Controllers
 
         public void Scene_Draw(object sender, PaintEventArgs e)
         {
-            scene.update(delta);
+            scene.Update(delta);
             e.Graphics.Clear(Color.Black);
-            e.Graphics.DrawLine(pen, scene.position.X - 10, scene.position.Y, scene.position.X + 10, scene.position.Y);
-            e.Graphics.DrawLine(pen, scene.position.X, scene.position.Y - 10, scene.position.X, scene.position.Y + 10);
+            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            //e.Graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+
 
             //Если поток не 
-            if (tileHandler == null)
+            if (TileHandler == null)
             {
                 return;
             }
 
-            IFrame[] frames = tileHandler.handle();
+            Frame[] frames = TileHandler.Handle();
 
             if (frames != null)
             {
@@ -79,11 +82,11 @@ namespace Controllers
                     try
                     {
                         e.Graphics.DrawImage(
-                            frame.image,
-                            frame.screenposition.X,
-                            frame.screenposition.Y,
-                            frame.size.X,
-                            frame.size.Y
+                            frame.Image,
+                            frame.Screenposition.X,
+                            frame.Screenposition.Y,
+                            frame.Size.X,
+                            frame.Size.Y
                         );
 
                     }
@@ -91,23 +94,39 @@ namespace Controllers
                     {
                         Console.WriteLine("image error");
                     }
-
-                    e.Graphics.DrawRectangle(pen,
-                        frame.screenposition.X,
-                        frame.screenposition.Y,
-                        256,
-                        256
-                    );
-                    e.Graphics.DrawString(
-                        frame.coordinate.ToString(),
-                        new Font("Arial", 15),
-                        new SolidBrush(Color.White),
-                        frame.position.X + scene.position.X,
-                        frame.position.Y + scene.position.Y
-                    );
+                    e.Graphics.DrawRectangle(pen, frame.Screenposition.X, frame.Screenposition.Y, 256, 256);
                 }
             }
 
+            frames = DataHandler.Handle();
+
+            if (frames != null)
+            {
+
+                foreach (Frame frame in frames)
+                {
+                    try
+                    {
+                        e.Graphics.DrawImage(
+                            frame.Image,
+                            frame.Screenposition.X,
+                            frame.Screenposition.Y,
+                            frame.Size.X,
+                            frame.Size.Y
+                        );
+
+                    }
+                    catch
+                    {
+                        Console.WriteLine("image error");
+                    }
+                }
+            }
+
+            e.Graphics.DrawLine(new Pen(Color.Green, 3f), scene.position.X - 10, scene.position.Y, scene.position.X + 10, scene.position.Y);
+            e.Graphics.DrawLine(new Pen(Color.Green, 3f), scene.position.X, scene.position.Y - 10, scene.position.X, scene.position.Y + 10);
+            e.Graphics.DrawLine(pen, scene.size.X / 2 - 10, scene.size.Y / 2, scene.size.X / 2 + 10, scene.size.Y / 2);
+            e.Graphics.DrawLine(pen, scene.size.X / 2, scene.size.Y / 2 - 10, scene.size.X / 2, scene.size.Y / 2 + 10);
             delta = new Vector2(0, 0);
         }
 
@@ -131,7 +150,8 @@ namespace Controllers
         {
             int zoom = scene.zoom + zoomed;
             scene.zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
-            tileHandler.update();
+            TileHandler.Update();
+            Refresh();
         }
 
         public static void Refresh()

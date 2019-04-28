@@ -1,48 +1,50 @@
 ﻿using Controllers;
 using System;
-using System.Device.Location;
 using System.Drawing;
-using System.Numerics;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace CropProd
 {
     public partial class Form1 : Form
     {
-
-        SceneHandler sceneHandler;
+        private readonly SceneHandler sceneHandler;
 
         public Form1()
         {
             InitializeComponent();
             sceneHandler = new SceneHandler(this);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.UserPaint, true);
+
+            UpdateStyles();
+
             //Handle draw calls
+            scene.CancelAsync();
             scene.MouseMove += new MouseEventHandler(sceneHandler.Scene_MouseMoove);
             scene.MouseDown += new MouseEventHandler(sceneHandler.Scene_MouseDown);
-            scene.Paint     += new PaintEventHandler(sceneHandler.Scene_Draw);
-            scene.Resize    += new EventHandler(sceneHandler.Scene_Resize);
-            scene.MouseWheel += Scene_MouseWheel;          
+            scene.Paint += new PaintEventHandler(sceneHandler.Scene_Draw);
+            scene.Resize += new EventHandler(sceneHandler.Scene_Resize);
+            scene.MouseWheel += Scene_MouseWheel;
 
         }
 
         private void Scene_MouseWheel(object sender, MouseEventArgs e)
         {
-            if(e.Delta > 0)
+            if (e.Delta > 0)
             {
                 //UP
                 sceneHandler.Zoom(1);
-            } else
+            }
+            else
             {
                 //down
                 sceneHandler.Zoom(-1);
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
-            //SceneHandler.scene.ClearImagePool();
-            string filename = "";
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.InitialDirectory = "d:\\";
@@ -52,8 +54,10 @@ namespace CropProd
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    filename = ofd.FileName;
+                    //SceneHandler.scene.ClearImagePool();
+                    string filename = ofd.FileName;
                     label1.Text = "Открыт файл " + filename;
+                    Readimg(filename);
                 }
             }
 
@@ -64,9 +68,9 @@ namespace CropProd
             scene.Invalidate();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
-            sceneHandler.tileHandler.update();
+            sceneHandler.TileHandler.Update();
         }
 
         private void Readimg(string filename)
@@ -100,7 +104,7 @@ namespace CropProd
                     }
                 }
 
-                //SceneHandler.AddTile(new Vector2(SceneHandler.scene.center.X, SceneHandler.scene.center.Y), image1);
+            sceneHandler.DataHandler.AddData(image1);
 
             }
             catch (ArgumentException)
