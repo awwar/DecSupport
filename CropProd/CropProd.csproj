@@ -50,7 +50,14 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+    </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,24 +76,32 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Controllers\DataHandler.cs" />
-    <Compile Include="src\Controllers\ImageLoader.cs" />
-    <Compile Include="src\Controllers\TileHandler.cs" />
-    <Compile Include="src\Controllers\SceneHandler.cs" />
+    <Compile Include="src\Handlers\DataHandler.cs" />
+    <Compile Include="src\DecisionSupport.cs" />
+    <Compile Include="src\Handlers\ImageLoader.cs" />
+    <Compile Include="src\Handlers\TileHandler.cs" />
     <Compile Include="src\Events\ImageLoadArgs.cs" />
-    <Compile Include="src\Interfaces\IHandler.cs" />
     <Compile Include="src\Interfaces\IFrame.cs" />
+    <Compile Include="src\Interfaces\IHandler.cs" />
     <Compile Include="src\Models\Data.cs" />
     <Compile Include="src\Models\Frame.cs" />
-    <Compile Include="src\Models\Tile.cs" />
     <Compile Include="src\Models\Scene.cs" />
+    <Compile Include="src\Models\Tile.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="obj\Debug\CropProd.Form1.resources" />
+    <EmbeddedResource Include="obj\Debug\CropProd.Properties.Resources.resources" />
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -95,6 +110,17 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="obj\Debug\CropProd.csproj.CopyComplete" />
+    <None Include="obj\Debug\CropProd.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\CropProd.csproj.GenerateResource.cache" />
+    <None Include="obj\Debug\CropProd.csprojAssemblyReference.cache" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferences.cache" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\project.razor.json" />
+    <None Include="obj\Release\CropProd.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Release\DesignTimeResolveAssemblyReferences.cache" />
+    <None Include="obj\Release\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -128,6 +154,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\def.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="obj\Debug\CropProd.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\CropProd.exe" />
+    <Content Include="obj\Debug\CropProd.pdb" />
+    <Content Include="obj\Debug\Default.JPG" />
+    <Content Include="obj\Debug\TempPE\Properties.Resources.Designer.cs.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Release\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

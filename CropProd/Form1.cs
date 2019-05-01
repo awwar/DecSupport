@@ -1,4 +1,4 @@
-﻿using Controllers;
+﻿using DSCore;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -7,12 +7,12 @@ namespace CropProd
 {
     public partial class Form1 : Form
     {
-        private readonly SceneHandler sceneHandler;
+        private readonly DecisionSupport decisionSupprot;
 
         public Form1()
         {
             InitializeComponent();
-            sceneHandler = new SceneHandler(this);
+            decisionSupprot = new DecisionSupport(this);
             SetStyle(ControlStyles.OptimizedDoubleBuffer |
                 ControlStyles.AllPaintingInWmPaint |
                 ControlStyles.UserPaint, true);
@@ -20,27 +20,21 @@ namespace CropProd
             UpdateStyles();
 
             //Handle draw calls
-            scene.CancelAsync();
-            scene.MouseMove += new MouseEventHandler(sceneHandler.Scene_MouseMoove);
-            scene.MouseDown += new MouseEventHandler(sceneHandler.Scene_MouseDown);
-            scene.Paint += new PaintEventHandler(sceneHandler.Scene_Draw);
-            scene.Resize += new EventHandler(sceneHandler.Scene_Resize);
-            scene.MouseWheel += Scene_MouseWheel;
+            // scene.MouseWheel    += decisionSupprot.OnZoom;
+            scene.Paint         += decisionSupprot.OnDraw;
+            scene.Resize        += decisionSupprot.OnResize;
+            this.DragDrop      += decisionSupprot.OnFileDrop;
+            this.DragEnter     += decisionSupprot.OnFileEnter;
+            scene.MouseDown     += decisionSupprot.OnMouseDown;
+            scene.MouseMove     += decisionSupprot.OnMouseClick;
+            
+            decisionSupprot.OnNeedRedraw += OnNeedRedraw;
 
         }
 
-        private void Scene_MouseWheel(object sender, MouseEventArgs e)
+        private void OnNeedRedraw()
         {
-            if (e.Delta > 0)
-            {
-                //UP
-                sceneHandler.Zoom(1);
-            }
-            else
-            {
-                //down
-                sceneHandler.Zoom(-1);
-            }
+            scene.Invalidate();
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -63,14 +57,9 @@ namespace CropProd
 
         }
 
-        public void Redraw()
-        {
-            scene.Invalidate();
-        }
-
         private void Button2_Click(object sender, EventArgs e)
         {
-            sceneHandler.TileHandler.Update();
+            decisionSupprot.TileHandler.Update();
         }
 
         private void Readimg(string filename)
@@ -104,7 +93,6 @@ namespace CropProd
                     }
                 }
 
-            sceneHandler.DataHandler.AddData(image1);
 
             }
             catch (ArgumentException)
@@ -112,7 +100,6 @@ namespace CropProd
                 MessageBox.Show("There was an error." +
                     "Check the path to the image file.");
             }
-            SceneHandler.Refresh();
         }
     }
 

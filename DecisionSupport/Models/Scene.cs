@@ -2,7 +2,7 @@
 
 namespace Models
 {
-    internal class Scene
+    class Scene
     {
         public Vector2 Size { get; set; } = new Vector2(0, 0);
         public Vector2 Position { get; set; } = new Vector2(0, 0);

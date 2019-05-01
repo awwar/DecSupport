@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Controllers
 {
-    internal class ImageLoader
+    class ImageLoader
     {
         private readonly WebClient client;
 
@@ -50,8 +50,8 @@ namespace Controllers
          */
         public void AddFrame(Tile frame)
         {
-            data[frame.path] = frame;
-            Load();
+            data[frame.Path] = frame;
+            Load();  
         }
 
         /*
@@ -61,7 +61,6 @@ namespace Controllers
         {
             if (data.TryGetValue(path, out Tile tile))
             {
-                OnImageLoad -= tile.ImageLoaded;
                 tile.Image.Dispose();
             }
             data.Remove(path);
@@ -74,19 +73,9 @@ namespace Controllers
         {
             foreach (KeyValuePair<string, Tile> item in data)
             {
-                OnImageLoad -= item.Value.ImageLoaded;
                 item.Value.Image.Dispose();
             }
             data.Clear();
-        }
-
-        /*
-        * Метод тригеррит ивент у подписчиков
-        */
-        private void ImageLoaded(Image img, string path)
-        {
-            OnImageLoad(this, new ImageLoadArgs(img, path));
-            SceneHandler.Refresh();
         }
 
         private Tile DictPop()
@@ -94,12 +83,7 @@ namespace Controllers
             KeyValuePair<string, Tile> last = data.Last();
             Tile tile = last.Value;
             data.Remove(last.Key);
-            if (tile == null)
-            {
-                throw new Exception("Path not found");
-            }
             return tile;
-
         }
 
         private async void Load()
@@ -109,43 +93,42 @@ namespace Controllers
                 return;
             }
             isLoading = true;
-            Tile frame;
             Image img = null;
-            try
-            {
-                frame = DictPop();
-            }
-            catch
+            Tile frame = DictPop();
+
+            if(frame == null)
             {
                 return;
             }
-            Directory.CreateDirectory(Path.GetDirectoryName(frame.path));
 
-            if (!File.Exists(frame.path))
+            Directory.CreateDirectory(Path.GetDirectoryName(frame.Path));
+
+            if (!File.Exists(frame.Path))
             {
                 try
                 {
                     client.Headers.Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36");
-                    await client.DownloadFileTaskAsync(new Uri(frame.url), @frame.path);
+                    await client.DownloadFileTaskAsync(new Uri(frame.Url), @frame.Path);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("LOad {0}", e);
-                    File.Delete(@frame.path);
+                    File.Delete(@frame.Path);
                     return;
                 }
                 try
                 {
-                    using (FileStream myStream = new FileStream(frame.path, FileMode.Open, FileAccess.Read))
+                    using (FileStream myStream = new FileStream(frame.Path, FileMode.Open, FileAccess.Read))
                     {
                         img = Image.FromStream(myStream);
                     }
-                    ImageLoaded(img, frame.path);
+
+                    OnImageLoad(this, new ImageLoadArgs(img, frame.Path));
                 }
                 catch
                 {
                     Console.WriteLine("Filetaker error!");
-                    File.Delete(@frame.path);
+                    File.Delete(@frame.Path);
                     return;
                 }
 

@@ -5,7 +5,7 @@ using System.Numerics;
 
 namespace Models
 {
-    internal class Tile: Frame
+    class Tile: Frame
     {
         public Vector2 coordinate = new Vector2(0, 0); // это положение тайла не умножанное на размер
         public string Url { get; set; }
@@ -22,20 +22,20 @@ namespace Models
             SetTile(position, url, path, ref scene, null);
         }
 
-        private void SetTile(Vector2 coordinate, string url, string path, ref Scene scene, Image image = null)
+        private void SetTile(Vector2 position, string url, string path, ref Scene scene, Image image = null)
         {
             Size = new Vector2(256, 256);
             this.Scene = scene;
             this.Image = image;
             if (this.Image == null)
             {
-                this.Image = CropProd.Properties.Resources.def;
+                this.Image = Settings.Setting.Def;
             }
-            this.coordinate = coordinate;
+            coordinate = position;
             this.Url = url;
             this.Path = path;
             this.Position = Vector2.Multiply(coordinate, Size);
-            Screenposition = Vector2.Add(coordinate, scene.Position);
+            Screenposition = Vector2.Add(position, scene.Position);
         }
 
         public override void Draw()

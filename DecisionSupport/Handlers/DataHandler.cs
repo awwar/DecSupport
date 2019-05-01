@@ -3,21 +3,21 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Controllers
 {
     class DataHandler : IHandler
     {
         private List<Data> datas = new List<Data>();
-        private Scene scene;
 
-        public DataHandler(ref Scene scene)
+        private Scene scene;
+        private Action Redraw;
+
+        public DataHandler(ref Scene scene, Action redraw)
         {
             this.scene = scene;
+            this.Redraw = redraw;
         }
 
         public void AddData(Bitmap img)
