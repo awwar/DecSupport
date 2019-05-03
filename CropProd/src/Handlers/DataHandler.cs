@@ -18,6 +18,9 @@ namespace Handlers
         private Scene scene;
         private Action Redraw;
         private TileCoordinate tileCoordinate;
+        private DataLoader Loader;
+
+        private Project cureentProject;
 
         public DataHandler(ref Scene scene, Action redraw)
         {
@@ -25,6 +28,7 @@ namespace Handlers
             this.Redraw = redraw;
             this.basepath = Path.GetTempPath() + "CropPod/projects";
             tileCoordinate = new TileCoordinate(256);
+            Loader = new DataLoader();
         }
 
         public void AddData(Image img , Vector2 pos)
@@ -46,6 +50,37 @@ namespace Handlers
                 item.Draw();
             }
             return datas.ToArray();
+        }
+
+        public void CreateProject(string name, string lat, string lon)
+        {
+            double[] tilelatlon = tileCoordinate.Convert(
+                double.Parse(lat, CultureInfo.InvariantCulture),
+                double.Parse(lon, CultureInfo.InvariantCulture),
+                18
+            );
+            Project proj = new Project()
+            {
+                Name = name,
+                Lat = tilelatlon[0],
+                Lon = tilelatlon[1]
+            };
+            Loader.CreateProject(proj);
+        }
+
+        public void OpenProject(string path)
+        {
+            this.cureentProject = Loader.LoadProject(path);
+            Console.WriteLine(cureentProject.Lat);
+        }
+
+        public void SaveProject()
+        {
+            if(cureentProject != null)
+            {
+                cureentProject.Lat = 1.000;
+                Loader.SaveProject(cureentProject);
+            }
         }
 
         public void ReadData(string path)
@@ -84,7 +119,7 @@ namespace Handlers
                     AddImageFromFile(img, imageFileName);
                 }
             }
-
+            Redraw();
         }
 
         private void AddImageFromFile(Image img , string filepath)

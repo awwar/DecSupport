@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Handlers
 {
-    internal class ImageLoader
+    internal class TileLoader
     {
         private readonly WebClient client;
 
@@ -21,7 +21,7 @@ namespace Handlers
         private bool isLoading = false;
 
 
-        public ImageLoader()
+        public TileLoader()
         {
             client = new WebClient
             {
@@ -109,6 +109,7 @@ namespace Handlers
                 {
                     client.Headers.Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36");
                     await client.DownloadFileTaskAsync(new Uri(frame.Url), @frame.Path);
+                    client.Dispose();
                 }
                 catch (Exception e)
                 {
@@ -116,12 +117,11 @@ namespace Handlers
                     File.Delete(@frame.Path);
                     return;
                 }
+                FileStream myStream = new FileStream(frame.Path, FileMode.Open, FileAccess.Read);
                 try
                 {
-                    using (FileStream myStream = new FileStream(frame.Path, FileMode.Open, FileAccess.Read))
-                    {
-                        img = Image.FromStream(myStream);
-                    }
+                    
+                    img = Image.FromStream(myStream);
 
                     OnImageLoad(this, new ImageLoadArgs(img, frame.Path));
                 }
@@ -131,7 +131,12 @@ namespace Handlers
                     File.Delete(@frame.Path);
                     return;
                 }
-
+                finally
+                {
+                    myStream.Close();
+                    myStream.Dispose();
+                }
+                return;
             }
         }
     }

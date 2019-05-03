@@ -19,7 +19,7 @@ namespace Handlers
 
         private readonly Random rnd;
         private Scene scene;
-        private ImageLoader Loader;
+        private TileLoader Loader;
         private TileCoordinate TileCoordinateConverter;
         private readonly Thread ImgLoader;
         private List<Tile> tiles = new List<Tile>();
@@ -42,7 +42,7 @@ namespace Handlers
             rnd = new Random();
             TileCoordinateConverter = new TileCoordinate(256);
             basePath = Path.GetTempPath() + "CropPod/tiles";
-            ImgLoader = new Thread(() => { Loader = new ImageLoader(); Loader.OnImageLoad += ImageLoaded; })
+            ImgLoader = new Thread(() => { Loader = new TileLoader(); Loader.OnImageLoad += ImageLoaded; })
             {
                 IsBackground = false
             };
@@ -118,16 +118,19 @@ namespace Handlers
             else
             {
                 Image img;
+                FileStream myStream = new FileStream(fullpath, FileMode.Open, FileAccess.Read);
                 try
                 {
-                    using (FileStream myStream = new FileStream(fullpath, FileMode.Open, FileAccess.Read))
-                    {
-                        img = Image.FromStream(myStream);
-                    }
+                    img = Image.FromStream(myStream);
                 }
                 catch (Exception)
                 {
                     img = null;
+                }
+                finally
+                {
+                    myStream.Close();
+                    myStream.Dispose();
                 }
                 AddTile(new Tile(
                     leftop,

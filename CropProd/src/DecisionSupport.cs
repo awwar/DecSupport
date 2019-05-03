@@ -1,5 +1,5 @@
-﻿using Handlers;
-using CropProd;
+﻿using CropProd;
+using Handlers;
 using Models;
 using System;
 using System.Drawing;
@@ -17,14 +17,14 @@ namespace DSCore
         internal event Action OnNeedRedraw;
 
         private Scene scene;
-        private static Form1 form;
+        private static MainWindow form;
         private Vector2 first = new Vector2(0, 0);
         private Vector2 delta = new Vector2(0, 0);
         private Vector2 last = new Vector2(0, 0);
         private readonly Thread TileThread;
         private readonly Pen pen = new Pen(Color.Red, 1f);
 
-        public DecisionSupport(Form1 myform)
+        public DecisionSupport(MainWindow myform)
         {
             form = myform;
             scene = new Scene(new Vector2(myform.Size.Height));
@@ -79,9 +79,8 @@ namespace DSCore
                             frame.Screenposition.X,
                             frame.Screenposition.Y,
                             frame.Size.X,
-                            frame.Size.Y
+                            frame.Size.Y + 1
                         );
-
                     }
                     catch
                     {
@@ -130,9 +129,47 @@ namespace DSCore
         public void OnFileDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) DataHandler.ReadData(file);
-            TileHandler.Update();
+            foreach (string file in files) DataHandler.OpenProject(file);
+        }
 
+        public void OnOpenProject(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.InitialDirectory = "d:\\";
+                ofd.Filter = "All files (*.*)|*.*";
+                ofd.FilterIndex = 2;
+                ofd.RestoreDirectory = false;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    string filename = ofd.FileName;
+                    DataHandler.OpenProject(filename);
+                }
+            }
+        }
+
+        public void OnSaveProject(object sender, EventArgs e)
+        {
+            DataHandler.SaveProject();
+        }
+
+        public void OnNewProject(object sender, EventArgs e)
+        {
+            CreateProjDialog createProj = new CreateProjDialog();
+
+            if (createProj.ShowDialog() == DialogResult.OK)
+            {
+                if (createProj.LatInput.TextLength > 0
+                    && createProj.LonInput.TextLength > 0
+                    && createProj.ProjName.TextLength > 0)
+                {
+                    DataHandler.CreateProject(createProj.ProjName.Text,
+                                           createProj.LatInput.Text,
+                                           createProj.LonInput.Text);
+                }
+            }
+            createProj.Dispose();
         }
     }
 }

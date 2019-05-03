@@ -5,14 +5,14 @@ using System.Windows.Forms;
 
 namespace CropProd
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
-        private readonly DecisionSupport decisionSupprot;
+        private readonly DecisionSupport decisionSupport;
 
-        public Form1()
+        public MainWindow()
         {
             InitializeComponent();
-            decisionSupprot = new DecisionSupport(this);
+            decisionSupport = new DecisionSupport(this);
             SetStyle(ControlStyles.OptimizedDoubleBuffer |
                 ControlStyles.AllPaintingInWmPaint |
                 ControlStyles.UserPaint, true);
@@ -21,45 +21,28 @@ namespace CropProd
 
             //Handle draw calls
             // scene.MouseWheel    += decisionSupprot.OnZoom;
-            scene.Paint         += decisionSupprot.OnDraw;
-            scene.Resize        += decisionSupprot.OnResize;
-            this.DragDrop      += decisionSupprot.OnFileDrop;
-            this.DragEnter     += decisionSupprot.OnFileEnter;
-            scene.MouseDown     += decisionSupprot.OnMouseDown;
-            scene.MouseMove     += decisionSupprot.OnMouseClick;
-            
-            decisionSupprot.OnNeedRedraw += OnNeedRedraw;
+            scene.Paint         += decisionSupport.OnDraw;
+            scene.Resize        += decisionSupport.OnResize;
+            this.DragDrop       += decisionSupport.OnFileDrop;
+            this.DragEnter      += decisionSupport.OnFileEnter;
+            scene.MouseDown     += decisionSupport.OnMouseDown;
+            scene.MouseMove     += decisionSupport.OnMouseClick;
+            onNewProject.Click  += decisionSupport.OnNewProject;
+            onOpenProject.Click += decisionSupport.OnOpenProject;
+            onSaveProject.Click += decisionSupport.OnSaveProject;
+
+            decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
         }
 
         private void OnNeedRedraw()
         {
-            scene.Invalidate();
-        }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.InitialDirectory = "d:\\";
-                ofd.Filter = "All files (*.*)|*.*";
-                ofd.FilterIndex = 2;
-                ofd.RestoreDirectory = false;
-
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    //SceneHandler.scene.ClearImagePool();
-                    string filename = ofd.FileName;
-                    label1.Text = "Открыт файл " + filename;
-                    Readimg(filename);
-                }
-            }
-
+            scene.Refresh();
         }
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            decisionSupprot.TileHandler.Update();
+            decisionSupport.TileHandler.Update();
         }
 
         private void Readimg(string filename)
