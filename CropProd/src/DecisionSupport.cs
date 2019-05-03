@@ -3,6 +3,7 @@ using Handlers;
 using Models;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
@@ -86,7 +87,7 @@ namespace DSCore
                     {
                         Console.WriteLine("image error");
                     }
-                    //e.Graphics.DrawRectangle(pen, frame.Screenposition.X, frame.Screenposition.Y, 256, 256);
+                    e.Graphics.DrawRectangle(pen, frame.Screenposition.X, frame.Screenposition.Y, 256, 256);
                 }
             }
 
@@ -129,7 +130,23 @@ namespace DSCore
         public void OnFileDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) DataHandler.OpenProject(file);
+            foreach (string file in files) OnFileDrop(file);
+        }
+
+        public void OnFileDrop(string file)
+        {
+            string ext = Path.GetExtension(file);
+            switch (ext)
+            {
+                case ".cpproj":
+                    DataHandler.OpenProject(file);
+                    break;
+                case ".cplay":
+                    DataHandler.AddLayer(file);
+                    break;
+                default:
+                    break;
+            }   
         }
 
         public void OnOpenProject(object sender, EventArgs e)
@@ -137,7 +154,7 @@ namespace DSCore
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.InitialDirectory = "d:\\";
-                ofd.Filter = "All files (*.*)|*.*";
+                ofd.Filter = "Crop Pod Projects (*.cpproj)|*.cpproj";
                 ofd.FilterIndex = 2;
                 ofd.RestoreDirectory = false;
 
@@ -151,7 +168,22 @@ namespace DSCore
 
         public void OnSaveProject(object sender, EventArgs e)
         {
-            DataHandler.SaveProject();
+            bool rez = DataHandler.SaveProject();
+            if (!rez)
+            {
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.InitialDirectory = "d:\\";
+                    sfd.FilterIndex = 2;
+                    sfd.FileName = "project_name.cpproj";
+                    sfd.RestoreDirectory = false;
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        DataHandler.SaveProject(sfd.FileName);
+                    }
+                }
+            }
         }
 
         public void OnNewProject(object sender, EventArgs e)
@@ -170,6 +202,44 @@ namespace DSCore
                 }
             }
             createProj.Dispose();
+        }
+
+        public void OnLayerCreate(object sender, EventArgs e)
+        {
+            LayerMaker layerMaker = new LayerMaker();
+
+            if (layerMaker.ShowDialog() == DialogResult.OK)
+            {
+                if (layerMaker.LatInput.TextLength > 0
+                    && layerMaker.LonInput.TextLength > 0
+                    && layerMaker.NameInput.TextLength > 0)
+                {
+                    string filename = string.Format("{0}_{1}_{2}.cplay",
+                        layerMaker.NameInput.Text,
+                        layerMaker.LatInput.Text,
+                        layerMaker.LonInput.Text);
+                    using (SaveFileDialog sfd = new SaveFileDialog())
+                    {
+                        sfd.InitialDirectory = "d:\\";
+                        sfd.FilterIndex = 2;
+                        sfd.FileName = filename;
+                        sfd.RestoreDirectory = false;
+
+                        if (sfd.ShowDialog() == DialogResult.OK)
+                        {
+                            filename = sfd.FileName;
+                            DataHandler.CreateLayer(
+                                layerMaker.tiles,
+                                layerMaker.NameInput.Text,
+                                layerMaker.LatInput.Text,
+                                layerMaker.LonInput.Text,
+                                filename
+                            );
+                        }
+                    }
+                }
+            }
+            layerMaker.Dispose();
         }
     }
 }

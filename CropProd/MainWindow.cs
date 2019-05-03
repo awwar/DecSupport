@@ -9,7 +9,7 @@ namespace CropProd
     {
         private readonly DecisionSupport decisionSupport;
 
-        public MainWindow()
+        public MainWindow(string[] args)
         {
             InitializeComponent();
             decisionSupport = new DecisionSupport(this);
@@ -30,9 +30,14 @@ namespace CropProd
             onNewProject.Click  += decisionSupport.OnNewProject;
             onOpenProject.Click += decisionSupport.OnOpenProject;
             onSaveProject.Click += decisionSupport.OnSaveProject;
+            onLayerCreate.Click += decisionSupport.OnLayerCreate;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
+            if(args.Length > 0)
+            {
+                decisionSupport.OnFileDrop(args[0]);
+            }
         }
 
         private void OnNeedRedraw()

@@ -9,11 +9,11 @@ namespace CropProd
         /// Главная точка входа для приложения.
         /// </summary>
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainWindow());
+            Application.Run(new MainWindow(args));
         }
     }
 }

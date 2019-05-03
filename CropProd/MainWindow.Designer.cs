@@ -36,6 +36,8 @@
             this.onNewProject = new System.Windows.Forms.ToolStripMenuItem();
             this.onOpenProject = new System.Windows.Forms.ToolStripMenuItem();
             this.onSaveProject = new System.Windows.Forms.ToolStripMenuItem();
+            this.слоиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.onLayerCreate = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.scene)).BeginInit();
             this.MainMenu.SuspendLayout();
             this.SuspendLayout();
@@ -54,10 +56,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.scene.Cursor = System.Windows.Forms.Cursors.NoMove2D;
-            this.scene.Location = new System.Drawing.Point(-40, -73);
+            this.scene.Location = new System.Drawing.Point(9, 24);
             this.scene.Margin = new System.Windows.Forms.Padding(0);
             this.scene.Name = "scene";
-            this.scene.Size = new System.Drawing.Size(1273, 716);
+            this.scene.Size = new System.Drawing.Size(971, 464);
             this.scene.TabIndex = 3;
             this.scene.TabStop = false;
             // 
@@ -77,11 +79,12 @@
             this.MainMenu.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.MainMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.проектToolStripMenuItem});
+            this.проектToolStripMenuItem,
+            this.слоиToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.MainMenu.Size = new System.Drawing.Size(1291, 24);
+            this.MainMenu.Size = new System.Drawing.Size(989, 24);
             this.MainMenu.TabIndex = 5;
             this.MainMenu.Text = "MainMenu";
             // 
@@ -113,14 +116,29 @@
             this.onSaveProject.Size = new System.Drawing.Size(180, 22);
             this.onSaveProject.Text = "Сохранить";
             // 
+            // слоиToolStripMenuItem
+            // 
+            this.слоиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.onLayerCreate});
+            this.слоиToolStripMenuItem.Name = "слоиToolStripMenuItem";
+            this.слоиToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.слоиToolStripMenuItem.Text = "Слои";
+            // 
+            // onLayerCreate
+            // 
+            this.onLayerCreate.Name = "onLayerCreate";
+            this.onLayerCreate.Size = new System.Drawing.Size(180, 22);
+            this.onLayerCreate.Text = "Создать";
+            // 
             // MainWindow
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.TitleBar;
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(1291, 749);
+            this.ClientSize = new System.Drawing.Size(989, 497);
             this.Controls.Add(this.MainMenu);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.scene);
@@ -131,9 +149,9 @@
             this.Name = "MainWindow";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainWindow";
             this.TransparencyKey = System.Drawing.Color.Transparent;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.scene)).EndInit();
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
@@ -151,6 +169,8 @@
         private System.Windows.Forms.ToolStripMenuItem onNewProject;
         private System.Windows.Forms.ToolStripMenuItem onOpenProject;
         private System.Windows.Forms.ToolStripMenuItem onSaveProject;
+        private System.Windows.Forms.ToolStripMenuItem слоиToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem onLayerCreate;
     }
 }
 

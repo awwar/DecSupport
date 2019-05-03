@@ -50,6 +50,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
@@ -76,6 +77,12 @@
     <Compile Include="CreateProjDialog.Designer.cs">
       <DependentUpon>CreateProjDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="LayerMaker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LayerMaker.Designer.cs">
+      <DependentUpon>LayerMaker.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -100,11 +107,15 @@
     <Compile Include="src\Interfaces\IHandler.cs" />
     <Compile Include="src\Models\Data.cs" />
     <Compile Include="src\Models\Frame.cs" />
+    <Compile Include="src\Models\Layer.cs" />
     <Compile Include="src\Models\Project.cs" />
     <Compile Include="src\Models\Scene.cs" />
     <Compile Include="src\Models\Tile.cs" />
     <EmbeddedResource Include="CreateProjDialog.resx">
       <DependentUpon>CreateProjDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayerMaker.resx">
+      <DependentUpon>LayerMaker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

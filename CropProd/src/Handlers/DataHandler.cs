@@ -59,27 +59,64 @@ namespace Handlers
                 double.Parse(lon, CultureInfo.InvariantCulture),
                 18
             );
-            Project proj = new Project()
+            cureentProject = new Project()
             {
                 Name = name,
                 Lat = tilelatlon[0],
                 Lon = tilelatlon[1]
             };
-            Loader.CreateProject(proj);
+            Loader.CreateProject(cureentProject);
         }
 
         public void OpenProject(string path)
         {
             this.cureentProject = Loader.LoadProject(path);
-            Console.WriteLine(cureentProject.Lat);
+            Console.WriteLine(cureentProject.Name);
         }
 
-        public void SaveProject()
+        public bool SaveProject(string path = null)
         {
             if(cureentProject != null)
             {
-                cureentProject.Lat = 1.000;
-                Loader.SaveProject(cureentProject);
+                if(path != null)
+                {
+                    cureentProject.Path = path;
+                }
+                if(cureentProject.Path == null)
+                {
+                    return false;
+                } else
+                {
+                    Loader.SaveProject(cureentProject);
+                }
+            }
+            return true;
+        }
+
+        public void CreateLayer(Dictionary<string, Bitmap> img , string Name, string Lat, string Lon, string Filename)
+        {
+            double[] tilelatlon = tileCoordinate.Convert(
+                double.Parse(Lat, CultureInfo.InvariantCulture),
+                double.Parse(Lon, CultureInfo.InvariantCulture),
+                18
+            );
+
+            Layer layer = new Layer()
+            {
+                Lat = tilelatlon[0],
+                Lon = tilelatlon[1],
+                Name = Name
+            };
+
+            Loader.CreateLayer(img, layer, Filename);
+        }
+
+        public void AddLayer(string path)
+        {
+            if(cureentProject != null)
+            {
+
+                Loader.AddLayer(path, cureentProject.Name);
             }
         }
 
