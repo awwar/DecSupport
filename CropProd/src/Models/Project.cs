@@ -9,9 +9,10 @@ namespace Models
     [Serializable]
     class Project
     {
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public double Lat { get; set; }
-        public double Lon { get; set; }
+        public string Name { get; set; } = null;
+        public string Path { get; set; } = null;
+        public double Lat { get; set; } = 0;
+        public double Lon { get; set; } = 0;
+        public string Hash { get; set; } = null;
     }
 }

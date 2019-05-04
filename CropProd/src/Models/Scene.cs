@@ -1,15 +1,21 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace Models
 {
+    [Serializable]
     internal class Scene
     {
+
+        public double Lat { get; set; }//55.763582;
+        public double Lon { get; set; }//37.663053;
+        public string Name { get; set; } = "Проект принятия решения";
+        public string Path { get; set; } = null;
+        public string Hash { get; set; } = null;
         public Vector2 Size { get; set; } = new Vector2(0, 0);
         public Vector2 Position { get; set; } = new Vector2(0, 0);
         public Vector2 Coordinate { get; set; } = new Vector2(0, 0);
         public int Zoom { get; set; } = 18;
-        public double Lat { get; set; } = 55.763582;
-        public double Lon { get; set; } = 37.663053;
 
         public Scene(Vector2 size)
         {

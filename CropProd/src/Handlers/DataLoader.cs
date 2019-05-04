@@ -1,18 +1,12 @@
-﻿using LatLonToTile;
-using Models;
+﻿using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Numerics;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Handlers
 {
@@ -27,24 +21,39 @@ namespace Handlers
 
         public void CreateProject(Project project)
         {
-            string path = basepath + project.Name;
-            if (!Directory.Exists(path))
+            project.Hash = GetHashProjName(project);
+
+            string tempPath = basepath + project.Hash;
+
+            if (!Directory.Exists(tempPath))
             {
-                Directory.CreateDirectory(path);                
+                Directory.CreateDirectory(tempPath);                
             }
         }
 
         public void SaveProject(Project project)
         {
-            string path = basepath + project.Name + "/";
-            Serilize(project, path);
-            ZipFile.CreateFromDirectory(path, project.Path);
+            string tempPath = basepath + project.Hash;
+
+            project.Hash = GetHashProjName(project);
+
+            Serilize(project, tempPath);
+            if (File.Exists(project.Path))
+            {
+                File.Delete(project.Path);
+            }
+            ZipFile.CreateFromDirectory(tempPath, project.Path);
         }
 
         public Project LoadProject(string path)
         {
-            string newPath = LoadZippenProject(path);
-            Project project = DeSerilize<Project>(newPath);
+            Project project = ReadProjectData(path);
+            string tempPath = basepath + project.Hash;
+            if (!Directory.Exists(tempPath))
+            {
+                ZipFile.ExtractToDirectory(path, tempPath);
+                project.Hash = GetHashProjName(project);
+            }
             project.Path = path;
             return project;
         }
@@ -82,14 +91,20 @@ namespace Handlers
             }
         }
 
-        private string LoadZippenProject(string path)
+        private Project ReadProjectData(string path)
         {
-            string trueNamePath = basepath + Path.GetFileNameWithoutExtension(path);
-            if (!Directory.Exists(trueNamePath))
+            using (var file = File.OpenRead(path))
+            using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
             {
-                ZipFile.ExtractToDirectory(path, trueNamePath);
+                foreach (var entry in zip.Entries)
+                {
+                    if (entry.FullName == "data.bin")
+                    {
+                        return DeSerilize<Project>(entry.Open());
+                    }
+                }
             }
-            return trueNamePath;
+            return null;
         }
 
         private void Serilize<T>(T project, string path)
@@ -102,11 +117,33 @@ namespace Handlers
 
         private T DeSerilize<T>(string path)
         {
-            IFormatter formatter = new BinaryFormatter();
             Stream stream = new FileStream(path + "/data.bin", FileMode.Open, FileAccess.Read);
+            return DeSerilize<T>(stream);
+        }
+
+        private T DeSerilize<T>(Stream stream)
+        {
+            IFormatter formatter = new BinaryFormatter();
             T serializeble = (T)formatter.Deserialize(stream);
             stream.Close();
             return serializeble;
+        }
+
+        private string GetHashProjName(Project project)
+        {
+            if (String.IsNullOrEmpty(project.Name))
+                return String.Empty;
+
+            if (!String.IsNullOrEmpty(project.Hash))
+                return project.Hash;
+
+            using (var sha = new System.Security.Cryptography.SHA256Managed())
+            {
+                DateTime now = DateTime.Now;
+                byte[] textData = System.Text.Encoding.UTF8.GetBytes(project.Name + now.ToString());
+                byte[] hash = sha.ComputeHash(textData);
+                return BitConverter.ToString(hash).Replace("-", String.Empty);
+            }
         }
     }
 }

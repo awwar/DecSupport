@@ -29,7 +29,7 @@ namespace DSCore
         {
             form = myform;
             scene = new Scene(new Vector2(myform.Size.Height));
-
+            form.Text = scene.Name;
 
             TileThread = new Thread(() =>
             {
@@ -48,6 +48,7 @@ namespace DSCore
                 form.scene.Width,
                 form.scene.Height
             ));
+            TileHandler.Update();
             OnNeedRedraw();
         }
 
@@ -140,11 +141,14 @@ namespace DSCore
             {
                 case ".cpproj":
                     DataHandler.OpenProject(file);
+                    form.Text = scene.Name;
+                    TileHandler.Update();
                     break;
                 case ".cplay":
                     DataHandler.AddLayer(file);
                     break;
                 default:
+                    MessageBox.Show("Неизвестное расширение проекта!");
                     break;
             }   
         }
@@ -202,6 +206,7 @@ namespace DSCore
                 }
             }
             createProj.Dispose();
+            TileHandler.Update();
         }
 
         public void OnLayerCreate(object sender, EventArgs e)

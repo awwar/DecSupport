@@ -62,6 +62,10 @@ namespace Handlers
 
         public void Update()
         {
+            if(scene.Lat == 0)
+            {
+                return;
+            }
             RecalculateSceneTilePosition();
             Loader.ClearPool();
             ClearTilePool();
