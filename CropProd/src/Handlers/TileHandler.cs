@@ -11,16 +11,16 @@ using System.Threading;
 
 namespace Handlers
 {
-    internal class TileHandler : IHandler
+    class TileHandler : IHandler
     {
         private string basePath = "";
         private string name = "google";
         private Action Redraw;
+        private int tilesize = Settings.Settings.TileSize;
 
         private readonly Random rnd;
         private Scene scene;
         private TileLoader Loader;
-        private TileCoordinate TileCoordinateConverter;
         private readonly Thread ImgLoader;
         private List<Tile> tiles = new List<Tile>();
 
@@ -40,7 +40,6 @@ namespace Handlers
             this.scene = scene;
             this.Redraw = redraw;
             rnd = new Random();
-            TileCoordinateConverter = new TileCoordinate(256);
             basePath = Path.GetTempPath() + "CropPod/tiles";
             ImgLoader = new Thread(() => { Loader = new TileLoader(); Loader.OnImageLoad += ImageLoaded; })
             {
@@ -54,7 +53,7 @@ namespace Handlers
             Tile[] tileA = tiles.ToArray();
             foreach (Tile tile in tileA)
             {
-                tile.Draw();
+                tile.Draw(scene.Position);
                 UpdateTile(tile);
             }
             return tileA;
@@ -62,22 +61,31 @@ namespace Handlers
 
         public void Update()
         {
-            if(scene.Lat == 0)
+            if (scene.Coordinate.Length() <= 0)
             {
                 return;
             }
-            RecalculateSceneTilePosition();
             Loader.ClearPool();
             ClearTilePool();
             GC.Collect();
             GetScreenAt();
         }
 
+        public void ImageLoaded(object sender, ImageLoadArgs e)
+        {
+            Tile find = tiles.Find(x => x.Path.Contains(e.Path));
+            if (find != null)
+            {
+                find.Image = e.Image;
+            }
+            Redraw();
+        }
+
         private void GetScreenAt()
         {
-            int width = (int)scene.Size.X / (256 * 2) + 2;
+            int width = (int)scene.Size.X / (tilesize * 2) + 2;
 
-            int height = (int)scene.Size.Y / (256 * 2) + 2;
+            int height = (int)scene.Size.Y / (tilesize * 2) + 2;
 
             for (int y = -height; y <= height; y++)
             {
@@ -88,23 +96,13 @@ namespace Handlers
             }
         }
 
-        public void ImageLoaded(object sender, ImageLoadArgs e)
-        {
-            Tile find = tiles.Find(x => x.Path.Contains(e.Path));
-            if (find != null)
-            {
-                find.Image = e.Image;                
-            }
-            Redraw();
-        }
-
         private void GetTileAt(Vector2 leftop)
         {
             double tx = leftop.X + scene.Coordinate.X;
             double ty = leftop.Y + scene.Coordinate.Y;
 
             string url = string.Format(distrib[name], tx, ty, scene.Zoom, rnd.Next(1, 3));
-            string filename = tx.ToString() + "_" + ty.ToString() + ".jpeg";
+            string filename = $"{tx.ToString()}_{ty.ToString()}.jpeg";
             string query = string.Format(@"{0}\{1}\{2}\", basePath, name, scene.Zoom);
             string fullpath = query + filename;
 
@@ -113,8 +111,7 @@ namespace Handlers
                 Tile tile = new Tile(
                     leftop,
                     url,
-                    fullpath,
-                    ref scene
+                    fullpath
                 );
                 Loader.AddFrame(tile);
                 AddTile(tile);
@@ -122,24 +119,19 @@ namespace Handlers
             else
             {
                 Image img;
-                FileStream myStream = new FileStream(fullpath, FileMode.Open, FileAccess.Read);
                 try
                 {
+                    FileStream myStream = new FileStream(fullpath, FileMode.Open, FileAccess.Read);
                     img = Image.FromStream(myStream);
+                    myStream.Close();
                 }
                 catch (Exception)
                 {
                     img = null;
                 }
-                finally
-                {
-                    myStream.Close();
-                    myStream.Dispose();
-                }
                 AddTile(new Tile(
                     leftop,
-                    img,
-                    ref scene
+                    img
                 ));
             }
         }
@@ -154,7 +146,7 @@ namespace Handlers
 
         private void RemoveTile(Tile tile)
         {
-            DisposeImg(tile);
+            //DisposeImg(tile);
             tiles.Remove(tile);
         }
 
@@ -181,38 +173,30 @@ namespace Handlers
 
         private void UpdateTile(Tile tile)
         {
-            if (tile.Screenposition.Y < -256 * 2 || tile.Screenposition.Y > scene.Size.Y + 256)
+            if (tile.Screenposition.Y < -tilesize * 2 || tile.Screenposition.Y > scene.Size.Y + tilesize)
             {
                 GetTileAt(
                     new Vector2(
-                        tile.coordinate.X,
-                        (tile.Screenposition.Y < -256 * 2)
-                            ? tile.coordinate.Y + (int)scene.Size.Y / (256) + 3
-                            : tile.coordinate.Y - (int)scene.Size.Y / (256) - 3
+                        tile.Coordinate.X,
+                        (tile.Screenposition.Y < -tilesize * 2)
+                            ? tile.Coordinate.Y + (int)scene.Size.Y / (tilesize) + 3
+                            : tile.Coordinate.Y - (int)scene.Size.Y / (tilesize) - 3
                     )
                 );
                 RemoveTile(tile);
             }
-            else if (tile.Screenposition.X < -256 * 2 || tile.Screenposition.X > scene.Size.X + 256)
+            else if (tile.Screenposition.X < -tilesize * 2 || tile.Screenposition.X > scene.Size.X + tilesize)
             {
                 GetTileAt(
                     new Vector2(
-                        (tile.Screenposition.X < -256 * 2)
-                            ? tile.coordinate.X + (int)scene.Size.X / (256) + 3
-                            : tile.coordinate.X - (int)scene.Size.X / (256) - 3,
-                        tile.coordinate.Y
+                        (tile.Screenposition.X < -tilesize * 2)
+                            ? tile.Coordinate.X + (int)scene.Size.X / (tilesize) + 3
+                            : tile.Coordinate.X - (int)scene.Size.X / (tilesize) - 3,
+                        tile.Coordinate.Y
                     )
                 );
                 RemoveTile(tile);
             }
-        }
-
-        private void RecalculateSceneTilePosition()
-        {
-            double[] rez = TileCoordinateConverter.Convert(scene.Lat, scene.Lon, scene.Zoom);
-            scene.SetTileCenter(
-                new Vector2((float)rez[0], (float)rez[1])
-            );
         }
     }
 }

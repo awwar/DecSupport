@@ -25,13 +25,13 @@ namespace Handlers
         {
             this.scene = scene;
             this.Redraw = redraw;
-            tileCoordinate = new TileCoordinate(256);
+            tileCoordinate = new TileCoordinate(Settings.Settings.TileSize);
             Loader = new DataLoader();
         }
 
         public void AddData(Image img , Vector2 pos)
         {
-            datas.Add(new Data(pos, new Vector2(img.Width, img.Height), img, ref scene));
+            datas.Add(new Data(pos, new Vector2(img.Width, img.Height), img));
         }
 
 
@@ -42,10 +42,9 @@ namespace Handlers
 
         public Frame[] Handle()
         {
-
             foreach (var item in datas)
             {
-                item.Draw();
+                item.Draw(scene.Position);
             }
             return datas.ToArray();
         }
@@ -64,13 +63,13 @@ namespace Handlers
                 Lon = tilelatlon[1]
             };
             Loader.CreateProject(cureentProject);
-            scene.Name = cureentProject.Name;
+            scene.AppendProject(cureentProject);
         }
 
         public void OpenProject(string path)
         {
             this.cureentProject = Loader.LoadProject(path);
-            scene.Name = cureentProject.Name;
+            scene.AppendProject(cureentProject);
         }
 
         public bool SaveProject(string path = null)
@@ -93,7 +92,7 @@ namespace Handlers
             return true;
         }
 
-        public void CreateLayer(Dictionary<string, Bitmap> img , string Name, string Lat, string Lon, string Filename)
+        public void CreateLayer(Dictionary<string, Bitmap> img, string Lat, string Lon, string Filename)
         {
             double[] tilelatlon = tileCoordinate.Convert(
                 double.Parse(Lat, CultureInfo.InvariantCulture),
@@ -105,7 +104,7 @@ namespace Handlers
             {
                 Lat = tilelatlon[0],
                 Lon = tilelatlon[1],
-                Name = Name
+                Name = Path.GetFileNameWithoutExtension(Filename)
             };
 
             Loader.CreateLayer(img, layer, Filename);
@@ -115,7 +114,7 @@ namespace Handlers
         {
             if(cureentProject != null)
             {
-                Loader.AddLayer(path, cureentProject.Name);
+                Loader.AddLayer(path, cureentProject.Hash);
             }
         }
 

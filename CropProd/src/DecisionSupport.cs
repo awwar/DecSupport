@@ -28,18 +28,20 @@ namespace DSCore
         public DecisionSupport(MainWindow myform)
         {
             form = myform;
-            scene = new Scene(new Vector2(myform.Size.Height));
+            scene = new Scene(new Vector2(myform.scene.Size.Width, myform.scene.Size.Height));
             form.Text = scene.Name;
 
-            TileThread = new Thread(() =>
-            {
-                TileHandler = new TileHandler(ref scene, OnNeedRedraw);
-                DataHandler = new DataHandler(ref scene, OnNeedRedraw);
-            })
+            TileThread = new Thread(Start)
             {
                 IsBackground = false
             };
             TileThread.Start();
+        }
+
+        private void Start()
+        {
+            this.TileHandler = new TileHandler(ref scene, OnNeedRedraw);
+            this.DataHandler = new DataHandler(ref scene, OnNeedRedraw);
         }
 
         public void OnResize(object sender, EventArgs e)
@@ -55,6 +57,7 @@ namespace DSCore
         public void OnDraw(object sender, PaintEventArgs e)
         {
             scene.Update(delta);
+            delta = new Vector2(0, 0);
             e.Graphics.Clear(Color.Black);
 
 
@@ -66,7 +69,7 @@ namespace DSCore
 
             Frame[] frames = TileHandler.Handle();
 
-            frames = frames.Concat(DataHandler.Handle()).ToArray();
+            //frames = frames.Concat(DataHandler.Handle()).ToArray();
 
 
             if (frames != null)
@@ -88,7 +91,11 @@ namespace DSCore
                     {
                         Console.WriteLine("image error");
                     }
-                    e.Graphics.DrawRectangle(pen, frame.Screenposition.X, frame.Screenposition.Y, 256, 256);
+                    /*e.Graphics.DrawRectangle(pen,
+                                             frame.Screenposition.X,
+                                             frame.Screenposition.Y,
+                                             Settings.Settings.TileSize,
+                                             Settings.Settings.TileSize);*/
                 }
             }
 
@@ -96,7 +103,7 @@ namespace DSCore
             e.Graphics.DrawLine(new Pen(Color.Green, 3f), scene.Position.X, scene.Position.Y - 10, scene.Position.X, scene.Position.Y + 10);
             e.Graphics.DrawLine(pen, scene.Size.X / 2 - 10, scene.Size.Y / 2, scene.Size.X / 2 + 10, scene.Size.Y / 2);
             e.Graphics.DrawLine(pen, scene.Size.X / 2, scene.Size.Y / 2 - 10, scene.Size.X / 2, scene.Size.Y / 2 + 10);
-            delta = new Vector2(0, 0);
+
         }
 
         public void OnMouseClick(object sender, MouseEventArgs e)
@@ -150,14 +157,14 @@ namespace DSCore
                 default:
                     MessageBox.Show("Неизвестное расширение проекта!");
                     break;
-            }   
+            }
         }
 
         public void OnOpenProject(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                ofd.InitialDirectory = "d:\\";
+                ofd.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
                 ofd.Filter = "Crop Pod Projects (*.cpproj)|*.cpproj";
                 ofd.FilterIndex = 2;
                 ofd.RestoreDirectory = false;
@@ -165,7 +172,7 @@ namespace DSCore
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     string filename = ofd.FileName;
-                    DataHandler.OpenProject(filename);
+                    OnFileDrop(filename);
                 }
             }
         }
@@ -177,9 +184,10 @@ namespace DSCore
             {
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    sfd.InitialDirectory = "d:\\";
+                    sfd.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
+                    sfd.Filter = "Crop Pod Projects (*.cpproj)|*.cpproj";
                     sfd.FilterIndex = 2;
-                    sfd.FileName = "project_name.cpproj";
+                    sfd.FileName = "";
                     sfd.RestoreDirectory = false;
 
                     if (sfd.ShowDialog() == DialogResult.OK)
@@ -200,9 +208,10 @@ namespace DSCore
                     && createProj.LonInput.TextLength > 0
                     && createProj.ProjName.TextLength > 0)
                 {
-                    DataHandler.CreateProject(createProj.ProjName.Text,
-                                           createProj.LatInput.Text,
-                                           createProj.LonInput.Text);
+                    DataHandler.CreateProject(
+                        createProj.ProjName.Text,
+                        createProj.LatInput.Text,
+                        createProj.LonInput.Text);
                 }
             }
             createProj.Dispose();
@@ -219,23 +228,20 @@ namespace DSCore
                     && layerMaker.LonInput.TextLength > 0
                     && layerMaker.NameInput.TextLength > 0)
                 {
-                    string filename = string.Format("{0}_{1}_{2}.cplay",
-                        layerMaker.NameInput.Text,
-                        layerMaker.LatInput.Text,
-                        layerMaker.LonInput.Text);
+
                     using (SaveFileDialog sfd = new SaveFileDialog())
                     {
-                        sfd.InitialDirectory = "d:\\";
+                        sfd.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
+                        sfd.Filter = "Crop Pod Layer (*.cplay)|*.cplay";
                         sfd.FilterIndex = 2;
-                        sfd.FileName = filename;
+                        sfd.FileName = layerMaker.NameInput.Text;
                         sfd.RestoreDirectory = false;
 
                         if (sfd.ShowDialog() == DialogResult.OK)
                         {
-                            filename = sfd.FileName;
+                            string filename = sfd.FileName;
                             DataHandler.CreateLayer(
                                 layerMaker.tiles,
-                                layerMaker.NameInput.Text,
                                 layerMaker.LatInput.Text,
                                 layerMaker.LonInput.Text,
                                 filename
@@ -245,6 +251,17 @@ namespace DSCore
                 }
             }
             layerMaker.Dispose();
+        }
+
+        public void DrawLayerItem(int n)
+        {
+            LayerListItem item = new LayerListItem();
+            item.CreateControl();
+            item.Parent = form.LayerList;
+            item.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
+            item.Location = new Point(item.Parent.Padding.Left, item.Parent.Padding.Top + item.Height * n + 10);
+            item.Show();
         }
     }
 }

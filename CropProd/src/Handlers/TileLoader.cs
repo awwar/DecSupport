@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Handlers
 {
-    internal class TileLoader
+    class TileLoader
     {
         private readonly WebClient client;
 
@@ -51,7 +51,7 @@ namespace Handlers
         public void AddFrame(Tile frame)
         {
             data[frame.Path] = frame;
-            Load();  
+            Load();
         }
 
         /*
@@ -93,10 +93,9 @@ namespace Handlers
                 return;
             }
             isLoading = true;
-            Image img = null;
             Tile frame = DictPop();
 
-            if(frame == null)
+            if (frame == null)
             {
                 return;
             }
@@ -109,7 +108,6 @@ namespace Handlers
                 {
                     client.Headers.Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 Safari/537.36");
                     await client.DownloadFileTaskAsync(new Uri(frame.Url), @frame.Path);
-                    client.Dispose();
                 }
                 catch (Exception e)
                 {
@@ -120,21 +118,16 @@ namespace Handlers
                 FileStream myStream = new FileStream(frame.Path, FileMode.Open, FileAccess.Read);
                 try
                 {
-                    
-                    img = Image.FromStream(myStream);
-
+                    Image img = Image.FromStream(myStream);
                     OnImageLoad(this, new ImageLoadArgs(img, frame.Path));
+                    myStream.Close();
                 }
                 catch
                 {
+                    myStream.Close();
                     Console.WriteLine("Filetaker error!");
                     File.Delete(@frame.Path);
                     return;
-                }
-                finally
-                {
-                    myStream.Close();
-                    myStream.Dispose();
                 }
                 return;
             }

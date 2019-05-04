@@ -39,8 +39,8 @@ namespace CropProd
             MemoryStream ms = new MemoryStream();
             pictureBox1.Image.Save(ms, ImageFormat.Jpeg);
             var img = Image.FromStream(ms);
-            int tileWidth = 256;
-            int tileHeight = 256;
+            int tileWidth = Settings.Settings.TileSize;
+            int tileHeight = Settings.Settings.TileSize;
             
             for (int x = 0; x <= down; x++)
             {
@@ -61,13 +61,12 @@ namespace CropProd
                 }
             }
             ms.Close();
-            ms.Dispose();
         }
 
         private void PictureBox1_Click(object sender, MouseEventArgs e)
         {
-            clickTileX = (int)Math.Floor((double)(e.X / 256));
-            clickTileY = (int)Math.Floor((double)(e.Y / 256));
+            clickTileX = (int)Math.Floor((double)(e.X / Settings.Settings.TileSize));
+            clickTileY = (int)Math.Floor((double)(e.Y / Settings.Settings.TileSize));
             pictureBox1.Invalidate();
         }
 
@@ -80,7 +79,7 @@ namespace CropProd
         {
             if (img != null)
             {
-
+                float tile = Settings.Settings.TileSize;
                 pictureBox1.Image = img;
                 for (int i = 0; i <= down; i++)
                 {
@@ -88,19 +87,19 @@ namespace CropProd
                     {
                         e.Graphics.DrawRectangle(
                             pen,
-                            j * 256,
-                            i * 256,
-                            256,
-                            256
+                            j * tile,
+                            i * tile,
+                            tile,
+                            tile
                         );
                     }
                 }
                 e.Graphics.DrawRectangle(
                     pen1,
-                    clickTileX * 256,
-                    clickTileY * 256,
-                    256,
-                    256
+                    clickTileX * tile,
+                    clickTileY * tile,
+                    tile,
+                    tile
                 );
             }
         }
@@ -109,8 +108,8 @@ namespace CropProd
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             img = Image.FromFile(files[0]);
-            rignt = (int)Math.Ceiling((double)(img.Width / 256));
-            down = (int)Math.Ceiling((double)(img.Height / 256));
+            rignt = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
+            down = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));
             pictureBox1.Invalidate();
         }
     }

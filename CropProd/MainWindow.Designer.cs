@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.scene = new System.Windows.Forms.PictureBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.проектToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.onNewProject = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,8 +36,10 @@
             this.onSaveProject = new System.Windows.Forms.ToolStripMenuItem();
             this.слоиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.onLayerCreate = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.scene)).BeginInit();
+            this.LayerList = new System.Windows.Forms.GroupBox();
+            this.scene = new System.Windows.Forms.PictureBox();
             this.MainMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.scene)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -49,29 +49,6 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(0, 13);
             this.label1.TabIndex = 2;
-            // 
-            // scene
-            // 
-            this.scene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.scene.Cursor = System.Windows.Forms.Cursors.NoMove2D;
-            this.scene.Location = new System.Drawing.Point(9, 24);
-            this.scene.Margin = new System.Windows.Forms.Padding(0);
-            this.scene.Name = "scene";
-            this.scene.Size = new System.Drawing.Size(971, 464);
-            this.scene.TabIndex = 3;
-            this.scene.TabStop = false;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(127, 26);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // MainMenu
             // 
@@ -84,7 +61,7 @@
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.MainMenu.Size = new System.Drawing.Size(989, 24);
+            this.MainMenu.Size = new System.Drawing.Size(1136, 24);
             this.MainMenu.TabIndex = 5;
             this.MainMenu.Text = "MainMenu";
             // 
@@ -101,19 +78,19 @@
             // onNewProject
             // 
             this.onNewProject.Name = "onNewProject";
-            this.onNewProject.Size = new System.Drawing.Size(180, 22);
+            this.onNewProject.Size = new System.Drawing.Size(132, 22);
             this.onNewProject.Text = "Создать";
             // 
             // onOpenProject
             // 
             this.onOpenProject.Name = "onOpenProject";
-            this.onOpenProject.Size = new System.Drawing.Size(180, 22);
+            this.onOpenProject.Size = new System.Drawing.Size(132, 22);
             this.onOpenProject.Text = "Открыть";
             // 
             // onSaveProject
             // 
             this.onSaveProject.Name = "onSaveProject";
-            this.onSaveProject.Size = new System.Drawing.Size(180, 22);
+            this.onSaveProject.Size = new System.Drawing.Size(132, 22);
             this.onSaveProject.Text = "Сохранить";
             // 
             // слоиToolStripMenuItem
@@ -127,8 +104,33 @@
             // onLayerCreate
             // 
             this.onLayerCreate.Name = "onLayerCreate";
-            this.onLayerCreate.Size = new System.Drawing.Size(180, 22);
+            this.onLayerCreate.Size = new System.Drawing.Size(117, 22);
             this.onLayerCreate.Text = "Создать";
+            // 
+            // LayerList
+            // 
+            this.LayerList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LayerList.Location = new System.Drawing.Point(923, 28);
+            this.LayerList.Name = "LayerList";
+            this.LayerList.Padding = new System.Windows.Forms.Padding(3, 20, 3, 3);
+            this.LayerList.Size = new System.Drawing.Size(201, 669);
+            this.LayerList.TabIndex = 6;
+            this.LayerList.TabStop = false;
+            this.LayerList.Text = "Layers";
+            // 
+            // scene
+            // 
+            this.scene.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.scene.Cursor = System.Windows.Forms.Cursors.NoMove2D;
+            this.scene.Location = new System.Drawing.Point(9, 24);
+            this.scene.Margin = new System.Windows.Forms.Padding(0);
+            this.scene.Name = "scene";
+            this.scene.Size = new System.Drawing.Size(911, 676);
+            this.scene.TabIndex = 3;
+            this.scene.TabStop = false;
             // 
             // MainWindow
             // 
@@ -138,9 +140,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.ClientSize = new System.Drawing.Size(989, 497);
+            this.ClientSize = new System.Drawing.Size(1136, 709);
+            this.Controls.Add(this.LayerList);
             this.Controls.Add(this.MainMenu);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.scene);
             this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
@@ -151,10 +153,10 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainWindow";
-            this.TransparencyKey = System.Drawing.Color.Transparent;
-            ((System.ComponentModel.ISupportInitialize)(this.scene)).EndInit();
+            this.TransparencyKey = System.Drawing.Color.Silver;
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.scene)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -163,7 +165,6 @@
         #endregion
         private System.Windows.Forms.Label label1;
         public System.Windows.Forms.PictureBox scene;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.MenuStrip MainMenu;
         private System.Windows.Forms.ToolStripMenuItem проектToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem onNewProject;
@@ -171,6 +172,7 @@
         private System.Windows.Forms.ToolStripMenuItem onSaveProject;
         private System.Windows.Forms.ToolStripMenuItem слоиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem onLayerCreate;
+        public System.Windows.Forms.GroupBox LayerList;
     }
 }
 

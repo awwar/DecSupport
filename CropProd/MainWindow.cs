@@ -19,6 +19,8 @@ namespace CropProd
 
             UpdateStyles();
 
+            Settings.Settings.TileSize = 256;
+
             //Handle draw calls
             // scene.MouseWheel    += decisionSupprot.OnZoom;
             scene.Paint         += decisionSupport.OnDraw;
@@ -34,8 +36,10 @@ namespace CropProd
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
-            if(args.Length > 0)
+
+            if (args.Length > 0)
             {
+                MessageBox.Show("Открыть: " + args[0] + "?");
                 decisionSupport.OnFileDrop(args[0]);
             }
         }
@@ -43,11 +47,6 @@ namespace CropProd
         private void OnNeedRedraw()
         {
             scene.Refresh();
-        }
-
-        private void Button2_Click(object sender, EventArgs e)
-        {
-            decisionSupport.TileHandler.Update();
         }
 
         private void Readimg(string filename)

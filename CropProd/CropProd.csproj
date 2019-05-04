@@ -103,7 +103,6 @@
     <Compile Include="src\Handlers\TileLoader.cs" />
     <Compile Include="src\Handlers\TileHandler.cs" />
     <Compile Include="src\Events\ImageLoadArgs.cs" />
-    <Compile Include="src\Interfaces\IFrame.cs" />
     <Compile Include="src\Interfaces\IHandler.cs" />
     <Compile Include="src\Models\Data.cs" />
     <Compile Include="src\Models\Frame.cs" />
@@ -111,6 +110,13 @@
     <Compile Include="src\Models\Project.cs" />
     <Compile Include="src\Models\Scene.cs" />
     <Compile Include="src\Models\Tile.cs" />
+    <Compile Include="src\Settings\Settings.cs" />
+    <Compile Include="LayerListItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LayerListItem.Designer.cs">
+      <DependentUpon>LayerListItem.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="CreateProjDialog.resx">
       <DependentUpon>CreateProjDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -132,6 +138,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="LayerListItem.resx">
+      <DependentUpon>LayerListItem.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="obj\Debug\CropProd.csproj.CopyComplete" />
     <None Include="obj\Debug\CropProd.csproj.CoreCompileInputs.cache" />
     <None Include="obj\Debug\CropProd.csproj.GenerateResource.cache" />

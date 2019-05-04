@@ -21,21 +21,19 @@ namespace Handlers
 
         public void CreateProject(Project project)
         {
-            project.Hash = GetHashProjName(project);
+            project.Hash = GetHashName(project.Name);
 
             string tempPath = basepath + project.Hash;
 
             if (!Directory.Exists(tempPath))
             {
-                Directory.CreateDirectory(tempPath);                
+                Directory.CreateDirectory(tempPath);
             }
         }
 
         public void SaveProject(Project project)
         {
             string tempPath = basepath + project.Hash;
-
-            project.Hash = GetHashProjName(project);
 
             Serilize(project, tempPath);
             if (File.Exists(project.Path))
@@ -47,12 +45,12 @@ namespace Handlers
 
         public Project LoadProject(string path)
         {
-            Project project = ReadProjectData(path);
+            Project project = ReadFileData<Project>(path);
             string tempPath = basepath + project.Hash;
+
             if (!Directory.Exists(tempPath))
             {
                 ZipFile.ExtractToDirectory(path, tempPath);
-                project.Hash = GetHashProjName(project);
             }
             project.Path = path;
             return project;
@@ -60,22 +58,23 @@ namespace Handlers
 
         public void CreateLayer(Dictionary<string, Bitmap> tiles, Layer layer, string Filename)
         {
-            string layerpath = Path.GetTempPath() + "CropPod/layers/" + Path.GetFileNameWithoutExtension(Filename)+"/";
-            Directory.CreateDirectory(layerpath);
+            layer.Hash = GetHashName(layer.Name);
+            string layerpath = Path.GetTempPath() + "CropPod/layers/" + layer.Hash + "/";
 
-            foreach (KeyValuePair<string , Bitmap> tile in tiles)
+            Directory.CreateDirectory(layerpath);
+            foreach (KeyValuePair<string, Bitmap> tile in tiles)
             {
                 tile.Value.Save(layerpath + tile.Key + ".png", ImageFormat.Png);
             }
             Serilize(layer, layerpath);
+
             ZipFile.CreateFromDirectory(layerpath, Filename);
         }
 
-        public void AddLayer(string path , string prodname)
+        public void AddLayer(string path, string prodname)
         {
-            string layername = Path.GetFileNameWithoutExtension(path);
-            string prodpath = basepath + prodname + "/" + layername;
-
+            Layer layer = ReadFileData<Layer>(path);
+            string prodpath = basepath + prodname + "/" + layer.Hash;
 
             if (!Directory.Exists(prodpath))
             {
@@ -91,8 +90,9 @@ namespace Handlers
             }
         }
 
-        private Project ReadProjectData(string path)
+        private T ReadFileData <T>(string path)
         {
+            T data = default;
             using (var file = File.OpenRead(path))
             using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
             {
@@ -100,11 +100,11 @@ namespace Handlers
                 {
                     if (entry.FullName == "data.bin")
                     {
-                        return DeSerilize<Project>(entry.Open());
+                        data = DeSerilize<T>(entry.Open());
                     }
                 }
             }
-            return null;
+            return data;
         }
 
         private void Serilize<T>(T project, string path)
@@ -129,18 +129,15 @@ namespace Handlers
             return serializeble;
         }
 
-        private string GetHashProjName(Project project)
+        private string GetHashName(string name)
         {
-            if (String.IsNullOrEmpty(project.Name))
+            if (String.IsNullOrEmpty(name))
                 return String.Empty;
-
-            if (!String.IsNullOrEmpty(project.Hash))
-                return project.Hash;
 
             using (var sha = new System.Security.Cryptography.SHA256Managed())
             {
                 DateTime now = DateTime.Now;
-                byte[] textData = System.Text.Encoding.UTF8.GetBytes(project.Name + now.ToString());
+                byte[] textData = System.Text.Encoding.UTF8.GetBytes(name + now.ToString());
                 byte[] hash = sha.ComputeHash(textData);
                 return BitConverter.ToString(hash).Replace("-", String.Empty);
             }

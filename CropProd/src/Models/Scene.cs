@@ -1,17 +1,13 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Models
 {
-    [Serializable]
-    internal class Scene
+    class Scene
     {
 
-        public double Lat { get; set; }//55.763582;
-        public double Lon { get; set; }//37.663053;
+        //55.763582;
+        //37.663053;
         public string Name { get; set; } = "Проект принятия решения";
-        public string Path { get; set; } = null;
-        public string Hash { get; set; } = null;
         public Vector2 Size { get; set; } = new Vector2(0, 0);
         public Vector2 Position { get; set; } = new Vector2(0, 0);
         public Vector2 Coordinate { get; set; } = new Vector2(0, 0);
@@ -19,25 +15,31 @@ namespace Models
 
         public Scene(Vector2 size)
         {
-            this.Size = size / 2;
-            Position = Vector2.Add(Position, this.Size);
+            this.Size = size;
+            this.Position = Vector2.Add(this.Position, this.Size / 2);
         }
 
         public void Update(Vector2 delta)
         {
-            Position = Vector2.Add(Position, delta);
+            this.Position = Vector2.Add(this.Position, delta);
         }
 
         public void SetTileCenter(Vector2 center)
         {
-            Coordinate = center;
+            this.Coordinate = center;
         }
 
         public void Resize(Vector2 size)
         {
-            Position = Vector2.Subtract(Position, this.Size);
+            this.Position = Vector2.Subtract(this.Position, this.Size / 2);
             this.Size = size;
-            Position = Vector2.Add(Position, size / 2);
+            this.Position = Vector2.Add(this.Position, size / 2);
+        }
+
+        public void AppendProject(Project proj)
+        {
+            this.Name = proj.Name;
+            this.Coordinate = new Vector2((float)proj.Lat, (float)proj.Lon);
         }
     }
 }
