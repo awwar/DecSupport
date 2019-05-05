@@ -28,20 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.components = new System.ComponentModel.Container();
+            this.LayName = new System.Windows.Forms.Label();
             this.isInvert = new System.Windows.Forms.RadioButton();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
+            // LayName
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "label1";
+            this.LayName.AutoSize = true;
+            this.LayName.Location = new System.Drawing.Point(3, 4);
+            this.LayName.Name = "LayName";
+            this.LayName.Size = new System.Drawing.Size(35, 13);
+            this.LayName.TabIndex = 0;
+            this.LayName.Text = "label1";
             // 
             // isInvert
             // 
@@ -65,6 +67,11 @@
             this.trackBar1.Size = new System.Drawing.Size(175, 45);
             this.trackBar1.TabIndex = 2;
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // LayerListItem
             // 
             this.AllowDrop = true;
@@ -76,7 +83,7 @@
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.isInvert);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.LayName);
             this.Name = "LayerListItem";
             this.Size = new System.Drawing.Size(181, 69);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
@@ -86,9 +93,9 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RadioButton isInvert;
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        public System.Windows.Forms.Label LayName;
     }
 }

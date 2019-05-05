@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.проектToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,6 +39,7 @@
             this.onLayerCreate = new System.Windows.Forms.ToolStripMenuItem();
             this.LayerList = new System.Windows.Forms.GroupBox();
             this.scene = new System.Windows.Forms.PictureBox();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scene)).BeginInit();
             this.SuspendLayout();
@@ -132,6 +134,11 @@
             this.scene.TabIndex = 3;
             this.scene.TabStop = false;
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // MainWindow
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.TitleBar;
@@ -173,6 +180,7 @@
         private System.Windows.Forms.ToolStripMenuItem слоиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem onLayerCreate;
         public System.Windows.Forms.GroupBox LayerList;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 

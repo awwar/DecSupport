@@ -13,9 +13,9 @@ namespace Handlers
 {
     class TileHandler : IHandler
     {
+        public Action Redraw { set; get; }
         private string basePath = "";
         private string name = "google";
-        private Action Redraw;
         private int tilesize = Settings.Settings.TileSize;
 
         private readonly Random rnd;
@@ -35,13 +35,15 @@ namespace Handlers
             {"yandex"       ,"https://sat01.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU"}
         };
 
-        public TileHandler(ref Scene scene, Action redraw)
+        public TileHandler(ref Scene scene)
         {
             this.scene = scene;
-            this.Redraw = redraw;
             rnd = new Random();
             basePath = Path.GetTempPath() + "CropPod/tiles";
-            ImgLoader = new Thread(() => { Loader = new TileLoader(); Loader.OnImageLoad += ImageLoaded; })
+            ImgLoader = new Thread(() => {
+                Loader = new TileLoader();
+                Loader.OnImageLoad += ImageLoaded;
+            })
             {
                 IsBackground = false
             };

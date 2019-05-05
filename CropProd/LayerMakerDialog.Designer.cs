@@ -1,6 +1,6 @@
 ﻿namespace CropProd
 {
-    partial class LayerMaker
+    partial class LayerMakerDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LayerMaker));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LayerMakerDialog));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.LatInput = new System.Windows.Forms.TextBox();
-            this.LonInput = new System.Windows.Forms.TextBox();
             this.NameInput = new System.Windows.Forms.TextBox();
+            this.LonInput = new System.Windows.Forms.TextBox();
+            this.LatInput = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -84,23 +84,29 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Create Layer";
             // 
-            // label1
+            // NameInput
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(22, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Lat";
+            this.NameInput.Location = new System.Drawing.Point(6, 112);
+            this.NameInput.Name = "NameInput";
+            this.NameInput.Size = new System.Drawing.Size(127, 20);
+            this.NameInput.TabIndex = 7;
+            this.NameInput.Text = "MIIGAIK TERRITORY";
             // 
-            // label2
+            // LonInput
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 57);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(25, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Lon";
+            this.LonInput.Location = new System.Drawing.Point(6, 73);
+            this.LonInput.Name = "LonInput";
+            this.LonInput.Size = new System.Drawing.Size(127, 20);
+            this.LonInput.TabIndex = 6;
+            this.LonInput.Text = "37.663053";
+            // 
+            // LatInput
+            // 
+            this.LatInput.Location = new System.Drawing.Point(6, 34);
+            this.LatInput.Name = "LatInput";
+            this.LatInput.Size = new System.Drawing.Size(127, 20);
+            this.LatInput.TabIndex = 5;
+            this.LatInput.Text = "55.763582";
             // 
             // label3
             // 
@@ -111,28 +117,25 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Name";
             // 
-            // LatInput
+            // label2
             // 
-            this.LatInput.Location = new System.Drawing.Point(6, 34);
-            this.LatInput.Name = "LatInput";
-            this.LatInput.Size = new System.Drawing.Size(127, 20);
-            this.LatInput.TabIndex = 5;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 57);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(25, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Lon";
             // 
-            // LonInput
+            // label1
             // 
-            this.LonInput.Location = new System.Drawing.Point(6, 73);
-            this.LonInput.Name = "LonInput";
-            this.LonInput.Size = new System.Drawing.Size(127, 20);
-            this.LonInput.TabIndex = 6;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 18);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(22, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Lat";
             // 
-            // NameInput
-            // 
-            this.NameInput.Location = new System.Drawing.Point(6, 112);
-            this.NameInput.Name = "NameInput";
-            this.NameInput.Size = new System.Drawing.Size(127, 20);
-            this.NameInput.TabIndex = 7;
-            // 
-            // LayerMaker
+            // LayerMakerDialog
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,7 +144,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pictureBox1);
             this.DoubleBuffered = true;
-            this.Name = "LayerMaker";
+            this.Name = "LayerMakerDialog";
             this.Text = "LayerMaker";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);

@@ -71,7 +71,7 @@ namespace Handlers
             ZipFile.CreateFromDirectory(layerpath, Filename);
         }
 
-        public void AddLayer(string path, string prodname)
+        public Layer AddLayer(string path, string prodname)
         {
             Layer layer = ReadFileData<Layer>(path);
             string prodpath = basepath + prodname + "/" + layer.Hash;
@@ -88,6 +88,7 @@ namespace Handlers
                     Console.WriteLine("this is not prod file!");
                 }
             }
+            return layer;
         }
 
         private T ReadFileData <T>(string path)

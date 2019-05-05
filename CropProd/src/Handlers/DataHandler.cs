@@ -13,45 +13,44 @@ namespace Handlers
 {
     class DataHandler : IHandler
     {
-        private List<Data> datas = new List<Data>();
-        private Scene scene;
-        private Action Redraw;
-        private TileCoordinate tileCoordinate;
-        private DataLoader Loader;
+        public Action Redraw { set; get; }
+        private List<Data> DataLayer = new List<Data>();
+        private readonly Scene Scene;
+        private readonly TileCoordinate TileCoordinate;
+        private readonly DataLoader Loader;
 
         private Project cureentProject;
 
-        public DataHandler(ref Scene scene, Action redraw)
+        public DataHandler(ref Scene scene)
         {
-            this.scene = scene;
-            this.Redraw = redraw;
-            tileCoordinate = new TileCoordinate(Settings.Settings.TileSize);
+            this.Scene = scene;
+            TileCoordinate = new TileCoordinate(Settings.Settings.TileSize);
             Loader = new DataLoader();
         }
 
         public void AddData(Image img , Vector2 pos)
         {
-            datas.Add(new Data(pos, new Vector2(img.Width, img.Height), img));
+            DataLayer.Add(new Data(pos, new Vector2(img.Width, img.Height), img));
         }
 
 
         public void DeleteData(Data data)
         {
-            datas.Remove(data);
+            DataLayer.Remove(data);
         }
 
         public Frame[] Handle()
         {
-            foreach (var item in datas)
+            foreach (var item in DataLayer)
             {
-                item.Draw(scene.Position);
+                item.Draw(Scene.Position);
             }
-            return datas.ToArray();
+            return DataLayer.ToArray();
         }
 
         public void CreateProject(string name, string lat, string lon)
         {
-            double[] tilelatlon = tileCoordinate.Convert(
+            double[] tilelatlon = TileCoordinate.Convert(
                 double.Parse(lat, CultureInfo.InvariantCulture),
                 double.Parse(lon, CultureInfo.InvariantCulture),
                 18
@@ -63,13 +62,14 @@ namespace Handlers
                 Lon = tilelatlon[1]
             };
             Loader.CreateProject(cureentProject);
-            scene.AppendProject(cureentProject);
+            Scene.AppendProject(cureentProject);
         }
 
-        public void OpenProject(string path)
+        public Project OpenProject(string path)
         {
             this.cureentProject = Loader.LoadProject(path);
-            scene.AppendProject(cureentProject);
+            Scene.AppendProject(cureentProject);
+            return cureentProject;
         }
 
         public bool SaveProject(string path = null)
@@ -87,14 +87,15 @@ namespace Handlers
                 else
                 {
                     Loader.SaveProject(cureentProject);
+                    return true;
                 }
             }
-            return true;
+            throw new Exception("Project not opened");
         }
 
         public void CreateLayer(Dictionary<string, Bitmap> img, string Lat, string Lon, string Filename)
         {
-            double[] tilelatlon = tileCoordinate.Convert(
+            double[] tilelatlon = TileCoordinate.Convert(
                 double.Parse(Lat, CultureInfo.InvariantCulture),
                 double.Parse(Lon, CultureInfo.InvariantCulture),
                 18
@@ -114,7 +115,8 @@ namespace Handlers
         {
             if(cureentProject != null)
             {
-                Loader.AddLayer(path, cureentProject.Hash);
+                Layer layer = Loader.AddLayer(path, cureentProject.Hash);
+                cureentProject.AddLayer(layer);
             }
         }
 

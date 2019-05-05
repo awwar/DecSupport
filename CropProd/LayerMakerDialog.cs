@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CropProd
 {
-    public partial class LayerMaker : Form
+    public struct LayerMakerDialogData
+    {
+        public Dictionary<string, Bitmap> Tiles;
+        public string Lat;
+        public string Lon;
+        public string FileName;
+    }
+
+    public partial class LayerMakerDialog : Form
     {
         Image img;
         int rignt;
@@ -24,7 +27,7 @@ namespace CropProd
 
         public Dictionary<string, Bitmap> tiles = new Dictionary<string, Bitmap>();
 
-        public LayerMaker()
+        public LayerMakerDialog()
         {
             InitializeComponent();
             this.DragDrop += LayerMaker_DragDrop;

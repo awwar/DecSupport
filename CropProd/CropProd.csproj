@@ -59,6 +59,9 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -77,11 +80,11 @@
     <Compile Include="CreateProjDialog.Designer.cs">
       <DependentUpon>CreateProjDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="LayerMaker.cs">
+    <Compile Include="LayerMakerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LayerMaker.Designer.cs">
-      <DependentUpon>LayerMaker.cs</DependentUpon>
+    <Compile Include="LayerMakerDialog.Designer.cs">
+      <DependentUpon>LayerMakerDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -104,6 +107,7 @@
     <Compile Include="src\Handlers\TileHandler.cs" />
     <Compile Include="src\Events\ImageLoadArgs.cs" />
     <Compile Include="src\Interfaces\IHandler.cs" />
+    <Compile Include="src\Interfaces\IUserForm.cs" />
     <Compile Include="src\Models\Data.cs" />
     <Compile Include="src\Models\Frame.cs" />
     <Compile Include="src\Models\Layer.cs" />
@@ -120,8 +124,8 @@
     <EmbeddedResource Include="CreateProjDialog.resx">
       <DependentUpon>CreateProjDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LayerMaker.resx">
-      <DependentUpon>LayerMaker.cs</DependentUpon>
+    <EmbeddedResource Include="LayerMakerDialog.resx">
+      <DependentUpon>LayerMakerDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

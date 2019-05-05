@@ -98,6 +98,7 @@
             this.ProjName.Name = "ProjName";
             this.ProjName.Size = new System.Drawing.Size(199, 20);
             this.ProjName.TabIndex = 2;
+            this.ProjName.Text = "MIIGAIK";
             // 
             // LonInput
             // 
@@ -105,6 +106,7 @@
             this.LonInput.Name = "LonInput";
             this.LonInput.Size = new System.Drawing.Size(199, 20);
             this.LonInput.TabIndex = 1;
+            this.LonInput.Text = "37.663053";
             // 
             // LatInput
             // 
@@ -112,6 +114,7 @@
             this.LatInput.Name = "LatInput";
             this.LatInput.Size = new System.Drawing.Size(199, 20);
             this.LatInput.TabIndex = 0;
+            this.LatInput.Text = "55.763582";
             // 
             // CreateProjDialog
             // 

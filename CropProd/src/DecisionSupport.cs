@@ -1,5 +1,6 @@
 ﻿using CropProd;
 using Handlers;
+using Interfaces;
 using Models;
 using System;
 using System.Drawing;
@@ -11,99 +12,67 @@ using System.Windows.Forms;
 
 namespace DSCore
 {
-    class DecisionSupport
+    class DecisionSupport<T> where T : IUserForm
     {
         internal TileHandler TileHandler { get; private set; }
         internal DataHandler DataHandler { get; private set; }
+        internal Scene Scene { get => scene; }
+
         internal event Action OnNeedRedraw;
 
         private Scene scene;
-        private static MainWindow form;
+        private static T form;
         private Vector2 first = new Vector2(0, 0);
         private Vector2 delta = new Vector2(0, 0);
         private Vector2 last = new Vector2(0, 0);
         private readonly Thread TileThread;
-        private readonly Pen pen = new Pen(Color.Red, 1f);
 
-        public DecisionSupport(MainWindow myform)
+
+        public DecisionSupport(T myform)
         {
             form = myform;
-            scene = new Scene(new Vector2(myform.scene.Size.Width, myform.scene.Size.Height));
-            form.Text = scene.Name;
+            scene = new Scene(form.GetDrawableSize());
+            form.ChangeTitle(scene.Name);
 
             TileThread = new Thread(Start)
             {
-                IsBackground = false
+                IsBackground = true
             };
             TileThread.Start();
         }
 
         private void Start()
         {
-            this.TileHandler = new TileHandler(ref scene, OnNeedRedraw);
-            this.DataHandler = new DataHandler(ref scene, OnNeedRedraw);
+            this.TileHandler = new TileHandler(ref scene);
+            this.DataHandler = new DataHandler(ref scene);
+            TileHandler.Redraw += OnNeedRedraw;
+            DataHandler.Redraw += OnNeedRedraw;
         }
 
         public void OnResize(object sender, EventArgs e)
         {
-            scene.Resize(new Vector2(
-                form.scene.Width,
-                form.scene.Height
-            ));
+            scene.Resize(form.GetDrawableSize());
             TileHandler.Update();
             OnNeedRedraw();
         }
 
-        public void OnDraw(object sender, PaintEventArgs e)
+        public Frame[] OnDraw()
         {
             scene.Update(delta);
             delta = new Vector2(0, 0);
-            e.Graphics.Clear(Color.Black);
-
+            Frame[] frames = new Frame[] { };
 
             //Если поток не 
             if (TileHandler == null || DataHandler == null)
             {
-                return;
+                return frames;
             }
 
-            Frame[] frames = TileHandler.Handle();
+            frames = TileHandler.Handle();
 
-            //frames = frames.Concat(DataHandler.Handle()).ToArray();
+            frames = frames.Concat(DataHandler.Handle()).ToArray();
 
-
-            if (frames != null)
-            {
-
-                foreach (Frame frame in frames)
-                {
-                    try
-                    {
-                        e.Graphics.DrawImage(
-                            frame.Image,
-                            frame.Screenposition.X,
-                            frame.Screenposition.Y,
-                            frame.Size.X,
-                            frame.Size.Y + 1
-                        );
-                    }
-                    catch
-                    {
-                        Console.WriteLine("image error");
-                    }
-                    /*e.Graphics.DrawRectangle(pen,
-                                             frame.Screenposition.X,
-                                             frame.Screenposition.Y,
-                                             Settings.Settings.TileSize,
-                                             Settings.Settings.TileSize);*/
-                }
-            }
-
-            e.Graphics.DrawLine(new Pen(Color.Green, 3f), scene.Position.X - 10, scene.Position.Y, scene.Position.X + 10, scene.Position.Y);
-            e.Graphics.DrawLine(new Pen(Color.Green, 3f), scene.Position.X, scene.Position.Y - 10, scene.Position.X, scene.Position.Y + 10);
-            e.Graphics.DrawLine(pen, scene.Size.X / 2 - 10, scene.Size.Y / 2, scene.Size.X / 2 + 10, scene.Size.Y / 2);
-            e.Graphics.DrawLine(pen, scene.Size.X / 2, scene.Size.Y / 2 - 10, scene.Size.X / 2, scene.Size.Y / 2 + 10);
-
+            return frames;
         }
 
         public void OnMouseClick(object sender, MouseEventArgs e)
@@ -147,8 +116,12 @@ namespace DSCore
             switch (ext)
             {
                 case ".cpproj":
-                    DataHandler.OpenProject(file);
-                    form.Text = scene.Name;
+                    Project proj = DataHandler.OpenProject(file);
+                    form.ChangeTitle(proj.Name);
+                    for (int i = 0; i < proj.Layers.Length; i++)
+                    {
+                        form.DrawLayerItem(i);
+                    }
                     TileHandler.Update();
                     break;
                 case ".cplay":
@@ -162,106 +135,63 @@ namespace DSCore
 
         public void OnOpenProject(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            string filename = form.ShowOpenFileDialog();
+            OnFileDrop(filename);
+           /* try
             {
-                ofd.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
-                ofd.Filter = "Crop Pod Projects (*.cpproj)|*.cpproj";
-                ofd.FilterIndex = 2;
-                ofd.RestoreDirectory = false;
-
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    string filename = ofd.FileName;
-                    OnFileDrop(filename);
-                }
             }
+            catch (Exception exc)
+            {
+                form.ShowBouble(exc.Message);
+            }*/
+
         }
 
         public void OnSaveProject(object sender, EventArgs e)
         {
-            bool rez = DataHandler.SaveProject();
-            if (!rez)
+            try
             {
-                using (SaveFileDialog sfd = new SaveFileDialog())
+                bool rez = DataHandler.SaveProject();
+                if (!rez)
                 {
-                    sfd.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
-                    sfd.Filter = "Crop Pod Projects (*.cpproj)|*.cpproj";
-                    sfd.FilterIndex = 2;
-                    sfd.FileName = "";
-                    sfd.RestoreDirectory = false;
-
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        DataHandler.SaveProject(sfd.FileName);
-                    }
+                    string filename = form.ShowSaveFileDialog();
+                    DataHandler.SaveProject(filename);
                 }
+            }
+            catch (Exception exc)
+            {
+                form.ShowBouble(exc.Message);
             }
         }
 
         public void OnNewProject(object sender, EventArgs e)
         {
-            CreateProjDialog createProj = new CreateProjDialog();
-
-            if (createProj.ShowDialog() == DialogResult.OK)
+            try
             {
-                if (createProj.LatInput.TextLength > 0
-                    && createProj.LonInput.TextLength > 0
-                    && createProj.ProjName.TextLength > 0)
-                {
-                    DataHandler.CreateProject(
-                        createProj.ProjName.Text,
-                        createProj.LatInput.Text,
-                        createProj.LonInput.Text);
-                }
+                CreateProjDialogData createProj = form.ShowCreateProjDialog();
+                DataHandler.CreateProject(
+                               createProj.Name,
+                               createProj.Lat,
+                               createProj.Lon);
+                DataHandler.SaveProject();
+                TileHandler.Update();
             }
-            createProj.Dispose();
-            TileHandler.Update();
+            catch (Exception exc)
+            {
+                form.ShowBouble(exc.Message);
+            }
         }
 
         public void OnLayerCreate(object sender, EventArgs e)
         {
-            LayerMaker layerMaker = new LayerMaker();
+            LayerMakerDialogData data = form.ShowLayerMakerDialog();
 
-            if (layerMaker.ShowDialog() == DialogResult.OK)
-            {
-                if (layerMaker.LatInput.TextLength > 0
-                    && layerMaker.LonInput.TextLength > 0
-                    && layerMaker.NameInput.TextLength > 0)
-                {
-
-                    using (SaveFileDialog sfd = new SaveFileDialog())
-                    {
-                        sfd.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
-                        sfd.Filter = "Crop Pod Layer (*.cplay)|*.cplay";
-                        sfd.FilterIndex = 2;
-                        sfd.FileName = layerMaker.NameInput.Text;
-                        sfd.RestoreDirectory = false;
-
-                        if (sfd.ShowDialog() == DialogResult.OK)
-                        {
-                            string filename = sfd.FileName;
-                            DataHandler.CreateLayer(
-                                layerMaker.tiles,
-                                layerMaker.LatInput.Text,
-                                layerMaker.LonInput.Text,
-                                filename
-                            );
-                        }
-                    }
-                }
-            }
-            layerMaker.Dispose();
-        }
-
-        public void DrawLayerItem(int n)
-        {
-            LayerListItem item = new LayerListItem();
-            item.CreateControl();
-            item.Parent = form.LayerList;
-            item.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
-            item.Location = new Point(item.Parent.Padding.Left, item.Parent.Padding.Top + item.Height * n + 10);
-            item.Show();
+            DataHandler.CreateLayer(
+                data.Tiles,
+                data.Lat,
+                data.Lon,
+                data.FileName
+            );
         }
     }
 }
