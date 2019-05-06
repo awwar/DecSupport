@@ -40,7 +40,7 @@ namespace CropProd
         private void Button1_Click(object sender, EventArgs e)
         {
             MemoryStream ms = new MemoryStream();
-            pictureBox1.Image.Save(ms, ImageFormat.Jpeg);
+            pictureBox1.Image.Save(ms, ImageFormat.Png);
             var img = Image.FromStream(ms);
             int tileWidth = Settings.Settings.TileSize;
             int tileHeight = Settings.Settings.TileSize;
@@ -54,6 +54,7 @@ namespace CropProd
                     string filename = String.Format("{0}_{1}", y - clickTileX, x - clickTileY);
                     using (Graphics graphics = Graphics.FromImage(target))
                     {
+                        graphics.Clear(Color.Transparent);
                         graphics.DrawImage(
                             img,
                             new Rectangle(0, 0, tileWidth, tileHeight),
@@ -64,6 +65,7 @@ namespace CropProd
                 }
             }
             ms.Close();
+            ms.Dispose();
         }
 
         private void PictureBox1_Click(object sender, MouseEventArgs e)

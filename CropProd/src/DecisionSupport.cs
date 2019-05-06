@@ -119,14 +119,14 @@ namespace DSCore
             }
         }
 
-        public void OnNewProject(CreateProjDialogData createProj)
+        public string OnNewProject(CreateProjDialogData createProj)
         {
             DataHandler.CreateProject(
                             createProj.Name,
                             createProj.Lat,
                             createProj.Lon);
-            DataHandler.SaveProject();
             TileHandler.Update();
+            return createProj.Name;
         }
 
         public void OnLayerCreate(LayerMakerDialogData data)

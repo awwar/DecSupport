@@ -89,12 +89,13 @@ namespace CropProd
             }
         }
 
-        public string ShowSaveFileDialog()
+        public string ShowSaveFileDialog(string name = "")
         {
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
                 sfd.InitialDirectory = Environment.SpecialFolder.Desktop.ToString();
                 sfd.Filter = "Crop Pod Projects (*.cpproj)|*.cpproj";
+                sfd.FileName = name;
                 sfd.FilterIndex = 2;
                 sfd.FileName = "";
                 sfd.RestoreDirectory = false;

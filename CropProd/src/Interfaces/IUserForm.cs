@@ -10,7 +10,7 @@ namespace Interfaces
         void ChangeTitle(string title);
         void DrawLayerItem(int n);
         string ShowOpenFileDialog();
-        string ShowSaveFileDialog();
+        string ShowSaveFileDialog(string filename = null);
         CreateProjDialogData ShowCreateProjDialog();
         LayerMakerDialogData ShowLayerMakerDialog();
         void ShowBouble(string msg);

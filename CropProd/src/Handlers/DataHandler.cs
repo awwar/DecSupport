@@ -32,6 +32,13 @@ namespace Handlers
             DataLayer.Add(new Data(pos, new Vector2(img.Width, img.Height), img));
         }
 
+        public void AddData(Data[] data)
+        {
+            foreach (Data item in data)
+            {
+                DataLayer.Add(item);
+            }
+        }
 
         public void DeleteData(Data data)
         {
@@ -68,6 +75,17 @@ namespace Handlers
         {
             this.cureentProject = Loader.LoadProject(path);
             Scene.AppendProject(cureentProject);
+            foreach (Layer layer in cureentProject.Layers)
+            {
+                try
+                {
+                    AddData(Loader.ReadLayerData(cureentProject.Hash, layer.Hash));
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
             return cureentProject;
         }
 
@@ -81,7 +99,7 @@ namespace Handlers
                 }
                 if(cureentProject.Path == null)
                 {
-                    return false;
+                    throw new IOException("Path not found");
                 }
                 else
                 {

@@ -34,6 +34,7 @@ namespace CropProd
 
         private void OnOpenProject_Click(object sender, EventArgs e)
         {
+
             try
             {
                 string filename = this.ShowOpenFileDialog();
@@ -51,6 +52,8 @@ namespace CropProd
             {
                 CreateProjDialogData createProj = this.ShowCreateProjDialog();
                 decisionSupport.OnNewProject(createProj);
+                string filename = this.ShowSaveFileDialog();
+                decisionSupport.OnSaveProject(filename);
             }
             catch (Exception exc)
             {

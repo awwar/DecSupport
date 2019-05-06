@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
+using System.Numerics;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -89,6 +90,39 @@ namespace Handlers
                 }
             }
             return layer;
+        }
+
+
+        public Data[] ReadLayerData(string prodname, string layername)
+        {
+            string prodpath = basepath + prodname + "/" + layername;
+            string[] files = Directory.GetFiles(prodpath, "*.png");
+            Data[] data = new Data[files.Length];
+            for (int i = 0; i < files.Length; i++)
+            {
+                using (FileStream myStream = new FileStream(files[i], FileMode.Open, FileAccess.Read))
+                {
+                    Image img = Image.FromStream(myStream);
+                    data[i] = ConvertDatafileToData(img, files[i]);
+                }
+            }
+            return data;
+        }
+
+        private Data ConvertDatafileToData(Image img, string filepath)
+        {
+            string name = Path.GetFileNameWithoutExtension(filepath);
+
+            char[] charSeparators = new char[] { '_' };
+
+            string[] xy = name.Split(charSeparators);
+
+            Vector2 coords = new Vector2(
+                Int32.Parse(xy[0]),
+                Int32.Parse(xy[1])
+                );
+
+            return new Data(coords,img);
         }
 
         private T ReadFileData <T>(string path)
