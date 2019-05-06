@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Numerics;
 
 namespace Handlers

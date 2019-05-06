@@ -3,12 +3,10 @@ using Handlers;
 using Interfaces;
 using Models;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace DSCore
 {
@@ -49,7 +47,7 @@ namespace DSCore
             DataHandler.Redraw += OnNeedRedraw;
         }
 
-        public void OnResize(object sender, EventArgs e)
+        public void OnResize()
         {
             scene.Resize(form.GetDrawableSize());
             TileHandler.Update();
@@ -75,117 +73,64 @@ namespace DSCore
             return frames;
         }
 
-        public void OnMouseClick(object sender, MouseEventArgs e)
+        public void OnMouseMoove(int x, int y)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                first = new Vector2(e.X, e.Y);
-                delta = Vector2.Subtract(last, first);
-                last = first;
-                OnNeedRedraw();
-            }
+            first = new Vector2(x, y);
+            delta = Vector2.Subtract(last, first);
+            last = first;
+            OnNeedRedraw();
         }
 
-        public void OnMouseDown(object sender, MouseEventArgs e)
+        public void OnMouseDown(int x, int y)
         {
-            last = new Vector2(e.X, e.Y);
+            last = new Vector2(x, y);
         }
 
-        public void OnZoom(object sender, MouseEventArgs e)
+        public void OnZoom(int delta)
         {
-            int zoom = scene.Zoom + ((e.Delta > 0) ? 1 : -1);
+            int zoom = scene.Zoom + ((delta > 0) ? 1 : -1);
             scene.Zoom = (zoom <= 0) ? 1 : (zoom > 18) ? 18 : zoom;
             TileHandler.Update();
             OnNeedRedraw();
         }
 
-        public void OnFileEnter(object sender, DragEventArgs e)
+        public void OnOpenProject(string file)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
-        }
-
-        public void OnFileDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) OnFileDrop(file);
-        }
-
-        public void OnFileDrop(string file)
-        {
-            string ext = Path.GetExtension(file);
-            switch (ext)
+            Project proj = DataHandler.OpenProject(file);
+            form.ChangeTitle(proj.Name);
+            for (int i = 0; i < proj.Layers.Length; i++)
             {
-                case ".cpproj":
-                    Project proj = DataHandler.OpenProject(file);
-                    form.ChangeTitle(proj.Name);
-                    for (int i = 0; i < proj.Layers.Length; i++)
-                    {
-                        form.DrawLayerItem(i);
-                    }
-                    TileHandler.Update();
-                    break;
-                case ".cplay":
-                    DataHandler.AddLayer(file);
-                    break;
-                default:
-                    MessageBox.Show("Неизвестное расширение проекта!");
-                    break;
+                form.DrawLayerItem(i);
+            }
+            TileHandler.Update();
+        }
+
+        public void OnLayerDrop(string file)
+        {
+            DataHandler.AddLayer(file);
+        }
+
+        public void OnSaveProject(string file = null)
+        {
+            bool rez = DataHandler.SaveProject(file);
+            if (!rez)
+            {
+                throw new IOException();
             }
         }
 
-        public void OnOpenProject(object sender, EventArgs e)
+        public void OnNewProject(CreateProjDialogData createProj)
         {
-            string filename = form.ShowOpenFileDialog();
-            OnFileDrop(filename);
-           /* try
-            {
-            }
-            catch (Exception exc)
-            {
-                form.ShowBouble(exc.Message);
-            }*/
-
+            DataHandler.CreateProject(
+                            createProj.Name,
+                            createProj.Lat,
+                            createProj.Lon);
+            DataHandler.SaveProject();
+            TileHandler.Update();
         }
 
-        public void OnSaveProject(object sender, EventArgs e)
+        public void OnLayerCreate(LayerMakerDialogData data)
         {
-            try
-            {
-                bool rez = DataHandler.SaveProject();
-                if (!rez)
-                {
-                    string filename = form.ShowSaveFileDialog();
-                    DataHandler.SaveProject(filename);
-                }
-            }
-            catch (Exception exc)
-            {
-                form.ShowBouble(exc.Message);
-            }
-        }
-
-        public void OnNewProject(object sender, EventArgs e)
-        {
-            try
-            {
-                CreateProjDialogData createProj = form.ShowCreateProjDialog();
-                DataHandler.CreateProject(
-                               createProj.Name,
-                               createProj.Lat,
-                               createProj.Lon);
-                DataHandler.SaveProject();
-                TileHandler.Update();
-            }
-            catch (Exception exc)
-            {
-                form.ShowBouble(exc.Message);
-            }
-        }
-
-        public void OnLayerCreate(object sender, EventArgs e)
-        {
-            LayerMakerDialogData data = form.ShowLayerMakerDialog();
-
             DataHandler.CreateLayer(
                 data.Tiles,
                 data.Lat,

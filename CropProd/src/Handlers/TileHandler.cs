@@ -1,6 +1,5 @@
 ﻿using Events;
 using Interfaces;
-using LatLonToTile;
 using Models;
 using System;
 using System.Collections.Generic;

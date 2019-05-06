@@ -3,6 +3,7 @@ using Interfaces;
 using Models;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Numerics;
 using System.Windows.Forms;
 
@@ -27,15 +28,15 @@ namespace CropProd
             Settings.Settings.TileSize = 256;
 
             scene.Paint += Scene_Paint; ;
-            scene.Resize += decisionSupport.OnResize;
-            this.DragDrop += decisionSupport.OnFileDrop;
-            this.DragEnter += decisionSupport.OnFileEnter;
-            scene.MouseDown += decisionSupport.OnMouseDown;
-            scene.MouseMove += decisionSupport.OnMouseClick;
-            onNewProject.Click += decisionSupport.OnNewProject;
-            onOpenProject.Click += decisionSupport.OnOpenProject;
-            onSaveProject.Click += decisionSupport.OnSaveProject;
-            onLayerCreate.Click += decisionSupport.OnLayerCreate;
+            scene.Resize += Scene_Resize; ;
+            this.DragDrop += MainWindow_DragDrop; ;
+            this.DragEnter += MainWindow_DragEnter; ;
+            scene.MouseDown += Scene_MouseDown; ;
+            scene.MouseMove += Scene_MouseMove; ;
+            onNewProject.Click += OnNewProject_Click; ;
+            onOpenProject.Click += OnOpenProject_Click; ;
+            onSaveProject.Click += OnSaveProject_Click; ;
+            onLayerCreate.Click += OnLayerCreate_Click; ;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
@@ -43,48 +44,7 @@ namespace CropProd
             if (args.Length > 0)
             {
                 MessageBox.Show("Открыть: " + args[0] + "?");
-                decisionSupport.OnFileDrop(args[0]);
-            }
-        }
-
-
-        private void Readimg(string filename)
-        {
-            try
-            {
-                Bitmap image1;
-                // Retrieve the image.
-                image1 = new Bitmap(@filename, true);
-
-                int x, y;
-                Color pixelColor;
-                Color newColor;
-                // Loop through the images pixels to reset color.
-                for (x = 0; x < image1.Width; x++)
-                {
-                    for (y = 0; y < image1.Height; y++)
-                    {
-                        pixelColor = image1.GetPixel(x, y);
-                        if (pixelColor.R > 100 && pixelColor.R < 150)
-                        {
-                            newColor = Color.FromArgb(pixelColor.R, 0, 0);
-                        }
-                        else
-                        {
-                            int g = pixelColor.G;
-                            int b = pixelColor.B;
-                            newColor = Color.FromArgb(0, g, b);
-                        }
-                        image1.SetPixel(x, y, newColor);
-                    }
-                }
-
-
-            }
-            catch (ArgumentException)
-            {
-                MessageBox.Show("There was an error." +
-                    "Check the path to the image file.");
+                decisionSupport.OnOpenProject(args[0]);
             }
         }
 
@@ -223,36 +183,6 @@ namespace CropProd
             return data;
         }
 
-        private void Scene_Paint(object sender, PaintEventArgs e)
-        {
-            Frame[] frames = decisionSupport.OnDraw();
-            e.Graphics.Clear(Color.Black);
-
-            if (frames != null)
-            {
-
-                foreach (Frame frame in frames)
-                {
-                    try
-                    {
-                        e.Graphics.DrawImage(
-                            frame.Image,
-                            frame.Screenposition.X,
-                            frame.Screenposition.Y,
-                            frame.Size.X,
-                            frame.Size.Y + 1
-                        );
-                    }
-                    catch
-                    {
-                        Console.WriteLine("image error");
-                    }
-                }
-            }
-
-            DrawXmark(pen, ref e, decisionSupport.Scene.Position.X, decisionSupport.Scene.Position.Y);
-            DrawXmark(pen2, ref e, decisionSupport.Scene.Size.X / 2, decisionSupport.Scene.Size.Y / 2);
-        }
 
         private void DrawXmark(Pen pen, ref PaintEventArgs e, float x, float y)
         {
@@ -265,7 +195,46 @@ namespace CropProd
             scene.Refresh();
         }
 
+        /*
+         private void Readimg(string filename)
+        {
+            try
+            {
+                Bitmap image1;
+                // Retrieve the image.
+                image1 = new Bitmap(@filename, true);
 
+                int x, y;
+                Color pixelColor;
+                Color newColor;
+                // Loop through the images pixels to reset color.
+                for (x = 0; x < image1.Width; x++)
+                {
+                    for (y = 0; y < image1.Height; y++)
+                    {
+                        pixelColor = image1.GetPixel(x, y);
+                        if (pixelColor.R > 100 && pixelColor.R < 150)
+                        {
+                            newColor = Color.FromArgb(pixelColor.R, 0, 0);
+                        }
+                        else
+                        {
+                            int g = pixelColor.G;
+                            int b = pixelColor.B;
+                            newColor = Color.FromArgb(0, g, b);
+                        }
+                        image1.SetPixel(x, y, newColor);
+                    }
+                }
+
+
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show("There was an error." +
+                    "Check the path to the image file.");
+            }
+        }*/
     }
 
 }
