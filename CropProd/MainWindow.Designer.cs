@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new System.Windows.Forms.Label();
             this.MainMenu = new System.Windows.Forms.MenuStrip();
             this.проектToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.onNewProject = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,17 +39,12 @@
             this.LayerList = new System.Windows.Forms.GroupBox();
             this.scene = new System.Windows.Forms.PictureBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scene)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(136, 21);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 2;
             // 
             // MainMenu
             // 
@@ -116,7 +110,7 @@
             this.LayerList.Location = new System.Drawing.Point(923, 28);
             this.LayerList.Name = "LayerList";
             this.LayerList.Padding = new System.Windows.Forms.Padding(3, 20, 3, 3);
-            this.LayerList.Size = new System.Drawing.Size(201, 669);
+            this.LayerList.Size = new System.Drawing.Size(201, 656);
             this.LayerList.TabIndex = 6;
             this.LayerList.TabStop = false;
             this.LayerList.Text = "Layers";
@@ -130,7 +124,7 @@
             this.scene.Location = new System.Drawing.Point(9, 24);
             this.scene.Margin = new System.Windows.Forms.Padding(0);
             this.scene.Name = "scene";
-            this.scene.Size = new System.Drawing.Size(911, 676);
+            this.scene.Size = new System.Drawing.Size(911, 660);
             this.scene.TabIndex = 3;
             this.scene.TabStop = false;
             // 
@@ -138,6 +132,23 @@
             // 
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.Visible = true;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Status});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 687);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1136, 22);
+            this.statusStrip1.TabIndex = 7;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // Status
+            // 
+            this.Status.Name = "Status";
+            this.Status.Size = new System.Drawing.Size(22, 17);
+            this.Status.Text = "Ok";
             // 
             // MainWindow
             // 
@@ -148,10 +159,10 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(1136, 709);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.LayerList);
             this.Controls.Add(this.MainMenu);
             this.Controls.Add(this.scene);
-            this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MainMenuStrip = this.MainMenu;
@@ -164,13 +175,14 @@
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scene)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Label label1;
         public System.Windows.Forms.PictureBox scene;
         private System.Windows.Forms.MenuStrip MainMenu;
         private System.Windows.Forms.ToolStripMenuItem проектToolStripMenuItem;
@@ -181,6 +193,8 @@
         private System.Windows.Forms.ToolStripMenuItem onLayerCreate;
         public System.Windows.Forms.GroupBox LayerList;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        public System.Windows.Forms.ToolStripStatusLabel Status;
     }
 }
 

@@ -7,14 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Models;
 
 namespace CropProd
 {
-    public partial class LayerListItem : UserControl
+    partial class LayerListItem : UserControl
     {
+        public Layer Layer;
+        public Action<Layer> LayerDelete;
+
         public LayerListItem()
         {
             InitializeComponent();
+            this.DeleteLayer.Click += DeleteLayer_Click;
+        }
+
+        private void DeleteLayer_Click(object sender, EventArgs e)
+        {
+            LayerDelete(Layer);
         }
     }
 }

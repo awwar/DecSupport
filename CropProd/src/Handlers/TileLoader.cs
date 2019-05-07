@@ -58,10 +58,6 @@ namespace Handlers
          */
         public void DeleteFrame(string path)
         {
-            if (data.TryGetValue(path, out Tile tile))
-            {
-                tile.Image.Dispose();
-            }
             data.Remove(path);
         }
 

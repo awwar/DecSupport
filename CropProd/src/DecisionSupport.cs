@@ -94,20 +94,19 @@ namespace DSCore
             OnNeedRedraw();
         }
 
-        public void OnOpenProject(string file)
+        public Project OnOpenProject(string file)
         {
             Project proj = DataHandler.OpenProject(file);
-            form.ChangeTitle(proj.Name);
-            for (int i = 0; i < proj.Layers.Length; i++)
-            {
-                form.DrawLayerItem(i);
-            }
+            form.RedrawLayerItem(proj.Layers);
             TileHandler.Update();
+            return proj;
         }
 
         public void OnLayerDrop(string file)
         {
-            DataHandler.AddLayer(file);
+            form.RedrawLayerItem(
+               DataHandler.AddLayer(file)
+            );
         }
 
         public void OnSaveProject(string file = null)
@@ -119,14 +118,14 @@ namespace DSCore
             }
         }
 
-        public string OnNewProject(CreateProjDialogData createProj)
+        public Project OnNewProject(CreateProjDialogData createProj)
         {
-            DataHandler.CreateProject(
+            Project proj = DataHandler.CreateProject(
                             createProj.Name,
                             createProj.Lat,
                             createProj.Lon);
             TileHandler.Update();
-            return createProj.Name;
+            return proj;
         }
 
         public void OnLayerCreate(LayerMakerDialogData data)
@@ -136,6 +135,13 @@ namespace DSCore
                 data.Lat,
                 data.Lon,
                 data.FileName
+            );
+        }
+
+        public void OnLayerDelete(Layer layer)
+        {
+            form.RedrawLayerItem(
+                DataHandler.DeleteLayer(layer)
             );
         }
     }

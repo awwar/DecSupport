@@ -13,6 +13,20 @@ namespace CropProd
 {
     public partial class MainWindow : Form, IUserForm
     {
+        private void MainWindow_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar.ToString() == Keys.Control.ToString())
+            {
+
+            }
+        }
+
+        private void DeleteLayer_Click(Layer layer)
+        {
+            decisionSupport.OnLayerDelete(layer);
+            decisionSupport.OnSaveProject();
+        }
+
         private void OnLayerCreate_Click(object sender, EventArgs e)
         {
             LayerMakerDialogData data = this.ShowLayerMakerDialog();
@@ -37,28 +51,35 @@ namespace CropProd
 
             try
             {
+                Status.Text = "Открываю проект";
                 string filename = this.ShowOpenFileDialog();
-                decisionSupport.OnOpenProject(filename);
+                Project proj = decisionSupport.OnOpenProject(filename);
+                this.Text = proj.Name;
             }
             catch (Exception exc)
             {
                 this.ShowBouble(exc.Message);
             }
+            Status.Text = "Ok";
         }
 
         private void OnNewProject_Click(object sender, EventArgs e)
         {
             try
             {
+                Status.Text = "Создание нового проекта";
                 CreateProjDialogData createProj = this.ShowCreateProjDialog();
-                decisionSupport.OnNewProject(createProj);
-                string filename = this.ShowSaveFileDialog();
+                Project proj = decisionSupport.OnNewProject(createProj);
+                string filename = this.ShowSaveFileDialog(proj.Name);
                 decisionSupport.OnSaveProject(filename);
+                this.Text = proj.Name;
+                this.ShowBouble($"Проект {proj.Name} успешно создан!");
             }
             catch (Exception exc)
             {
                 this.ShowBouble(exc.Message);
             }
+            Status.Text = "Ok";
         }
 
         private void Scene_MouseMove(object sender, MouseEventArgs e)
@@ -123,7 +144,8 @@ namespace CropProd
                 switch (ext)
                 {
                     case ".cpproj":
-                        decisionSupport.OnOpenProject(file);
+                        Project proj = decisionSupport.OnOpenProject(file);
+                        this.Text = proj.Name;
                         break;
                     case ".cplay":
                         decisionSupport.OnLayerDrop(file);

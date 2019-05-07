@@ -31,17 +31,18 @@ namespace Models
 
         public void DeleteLayer(Layer layer)
         {
+            layer.Dispose();
             bool isFinde = false;
 
             for (int i = 0; i < Layers.Length; i++)
             {
-                if (Layers[i].Hash == layer.Hash)
-                {
-                    isFinde = true;
-                }
                 if (isFinde)
                 {
                     Layers[i] = Layers[i + 1];
+                }
+                if (Layers[i].Hash == layer.Hash)
+                {
+                    isFinde = true;
                 }
             }
             if (isFinde)

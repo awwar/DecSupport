@@ -8,7 +8,7 @@ namespace Interfaces
     {
         Vector2 GetDrawableSize();
         void ChangeTitle(string title);
-        void DrawLayerItem(int n);
+        void RedrawLayerItem(Layer[] layer);
         string ShowOpenFileDialog();
         string ShowSaveFileDialog(string filename = null);
         CreateProjDialogData ShowCreateProjDialog();

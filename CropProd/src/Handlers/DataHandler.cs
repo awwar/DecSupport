@@ -13,7 +13,7 @@ namespace Handlers
     class DataHandler : IHandler
     {
         public Action Redraw { set; get; }
-        private List<Data> DataLayer = new List<Data>();
+        private List<Layer> DataLayer = new List<Layer>();
         private readonly Scene Scene;
         private readonly TileCoordinate TileCoordinate;
         private readonly DataLoader Loader;
@@ -27,34 +27,34 @@ namespace Handlers
             Loader = new DataLoader();
         }
 
-        public void AddData(Image img , Vector2 pos)
+        public void AddLayer(Layer layer)
         {
-            DataLayer.Add(new Data(pos, new Vector2(img.Width, img.Height), img));
+            layer.Datas = Loader.ReadLayerData(cureentProject.Hash, layer.Hash);
+            cureentProject.AddLayer(layer);
         }
 
-        public void AddData(Data[] data)
+        public void DeleteLayer(Layer layer)
         {
-            foreach (Data item in data)
-            {
-                DataLayer.Add(item);
-            }
-        }
-
-        public void DeleteData(Data data)
-        {
-            DataLayer.Remove(data);
+            cureentProject.DeleteLayer(layer);
         }
 
         public Frame[] Handle()
         {
-            foreach (var item in DataLayer)
-            {
-                item.Draw(Scene.Position);
+            List <Data> retdata = new List<Data>() { };
+            if(cureentProject != null) {
+                foreach (Layer item in cureentProject.Layers)
+                {
+                    foreach (Data data in item.Datas)
+                    {
+                        data.Draw(Scene.Position);
+                        retdata.Add(data);
+                    }
+                }
             }
-            return DataLayer.ToArray();
+            return retdata.ToArray();
         }
 
-        public void CreateProject(string name, string lat, string lon)
+        public Project CreateProject(string name, string lat, string lon)
         {
             double[] tilelatlon = TileCoordinate.Convert(
                 double.Parse(lat, CultureInfo.InvariantCulture),
@@ -69,6 +69,7 @@ namespace Handlers
             };
             Loader.CreateProject(cureentProject);
             Scene.AppendProject(cureentProject);
+            return cureentProject;
         }
 
         public Project OpenProject(string path)
@@ -79,7 +80,7 @@ namespace Handlers
             {
                 try
                 {
-                    AddData(Loader.ReadLayerData(cureentProject.Hash, layer.Hash));
+                    AddLayer(layer);
                 }
                 catch (Exception)
                 {
@@ -128,13 +129,28 @@ namespace Handlers
             Loader.CreateLayer(img, layer, Filename);
         }
 
-        public void AddLayer(string path)
+        public Layer[] AddLayer(string path)
         {
             if(cureentProject != null)
             {
                 Layer layer = Loader.AddLayer(path, cureentProject.Hash);
                 cureentProject.AddLayer(layer);
+
+                AddLayer(layer);
             }
+            return cureentProject.Layers;
+        }
+
+
+        public Layer[] DeleteLayer(Layer layer)
+        {
+            if (cureentProject != null)
+            {
+                cureentProject.DeleteLayer(layer);
+                Loader.DeleteLayer(layer.Hash, cureentProject.Hash);
+                DeleteLayer(layer);
+            }
+            return cureentProject.Layers;
         }
 
     }

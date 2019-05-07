@@ -2,6 +2,7 @@
 using Interfaces;
 using Models;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Numerics;
@@ -9,11 +10,13 @@ using System.Windows.Forms;
 
 namespace CropProd
 {
-    public partial class MainWindow : Form, IUserForm
+    partial class MainWindow : Form, IUserForm
     {
         private readonly DecisionSupport<MainWindow> decisionSupport;
         private readonly Pen pen = new Pen(Color.Red, 1f);
         private readonly Pen pen2 = new Pen(Color.Green, 4f);
+
+        private List<LayerListItem> layerlist = new List<LayerListItem>();
 
         public MainWindow(string[] args)
         {
@@ -27,16 +30,17 @@ namespace CropProd
 
             Settings.Settings.TileSize = 256;
 
-            scene.Paint += Scene_Paint; ;
-            scene.Resize += Scene_Resize; ;
-            this.DragDrop += MainWindow_DragDrop; ;
-            this.DragEnter += MainWindow_DragEnter; ;
-            scene.MouseDown += Scene_MouseDown; ;
-            scene.MouseMove += Scene_MouseMove; ;
-            onNewProject.Click += OnNewProject_Click; ;
-            onOpenProject.Click += OnOpenProject_Click; ;
-            onSaveProject.Click += OnSaveProject_Click; ;
-            onLayerCreate.Click += OnLayerCreate_Click; ;
+            scene.Paint += Scene_Paint;
+            scene.Resize += Scene_Resize;
+            this.DragDrop += MainWindow_DragDrop;
+            this.DragEnter += MainWindow_DragEnter;
+            scene.MouseDown += Scene_MouseDown;
+            scene.MouseMove += Scene_MouseMove;
+            onNewProject.Click += OnNewProject_Click;
+            onOpenProject.Click += OnOpenProject_Click;
+            onSaveProject.Click += OnSaveProject_Click;
+            onLayerCreate.Click += OnLayerCreate_Click;
+            this.KeyPress += MainWindow_KeyPress;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
@@ -58,15 +62,27 @@ namespace CropProd
             this.Text = title;
         }
 
-        public void DrawLayerItem(int n)
+        public void RedrawLayerItem(Layer[] layers)
         {
-            LayerListItem item = new LayerListItem();
-            item.CreateControl();
-            item.Parent = LayerList;
-            item.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
-            item.Location = new Point(item.Parent.Padding.Left, item.Parent.Padding.Top + item.Height * n + 10);
-            item.Show();
+            foreach (LayerListItem item in layerlist)
+            {
+                item.Dispose();
+            }
+            layerlist.Clear();
+            for (int i = 0; i < layers.Length; i++)
+            {
+                LayerListItem item = new LayerListItem();
+                item.CreateControl();
+                item.Parent = LayerList;
+                item.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+                item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
+                item.Layer = layers[i];
+                item.LayName.Text = layers[i].Name;
+                item.LayerDelete += DeleteLayer_Click;
+                item.Location = new Point(item.Parent.Padding.Left, item.Parent.Padding.Top + item.Height * i + 10);
+                item.Show();
+                layerlist.Add(item);
+            }
         }
 
         public string ShowOpenFileDialog()

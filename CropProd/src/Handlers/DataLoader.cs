@@ -92,6 +92,23 @@ namespace Handlers
             return layer;
         }
 
+        public void DeleteLayer(string layerhash, string prodname)
+        {
+            string prodpath = basepath + prodname + "/" + layerhash;
+
+            if (Directory.Exists(prodpath))
+            {
+                try
+                {
+                    Directory.Delete(prodpath, true);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("this is not prod file!");
+                }
+            }
+        }
+
 
         public Data[] ReadLayerData(string prodname, string layername)
         {
@@ -103,13 +120,13 @@ namespace Handlers
                 using (FileStream myStream = new FileStream(files[i], FileMode.Open, FileAccess.Read))
                 {
                     Image img = Image.FromStream(myStream);
-                    data[i] = ConvertDatafileToData(img, files[i]);
+                    data[i] = ConvertDatafileToData(img, files[i], layername);
                 }
             }
             return data;
         }
 
-        private Data ConvertDatafileToData(Image img, string filepath)
+        private Data ConvertDatafileToData(Image img, string filepath, string layerhash)
         {
             string name = Path.GetFileNameWithoutExtension(filepath);
 
@@ -122,7 +139,7 @@ namespace Handlers
                 Int32.Parse(xy[1])
                 );
 
-            return new Data(coords,img);
+            return new Data(coords,img, layerhash);
         }
 
         private T ReadFileData <T>(string path)

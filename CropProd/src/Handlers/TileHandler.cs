@@ -147,7 +147,7 @@ namespace Handlers
 
         private void RemoveTile(Tile tile)
         {
-            //DisposeImg(tile);
+            DisposeImg(tile);
             tiles.Remove(tile);
         }
 
