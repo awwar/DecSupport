@@ -18,13 +18,13 @@ namespace DSCore
 
         internal event Action OnNeedRedraw;
 
+        private T form;
         private Scene scene;
-        private static T form;
         private Vector2 first = new Vector2(0, 0);
         private Vector2 delta = new Vector2(0, 0);
         private Vector2 last = new Vector2(0, 0);
         private readonly Thread TileThread;
-
+        Frame[] frames = new Frame[] { };
 
         public DecisionSupport(T myform)
         {
@@ -57,28 +57,27 @@ namespace DSCore
         public Frame[] OnDraw()
         {
             scene.Update(delta);
-            delta = new Vector2(0, 0);
-            Frame[] frames = new Frame[] { };
 
             //Если поток не 
-            if (TileHandler == null || DataHandler == null)
+            if (TileHandler != null || DataHandler != null)
             {
-                return frames;
+
+                frames = TileHandler.Handle();
+
+                frames = frames.Concat(DataHandler.Handle()).ToArray();
+
             }
-
-            frames = TileHandler.Handle();
-
-            frames = frames.Concat(DataHandler.Handle()).ToArray();
 
             return frames;
         }
 
-        public void OnMouseMoove(int x, int y)
+        public Vector2 OnMouseMoove(int x, int y)
         {
             first = new Vector2(x, y);
             delta = Vector2.Subtract(last, first);
             last = first;
             OnNeedRedraw();
+            return delta;
         }
 
         public void OnMouseDown(int x, int y)
@@ -98,18 +97,14 @@ namespace DSCore
         {
             Project proj = DataHandler.OpenProject(file);
             scene.AppendProject(proj);
-            form.RedrawLayerItem(proj.Layers);
             TileHandler.Update();
             OnNeedRedraw();
             return proj;
         }
 
-        public void OnLayerDrop(string file)
+        public Layer[] OnLayerDrop(string file)
         {
-            form.RedrawLayerItem(
-               DataHandler.LoadLayer(file)
-            );
-            OnNeedRedraw();
+            return DataHandler.LoadLayer(file); ;
         }
 
         public void OnSaveProject(string file = null)
@@ -142,12 +137,9 @@ namespace DSCore
             );
         }
 
-        public void OnLayerDelete(Layer layer)
+        public Layer[] OnLayerDelete(Layer layer)
         {
-            form.RedrawLayerItem(
-                DataHandler.DeleteLayer(layer)
-            );
-            OnNeedRedraw();
+            return DataHandler.DeleteLayer(layer);
         }
     }
 }

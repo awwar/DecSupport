@@ -41,6 +41,8 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.решениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.AcceptDecision = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scene)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -53,7 +55,8 @@
             this.MainMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.проектToolStripMenuItem,
-            this.слоиToolStripMenuItem});
+            this.слоиToolStripMenuItem,
+            this.решениеToolStripMenuItem});
             this.MainMenu.Location = new System.Drawing.Point(0, 0);
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -150,6 +153,20 @@
             this.Status.Size = new System.Drawing.Size(22, 17);
             this.Status.Text = "Ok";
             // 
+            // решениеToolStripMenuItem
+            // 
+            this.решениеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.AcceptDecision});
+            this.решениеToolStripMenuItem.Name = "решениеToolStripMenuItem";
+            this.решениеToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.решениеToolStripMenuItem.Text = "Решение";
+            // 
+            // AcceptDecision
+            // 
+            this.AcceptDecision.Name = "AcceptDecision";
+            this.AcceptDecision.Size = new System.Drawing.Size(180, 22);
+            this.AcceptDecision.Text = "Принять";
+            // 
             // MainWindow
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.TitleBar;
@@ -195,6 +212,8 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         public System.Windows.Forms.ToolStripStatusLabel Status;
+        private System.Windows.Forms.ToolStripMenuItem решениеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem AcceptDecision;
     }
 }
 

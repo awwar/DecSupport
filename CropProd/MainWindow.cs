@@ -39,7 +39,9 @@ namespace CropProd
             onOpenProject.Click += OnOpenProject_Click;
             onSaveProject.Click += OnSaveProject_Click;
             onLayerCreate.Click += OnLayerCreate_Click;
-            KeyPress += MainWindow_KeyPress;
+            KeyDown += MainWindow_KeyPress;
+            KeyUp += MainWindow_KeyUp;
+            AcceptDecision.Click += AcceptDecision_Click;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
@@ -51,6 +53,7 @@ namespace CropProd
             }
         }
 
+
         public Vector2 GetDrawableSize()
         {
             return new Vector2(scene.Width, scene.Height);
@@ -59,29 +62,6 @@ namespace CropProd
         public void ChangeTitle(string title)
         {
             Text = title;
-        }
-
-        public void RedrawLayerItem(Layer[] layers)
-        {
-            foreach (LayerListItem item in layerlist)
-            {
-                item.Dispose();
-            }
-            layerlist.Clear();
-            for (int i = 0; i < layers.Length; i++)
-            {
-                LayerListItem item = new LayerListItem();
-                item.CreateControl();
-                item.Parent = LayerList;
-                item.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-                item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
-                item.Layer = layers[i];
-                item.LayName.Text = layers[i].Name;
-                item.LayerDelete += DeleteLayer_Click;
-                item.Location = new Point(item.Parent.Padding.Left, item.Parent.Padding.Top + item.Height * i + 10);
-                item.Show();
-                layerlist.Add(item);
-            }
         }
 
         public string ShowOpenFileDialog()

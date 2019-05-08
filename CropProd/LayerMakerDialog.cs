@@ -29,7 +29,6 @@ namespace CropProd
         int clickx;
         int clicky;
         Pen pen = new Pen(Color.Red, 1f);
-        Pen pen1 = new Pen(Color.Orange, 10f);
 
         public Dictionary<string, Bitmap> tiles = new Dictionary<string, Bitmap>();
 
