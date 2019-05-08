@@ -1,12 +1,8 @@
 ﻿using Interfaces;
 using Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CropProd
@@ -15,7 +11,7 @@ namespace CropProd
     {
         private void MainWindow_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if(e.KeyChar.ToString() == Keys.Control.ToString())
+            if (e.KeyChar.ToString() == Keys.Control.ToString())
             {
 
             }
@@ -29,55 +25,67 @@ namespace CropProd
 
         private void OnLayerCreate_Click(object sender, EventArgs e)
         {
-            LayerMakerDialogData data = this.ShowLayerMakerDialog();
-            decisionSupport.OnLayerCreate(data);
+
+            Status.Text = "Создание нового слоя";
+            try
+            {
+                LayerMakerDialogData data = ShowLayerMakerDialog();
+                decisionSupport.OnLayerCreate(data);
+            }
+            catch (Exception exc)
+            {
+                ShowBouble(exc.Message);
+            }
+
+            Status.Text = "Ok";
         }
 
         private void OnSaveProject_Click(object sender, EventArgs e)
         {
+            Status.Text = "Сохраняю...";
             try
             {
                 decisionSupport.OnSaveProject();
             }
             catch (IOException)
             {
-                string filename = this.ShowSaveFileDialog();
+                string filename = ShowSaveFileDialog();
                 decisionSupport.OnSaveProject(filename);
             }
+            Status.Text = "Ok";
         }
 
         private void OnOpenProject_Click(object sender, EventArgs e)
         {
-
             try
             {
                 Status.Text = "Открываю проект";
-                string filename = this.ShowOpenFileDialog();
+                string filename = ShowOpenFileDialog();
                 Project proj = decisionSupport.OnOpenProject(filename);
-                this.Text = proj.Name;
+                Text = proj.Name;
             }
             catch (Exception exc)
             {
-                this.ShowBouble(exc.Message);
+                ShowBouble(exc.Message);
             }
             Status.Text = "Ok";
         }
 
         private void OnNewProject_Click(object sender, EventArgs e)
         {
+            Status.Text = "Создание нового проекта";
             try
             {
-                Status.Text = "Создание нового проекта";
-                CreateProjDialogData createProj = this.ShowCreateProjDialog();
+                CreateProjDialogData createProj = ShowCreateProjDialog();
                 Project proj = decisionSupport.OnNewProject(createProj);
-                string filename = this.ShowSaveFileDialog(proj.Name);
+                string filename = ShowSaveFileDialog(proj.Name);
                 decisionSupport.OnSaveProject(filename);
-                this.Text = proj.Name;
-                this.ShowBouble($"Проект {proj.Name} успешно создан!");
+                Text = proj.Name;
+                ShowBouble($"Проект {proj.Name} успешно создан!");
             }
             catch (Exception exc)
             {
-                this.ShowBouble(exc.Message);
+                ShowBouble(exc.Message);
             }
             Status.Text = "Ok";
         }
@@ -132,7 +140,10 @@ namespace CropProd
         }
         private void MainWindow_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
         }
 
         private void MainWindow_DragDrop(object sender, DragEventArgs e)
@@ -145,7 +156,7 @@ namespace CropProd
                 {
                     case ".cpproj":
                         Project proj = decisionSupport.OnOpenProject(file);
-                        this.Text = proj.Name;
+                        Text = proj.Name;
                         break;
                     case ".cplay":
                         decisionSupport.OnLayerDrop(file);

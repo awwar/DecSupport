@@ -6,23 +6,21 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Numerics;
 
 namespace Handlers
 {
-    class DataHandler : IHandler
+    class LayerLoader : IHandler
     {
         public Action Redraw { set; get; }
-        private List<Layer> DataLayer = new List<Layer>();
         private readonly Scene Scene;
         private readonly TileCoordinate TileCoordinate;
         private readonly DataLoader Loader;
 
         private Project cureentProject;
 
-        public DataHandler(ref Scene scene)
+        public LayerLoader(ref Scene scene)
         {
-            this.Scene = scene;
+            Scene = scene;
             TileCoordinate = new TileCoordinate(Settings.Settings.TileSize);
             Loader = new DataLoader();
         }
@@ -33,22 +31,22 @@ namespace Handlers
             cureentProject.AddLayer(layer);
         }
 
-        public void DeleteLayer(Layer layer)
-        {
-            cureentProject.DeleteLayer(layer);
-        }
-
         public Frame[] Handle()
         {
-            List <Data> retdata = new List<Data>() { };
-            if(cureentProject != null) {
+            List<Data> retdata = new List<Data>() { };
+            if (cureentProject != null)
+            {
                 foreach (Layer item in cureentProject.Layers)
                 {
-                    foreach (Data data in item.Datas)
+                    if(item.Datas != null)
                     {
-                        data.Draw(Scene.Position);
-                        retdata.Add(data);
+                        foreach (Data data in item.Datas)
+                        {
+                            data.Draw(Scene.Position);
+                            retdata.Add(data);
+                        }
                     }
+
                 }
             }
             return retdata.ToArray();
@@ -74,7 +72,7 @@ namespace Handlers
 
         public Project OpenProject(string path)
         {
-            this.cureentProject = Loader.LoadProject(path);
+            cureentProject = Loader.LoadProject(path);
             Scene.AppendProject(cureentProject);
             foreach (Layer layer in cureentProject.Layers)
             {
@@ -92,13 +90,13 @@ namespace Handlers
 
         public bool SaveProject(string path = null)
         {
-            if(cureentProject != null)
+            if (cureentProject != null)
             {
-                if(path != null)
+                if (path != null)
                 {
                     cureentProject.Path = path;
                 }
-                if(cureentProject.Path == null)
+                if (cureentProject.Path == null)
                 {
                     throw new IOException("Path not found");
                 }
@@ -129,12 +127,11 @@ namespace Handlers
             Loader.CreateLayer(img, layer, Filename);
         }
 
-        public Layer[] AddLayer(string path)
+        public Layer[] LoadLayer(string path)
         {
-            if(cureentProject != null)
+            if (cureentProject != null)
             {
                 Layer layer = Loader.AddLayer(path, cureentProject.Hash);
-                cureentProject.AddLayer(layer);
 
                 AddLayer(layer);
             }
@@ -148,7 +145,6 @@ namespace Handlers
             {
                 cureentProject.DeleteLayer(layer);
                 Loader.DeleteLayer(layer.Hash, cureentProject.Hash);
-                DeleteLayer(layer);
             }
             return cureentProject.Layers;
         }

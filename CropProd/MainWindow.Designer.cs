@@ -1,6 +1,6 @@
 ﻿namespace CropProd
 {
-    partial class MainWindow
+    public partial class MainWindow
     {
         /// <summary>
         /// Обязательная переменная конструктора.

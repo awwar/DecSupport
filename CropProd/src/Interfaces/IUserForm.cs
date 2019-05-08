@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Interfaces
 {
-    internal interface IUserForm
+    public interface IUserForm
     {
         Vector2 GetDrawableSize();
         void ChangeTitle(string title);

@@ -17,7 +17,7 @@ namespace Handlers
 
         public DataLoader()
         {
-            this.basepath = Path.GetTempPath() + "CropPod/projects/";
+            basepath = Path.GetTempPath() + "CropPod/projects/";
         }
 
         public void CreateProject(Project project)
@@ -139,20 +139,21 @@ namespace Handlers
                 Int32.Parse(xy[1])
                 );
 
-            return new Data(coords,img, layerhash);
+            return new Data(coords, img, layerhash);
         }
 
-        private T ReadFileData <T>(string path)
+        private T ReadFileData<T>(string path)
         {
             T data = default;
-            using (var file = File.OpenRead(path))
-            using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
+            using (FileStream file = File.OpenRead(path))
+            using (ZipArchive zip = new ZipArchive(file, ZipArchiveMode.Read))
             {
-                foreach (var entry in zip.Entries)
+                foreach (ZipArchiveEntry entry in zip.Entries)
                 {
                     if (entry.FullName == "data.bin")
                     {
                         data = DeSerilize<T>(entry.Open());
+                        break;
                     }
                 }
             }
@@ -184,9 +185,11 @@ namespace Handlers
         private string GetHashName(string name)
         {
             if (String.IsNullOrEmpty(name))
+            {
                 return String.Empty;
+            }
 
-            using (var sha = new System.Security.Cryptography.SHA256Managed())
+            using (System.Security.Cryptography.SHA256Managed sha = new System.Security.Cryptography.SHA256Managed())
             {
                 DateTime now = DateTime.Now;
                 byte[] textData = System.Text.Encoding.UTF8.GetBytes(name + now.ToString());

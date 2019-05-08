@@ -5,7 +5,7 @@ using System.Linq;
 namespace Models
 {
     [Serializable]
-    class Project
+    public class Project
     {
         public string Name { get; set; } = null;
         public string Path { get; set; } = null;
@@ -31,24 +31,9 @@ namespace Models
 
         public void DeleteLayer(Layer layer)
         {
-            layer.Dispose();
-            bool isFinde = false;
+            Layers = Layers.Where(x => x.Hash != layer.Hash).ToArray();
 
-            for (int i = 0; i < Layers.Length; i++)
-            {
-                if (isFinde)
-                {
-                    Layers[i] = Layers[i + 1];
-                }
-                if (Layers[i].Hash == layer.Hash)
-                {
-                    isFinde = true;
-                }
-            }
-            if (isFinde)
-            {
-                Array.Resize(ref Layers, Layers.Length - 1);  
-            }
+            layer.Dispose();
         }
     }
 }

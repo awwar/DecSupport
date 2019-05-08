@@ -1,7 +1,7 @@
-﻿ 
-using System;  
-using System.Text;  
-  
+﻿
+using System;
+using System.Text;
+
 namespace LatLonToTile
 {
     static class BinTile

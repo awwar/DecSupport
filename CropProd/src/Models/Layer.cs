@@ -10,14 +10,18 @@ namespace Models
         public double Lon { get; set; }
         public string Hash { get; set; }
         public int Id { get; set; }
-        [NonSerialized()]  public Data[] Datas = new Data[] { };
+        [NonSerialized()] public Data[] Datas = new Data[] { };
 
         public void Dispose()
         {
-            foreach (Data item in Datas)
+            if(Datas != null)
             {
-                item.Image.Dispose();
+                foreach (Data item in Datas)
+                {
+                    item.Image.Dispose();
+                }
             }
+
         }
     }
 }

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Models;
+using System;
 using System.Windows.Forms;
-using Models;
 
 namespace CropProd
 {
@@ -19,7 +12,7 @@ namespace CropProd
         public LayerListItem()
         {
             InitializeComponent();
-            this.DeleteLayer.Click += DeleteLayer_Click;
+            DeleteLayer.Click += DeleteLayer_Click;
         }
 
         private void DeleteLayer_Click(object sender, EventArgs e)

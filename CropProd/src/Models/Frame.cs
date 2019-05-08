@@ -1,5 +1,4 @@
-﻿using Interfaces;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Numerics;
 
 namespace Models
@@ -12,7 +11,7 @@ namespace Models
         public Vector2 Screenposition { get; set; }
         public Image Image { get; set; }
 
-        virtual public void Draw(Vector2 scenePose)
+        public virtual void Draw(Vector2 scenePose)
         {
             Screenposition = Vector2.Add(Position, scenePose);
         }

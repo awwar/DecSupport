@@ -10,8 +10,8 @@ namespace Events
 
         public ImageLoadArgs(Image image, string path)
         {
-            this.Image = image;
-            this.Path = path;
+            Image = image;
+            Path = path;
         }
     }
 }

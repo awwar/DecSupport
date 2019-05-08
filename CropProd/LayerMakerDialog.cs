@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DSCore;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -18,46 +20,62 @@ namespace CropProd
     public partial class LayerMakerDialog : Form
     {
         Image img;
-        int rignt;
-        int down;
-        int clickTileX;
-        int clickTileY;
+        int left;
+        int right;        
+        int width;
+        int top;      
+        int height;
+        int bottom;     
+        int clickx;
+        int clicky;
         Pen pen = new Pen(Color.Red, 1f);
-        Pen pen1 = new Pen(Color.Orange, 4f);
+        Pen pen1 = new Pen(Color.Orange, 10f);
 
         public Dictionary<string, Bitmap> tiles = new Dictionary<string, Bitmap>();
 
         public LayerMakerDialog()
         {
             InitializeComponent();
-            this.DragDrop += LayerMaker_DragDrop;
-            this.DragEnter += LayerMaker_DragEnter; ;
-            this.pictureBox1.Paint += PictureBox1_Paint;
-            pictureBox1.MouseClick += PictureBox1_Click;
-            this.button1.Click += Button1_Click;
+            DragDrop += LayerMaker_DragDrop;
+            DragEnter += LayerMaker_DragEnter;
+            pictureBox1.Paint += PictureBox1_Paint;
+            pictureBox1.MouseDown += PictureBox1_Move; ;
+            button1.Click += Button1_Click;
+        }
+
+        private void PictureBox1_Move(object sender, MouseEventArgs e)
+        {
+            clickx = e.X;
+            clicky = e.Y;
+            right = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
+            bottom = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));
+            left =  e.X % 256;
+            top  =  e.Y % 256; ;
+
+            pictureBox1.Invalidate();
         }
 
         private void Button1_Click(object sender, EventArgs e)
         {
             MemoryStream ms = new MemoryStream();
             pictureBox1.Image.Save(ms, ImageFormat.Png);
-            var img = Image.FromStream(ms);
-            int tileWidth = Settings.Settings.TileSize;
-            int tileHeight = Settings.Settings.TileSize;
-            
-            for (int x = 0; x <= down; x++)
+            Image img = Image.FromStream(ms);
+            int tile = Settings.Settings.TileSize;
+            int clicktileX = (int)Math.Ceiling((double)(clickx / tile));
+            int clicktileY = (int)Math.Ceiling((double)(clicky / tile));
+            for (int x = 0; x <= bottom; x++)
             {
-                for (int y = 0; y <= rignt;  y++)
+                for (int y = 0; y <= right; y++)
                 {
-                    Rectangle tileBounds = new Rectangle(y * tileWidth, x * tileHeight, tileWidth, tileHeight);
-                    Bitmap target = new Bitmap(tileWidth, tileHeight);
-                    string filename = String.Format("{0}_{1}", y - clickTileX, x - clickTileY);
+                    Rectangle tileBounds = new Rectangle(y * tile - left, x * tile - top, tile, tile);
+                    Bitmap target = new Bitmap(tile, tile);
+                    string filename = String.Format("{0}_{1}", y - clicktileX, x - clicktileY);
                     using (Graphics graphics = Graphics.FromImage(target))
                     {
                         graphics.Clear(Color.Transparent);
                         graphics.DrawImage(
                             img,
-                            new Rectangle(0, 0, tileWidth, tileHeight),
+                            new Rectangle(0, 0, tile, tile),
                             tileBounds,
                             GraphicsUnit.Pixel);
                     }
@@ -68,53 +86,50 @@ namespace CropProd
             ms.Dispose();
         }
 
-        private void PictureBox1_Click(object sender, MouseEventArgs e)
-        {
-            clickTileX = (int)Math.Floor((double)(e.X / Settings.Settings.TileSize));
-            clickTileY = (int)Math.Floor((double)(e.Y / Settings.Settings.TileSize));
-            pictureBox1.Invalidate();
-        }
-
         private void LayerMaker_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
         }
 
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
         {
+            System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
+            int tile = Settings.Settings.TileSize;
+            e.Graphics.FillRectangle(myBrush, new Rectangle(clickx - 5, clicky - 5, 10, 10));
             if (img != null)
             {
-                float tile = Settings.Settings.TileSize;
                 pictureBox1.Image = img;
-                for (int i = 0; i <= down; i++)
+                for (int i = 0; i <= bottom; i++)
                 {
-                    for (int j = 0; j <= rignt; j++)
+                    for (int j = 0; j <= right; j++)
                     {
                         e.Graphics.DrawRectangle(
                             pen,
-                            j * tile,
-                            i * tile,
+                            j * tile - left,
+                            i * tile - top,
                             tile,
                             tile
                         );
                     }
                 }
-                e.Graphics.DrawRectangle(
-                    pen1,
-                    clickTileX * tile,
-                    clickTileY * tile,
-                    tile,
-                    tile
-                );
             }
         }
 
         private void LayerMaker_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            img = Image.FromFile(files[0]);
-            rignt = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
-            down = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));
+            using (FileStream myStream = new FileStream(files[0], FileMode.Open, FileAccess.Read))
+            {
+                img = Image.FromStream(myStream);
+                myStream.Close();
+            }
+            width = img.Width;
+            height = img.Height;/*
+            width = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
+            height = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));*/
             pictureBox1.Invalidate();
         }
     }

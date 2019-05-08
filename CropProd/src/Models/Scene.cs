@@ -15,31 +15,31 @@ namespace Models
 
         public Scene(Vector2 size)
         {
-            this.Size = size;
-            this.Position = Vector2.Add(this.Position, this.Size / 2);
+            Size = size;
+            Position = Vector2.Add(Position, Size / 2);
         }
 
         public void Update(Vector2 delta)
         {
-            this.Position = Vector2.Add(this.Position, delta);
+            Position = Vector2.Add(Position, delta);
         }
 
         public void SetTileCenter(Vector2 center)
         {
-            this.Coordinate = center;
+            Coordinate = center;
         }
 
         public void Resize(Vector2 size)
         {
-            this.Position = Vector2.Subtract(this.Position, this.Size / 2);
-            this.Size = size;
-            this.Position = Vector2.Add(this.Position, size / 2);
+            Position = Vector2.Subtract(Position, Size / 2);
+            Size = size;
+            Position = Vector2.Add(Position, size / 2);
         }
 
         public void AppendProject(Project proj)
         {
-            this.Name = proj.Name;
-            this.Coordinate = new Vector2((float)proj.Lat, (float)proj.Lon);
+            Name = proj.Name;
+            Coordinate = new Vector2((float)proj.Lat, (float)proj.Lon);
         }
     }
 }

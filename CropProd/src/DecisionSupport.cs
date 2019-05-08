@@ -10,10 +10,10 @@ using System.Threading;
 
 namespace DSCore
 {
-    class DecisionSupport<T> where T : IUserForm
+    public class DecisionSupport<T> where T : IUserForm
     {
         internal TileHandler TileHandler { get; private set; }
-        internal DataHandler DataHandler { get; private set; }
+        internal LayerLoader DataHandler { get; private set; }
         internal Scene Scene { get => scene; }
 
         internal event Action OnNeedRedraw;
@@ -41,8 +41,8 @@ namespace DSCore
 
         private void Start()
         {
-            this.TileHandler = new TileHandler(ref scene);
-            this.DataHandler = new DataHandler(ref scene);
+            TileHandler = new TileHandler(ref scene);
+            DataHandler = new LayerLoader(ref scene);
             TileHandler.Redraw += OnNeedRedraw;
             DataHandler.Redraw += OnNeedRedraw;
         }
@@ -97,16 +97,19 @@ namespace DSCore
         public Project OnOpenProject(string file)
         {
             Project proj = DataHandler.OpenProject(file);
+            scene.AppendProject(proj);
             form.RedrawLayerItem(proj.Layers);
             TileHandler.Update();
+            OnNeedRedraw();
             return proj;
         }
 
         public void OnLayerDrop(string file)
         {
             form.RedrawLayerItem(
-               DataHandler.AddLayer(file)
+               DataHandler.LoadLayer(file)
             );
+            OnNeedRedraw();
         }
 
         public void OnSaveProject(string file = null)
@@ -125,6 +128,7 @@ namespace DSCore
                             createProj.Lat,
                             createProj.Lon);
             TileHandler.Update();
+            OnNeedRedraw();
             return proj;
         }
 
@@ -143,6 +147,7 @@ namespace DSCore
             form.RedrawLayerItem(
                 DataHandler.DeleteLayer(layer)
             );
+            OnNeedRedraw();
         }
     }
 }

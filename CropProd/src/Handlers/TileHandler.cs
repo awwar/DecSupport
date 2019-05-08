@@ -39,7 +39,8 @@ namespace Handlers
             this.scene = scene;
             rnd = new Random();
             basePath = Path.GetTempPath() + "CropPod/tiles";
-            ImgLoader = new Thread(() => {
+            ImgLoader = new Thread(() =>
+            {
                 Loader = new TileLoader();
                 Loader.OnImageLoad += ImageLoaded;
             })

@@ -4,15 +4,14 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Numerics;
 using System.Windows.Forms;
 
 namespace CropProd
 {
-    partial class MainWindow : Form, IUserForm
+    public partial class MainWindow : Form, IUserForm
     {
-        private readonly DecisionSupport<MainWindow> decisionSupport;
+        private DecisionSupport<MainWindow> decisionSupport;
         private readonly Pen pen = new Pen(Color.Red, 1f);
         private readonly Pen pen2 = new Pen(Color.Green, 4f);
 
@@ -32,15 +31,15 @@ namespace CropProd
 
             scene.Paint += Scene_Paint;
             scene.Resize += Scene_Resize;
-            this.DragDrop += MainWindow_DragDrop;
-            this.DragEnter += MainWindow_DragEnter;
+            DragDrop += MainWindow_DragDrop;
+            DragEnter += MainWindow_DragEnter;
             scene.MouseDown += Scene_MouseDown;
             scene.MouseMove += Scene_MouseMove;
             onNewProject.Click += OnNewProject_Click;
             onOpenProject.Click += OnOpenProject_Click;
             onSaveProject.Click += OnSaveProject_Click;
             onLayerCreate.Click += OnLayerCreate_Click;
-            this.KeyPress += MainWindow_KeyPress;
+            KeyPress += MainWindow_KeyPress;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
@@ -59,7 +58,7 @@ namespace CropProd
 
         public void ChangeTitle(string title)
         {
-            this.Text = title;
+            Text = title;
         }
 
         public void RedrawLayerItem(Layer[] layers)
@@ -146,7 +145,7 @@ namespace CropProd
                     return data;
                 }
             }
-            throw new Exception("Project not created");           
+            throw new Exception("Project not created");
         }
 
         public void ShowBouble(string msg)
@@ -191,10 +190,13 @@ namespace CropProd
                             data.Tiles = layerMaker.tiles;
                             data.Lat = layerMaker.LatInput.Text;
                             data.Lon = layerMaker.LonInput.Text;
-                            data.FileName = sfd.FileName;              
+                            data.FileName = sfd.FileName;
                         }
                     }
                 }
+            } else
+            {
+                throw new Exception("Layer not created");
             }
             layerMaker.Dispose();
             return data;
