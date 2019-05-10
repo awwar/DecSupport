@@ -3,6 +3,7 @@ using Handlers;
 using Interfaces;
 using Models;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -54,6 +55,12 @@ namespace DSCore
             OnNeedRedraw();
         }
 
+
+        public void OnBeginDecision(Layer[] layers, PointF[] points)
+        {
+
+        }
+
         public Frame[] OnDraw()
         {
             scene.Update(delta);
@@ -76,7 +83,6 @@ namespace DSCore
             first = new Vector2(x, y);
             delta = Vector2.Subtract(last, first);
             last = first;
-            OnNeedRedraw();
             return delta;
         }
 
@@ -133,6 +139,8 @@ namespace DSCore
                 data.Tiles,
                 data.Lat,
                 data.Lon,
+                data.Max,
+                data.Min,
                 data.FileName
             );
         }

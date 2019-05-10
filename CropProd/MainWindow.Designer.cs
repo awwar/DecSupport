@@ -36,13 +36,15 @@
             this.onSaveProject = new System.Windows.Forms.ToolStripMenuItem();
             this.слоиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.onLayerCreate = new System.Windows.Forms.ToolStripMenuItem();
+            this.решениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RegionDecision = new System.Windows.Forms.ToolStripMenuItem();
+            this.BeginDecision = new System.Windows.Forms.ToolStripMenuItem();
+            this.CancelDecision = new System.Windows.Forms.ToolStripMenuItem();
             this.LayerList = new System.Windows.Forms.GroupBox();
             this.scene = new System.Windows.Forms.PictureBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.Status = new System.Windows.Forms.ToolStripStatusLabel();
-            this.решениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.AcceptDecision = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scene)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -106,6 +108,35 @@
             this.onLayerCreate.Size = new System.Drawing.Size(117, 22);
             this.onLayerCreate.Text = "Создать";
             // 
+            // решениеToolStripMenuItem
+            // 
+            this.решениеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RegionDecision,
+            this.BeginDecision,
+            this.CancelDecision});
+            this.решениеToolStripMenuItem.Name = "решениеToolStripMenuItem";
+            this.решениеToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.решениеToolStripMenuItem.Text = "Решение";
+            // 
+            // RegionDecision
+            // 
+            this.RegionDecision.Name = "RegionDecision";
+            this.RegionDecision.Size = new System.Drawing.Size(180, 22);
+            this.RegionDecision.Text = "Область";
+            this.RegionDecision.Click += new System.EventHandler(this.AcceptDecision_Click);
+            // 
+            // BeginDecision
+            // 
+            this.BeginDecision.Name = "BeginDecision";
+            this.BeginDecision.Size = new System.Drawing.Size(180, 22);
+            this.BeginDecision.Text = "Начать";
+            // 
+            // CancelDecision
+            // 
+            this.CancelDecision.Name = "CancelDecision";
+            this.CancelDecision.Size = new System.Drawing.Size(180, 22);
+            this.CancelDecision.Text = "Отмена";
+            // 
             // LayerList
             // 
             this.LayerList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -153,20 +184,6 @@
             this.Status.Size = new System.Drawing.Size(22, 17);
             this.Status.Text = "Ok";
             // 
-            // решениеToolStripMenuItem
-            // 
-            this.решениеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AcceptDecision});
-            this.решениеToolStripMenuItem.Name = "решениеToolStripMenuItem";
-            this.решениеToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
-            this.решениеToolStripMenuItem.Text = "Решение";
-            // 
-            // AcceptDecision
-            // 
-            this.AcceptDecision.Name = "AcceptDecision";
-            this.AcceptDecision.Size = new System.Drawing.Size(180, 22);
-            this.AcceptDecision.Text = "Принять";
-            // 
             // MainWindow
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.TitleBar;
@@ -213,7 +230,9 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         public System.Windows.Forms.ToolStripStatusLabel Status;
         private System.Windows.Forms.ToolStripMenuItem решениеToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem AcceptDecision;
+        private System.Windows.Forms.ToolStripMenuItem RegionDecision;
+        private System.Windows.Forms.ToolStripMenuItem BeginDecision;
+        private System.Windows.Forms.ToolStripMenuItem CancelDecision;
     }
 }
 

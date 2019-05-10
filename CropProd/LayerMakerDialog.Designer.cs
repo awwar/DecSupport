@@ -32,6 +32,10 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.MaxInput = new System.Windows.Forms.TextBox();
+            this.MinInput = new System.Windows.Forms.TextBox();
             this.NameInput = new System.Windows.Forms.TextBox();
             this.LonInput = new System.Windows.Forms.TextBox();
             this.LatInput = new System.Windows.Forms.TextBox();
@@ -71,6 +75,10 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.MaxInput);
+            this.groupBox1.Controls.Add(this.MinInput);
             this.groupBox1.Controls.Add(this.NameInput);
             this.groupBox1.Controls.Add(this.LonInput);
             this.groupBox1.Controls.Add(this.LatInput);
@@ -84,6 +92,40 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Create Layer";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 178);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(57, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Max Value";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 139);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(54, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Min Value";
+            // 
+            // MaxInput
+            // 
+            this.MaxInput.Location = new System.Drawing.Point(6, 194);
+            this.MaxInput.Name = "MaxInput";
+            this.MaxInput.Size = new System.Drawing.Size(100, 20);
+            this.MaxInput.TabIndex = 9;
+            this.MaxInput.Text = "1";
+            // 
+            // MinInput
+            // 
+            this.MinInput.Location = new System.Drawing.Point(6, 155);
+            this.MinInput.Name = "MinInput";
+            this.MinInput.Size = new System.Drawing.Size(100, 20);
+            this.MinInput.TabIndex = 8;
+            this.MinInput.Text = "0";
             // 
             // NameInput
             // 
@@ -165,5 +207,9 @@
         public System.Windows.Forms.TextBox LatInput;
         public System.Windows.Forms.TextBox LonInput;
         public System.Windows.Forms.TextBox NameInput;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
+        public System.Windows.Forms.TextBox MaxInput;
+        public System.Windows.Forms.TextBox MinInput;
     }
 }

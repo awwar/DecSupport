@@ -109,7 +109,7 @@ namespace Handlers
             throw new Exception("Project not opened");
         }
 
-        public void CreateLayer(Dictionary<string, Bitmap> img, string Lat, string Lon, string Filename)
+        public void CreateLayer(Dictionary<string, Bitmap> img, string Lat, string Lon, string Min, string Max, string Filename)
         {
             double[] tilelatlon = TileCoordinate.Convert(
                 double.Parse(Lat, CultureInfo.InvariantCulture),
@@ -121,6 +121,8 @@ namespace Handlers
             {
                 Lat = tilelatlon[0],
                 Lon = tilelatlon[1],
+                Min = float.Parse(Min),
+                Max = float.Parse(Max),
                 Name = Path.GetFileNameWithoutExtension(Filename)
             };
 
@@ -134,6 +136,8 @@ namespace Handlers
                 Layer layer = Loader.AddLayer(path, cureentProject.Hash);
 
                 AddLayer(layer);
+
+                SaveProject();
             }
             return cureentProject.Layers;
         }
@@ -145,6 +149,7 @@ namespace Handlers
             {
                 cureentProject.DeleteLayer(layer);
                 Loader.DeleteLayer(layer.Hash, cureentProject.Hash);
+                SaveProject();
             }
             return cureentProject.Layers;
         }

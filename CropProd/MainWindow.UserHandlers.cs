@@ -3,6 +3,7 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Numerics;
 using System.Windows.Forms;
@@ -11,48 +12,33 @@ namespace CropProd
 {
     public partial class MainWindow : Form, IUserForm
     {
-        private bool Iscontrollpress { get; set; } = false;
         private bool IsDecisionMode { get; set; } = false;
         private List<PointF> points = new List<PointF>() { };
         Vector2 delta;
         Vector2 Position { get; set; } = new Vector2(0, 0);
-        SolidBrush myBrush = new SolidBrush(System.Drawing.Color.Red);
-
-        private void MainWindow_KeyPress(object sender, KeyEventArgs e)
-        {
-            if (e.Control)
-            {
-                Iscontrollpress = true;
-            }
-        }
-
-        private void MainWindow_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.ControlKey | e.KeyData == Keys.Control)
-            {
-                Iscontrollpress = false;
-            }
-        }
+        HatchBrush myBrush = new HatchBrush(HatchStyle.Horizontal, Color.Blue, Color.FromArgb(90, 0, 0, 100));
 
         private void Scene_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && Iscontrollpress)
+            if (e.Button == MouseButtons.Right)
             {
                 delta = decisionSupport.OnMouseMoove(e.X, e.Y);
                 Position = Vector2.Add(Position, delta);
+                scene.Refresh();
             }
 
         }
 
         private void Scene_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && Iscontrollpress)
+            if (e.Button == MouseButtons.Right)
             {
                 decisionSupport.OnMouseDown(e.X, e.Y);
             }
-            if (IsDecisionMode && !Iscontrollpress)
+            if (e.Button == MouseButtons.Left && IsDecisionMode)
             {
                 points.Add(new PointF(e.X - Position.X, e.Y - Position.Y));
+                OnNeedRedraw();
             }
         }
 
@@ -61,6 +47,25 @@ namespace CropProd
             IsDecisionMode = true;
         }
 
+        private void BeginDecision_Click(object sender, EventArgs e)
+        {
+            Layer[] layers = new Layer[layerlist.Count];
+            for (int i = 0; i < layerlist.Count; i++)
+            {
+                layers[i] = layerlist[i].Layer;
+                layers[i].Max = layerlist[i].Max;
+                layers[i].Min = layerlist[i].Min;
+            }
+
+            decisionSupport.OnBeginDecision(layers, points.ToArray());
+        }
+
+        private void CancelDecision_Click(object sender, EventArgs e)
+        {
+            points.Clear();
+            IsDecisionMode = false;
+            OnNeedRedraw();
+        }
 
         private void DeleteLayer_Click(Layer layer)
         {
@@ -172,10 +177,32 @@ namespace CropProd
 
             if (IsDecisionMode)
             {
-                foreach (PointF item in points)
+                GraphicsPath graphPath = new GraphicsPath();
+                if(points.Count > 2)
                 {
-                    DrawXmark(pen2, ref e, item.X + Position.X, item.Y + Position.Y);
+
+                    for (int i = 0; i < points.Count; i++)
+                    {
+                        float x = points[i].X + Position.X;
+                        float y = points[i].Y + Position.Y;
+                        if(i == points.Count - 1)
+                        {
+                            graphPath.AddLine(x, y, points[0].X + Position.X, points[0].Y + Position.Y);
+                        } else
+                        {
+                            graphPath.AddLine(x, y, points[i + 1].X + Position.X, points[i + 1].Y + Position.Y);
+                        }
+                        DrawXmark(pen3, ref e, x, y);
+                    }
+                    e.Graphics.FillPath(myBrush, graphPath);
+                } else
+                {
+                    foreach (PointF item in points)
+                    {
+                        DrawXmark(pen3, ref e, item.X + Position.X, item.Y + Position.Y);
+                    }
                 }
+
             }
             e.Graphics.DrawString(Position.ToString(), new Font("Times new Roman", 12), myBrush, 0, 0);
 
@@ -212,6 +239,8 @@ namespace CropProd
                         break;
                 }
             }
+            e.Effect = DragDropEffects.None;
+            OnNeedRedraw();
         }
 
         public void RedrawLayerItem(Layer[] layers)

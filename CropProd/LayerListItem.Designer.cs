@@ -31,10 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.LayName = new System.Windows.Forms.Label();
             this.isInvert = new System.Windows.Forms.RadioButton();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.DeleteLayer = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.LeftRange = new System.Windows.Forms.TextBox();
+            this.RightRange = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // LayName
@@ -58,15 +58,7 @@
             this.isInvert.TabStop = true;
             this.isInvert.Text = "Is Invert";
             this.isInvert.UseVisualStyleBackColor = true;
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBar1.Location = new System.Drawing.Point(3, 21);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(200, 45);
-            this.trackBar1.TabIndex = 2;
+            this.isInvert.CheckedChanged += new System.EventHandler(this.IsInvert_CheckedChanged);
             // 
             // notifyIcon1
             // 
@@ -89,6 +81,25 @@
             this.DeleteLayer.Text = "X";
             this.DeleteLayer.UseVisualStyleBackColor = false;
             // 
+            // LeftRange
+            // 
+            this.LeftRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.LeftRange.Location = new System.Drawing.Point(6, 46);
+            this.LeftRange.Name = "LeftRange";
+            this.LeftRange.Size = new System.Drawing.Size(94, 20);
+            this.LeftRange.TabIndex = 2;
+            this.LeftRange.Text = "0";
+            this.LeftRange.TextChanged += new System.EventHandler(this.LeftRange_TextChanged);
+            // 
+            // RightRange
+            // 
+            this.RightRange.Location = new System.Drawing.Point(106, 46);
+            this.RightRange.Name = "RightRange";
+            this.RightRange.Size = new System.Drawing.Size(93, 20);
+            this.RightRange.TabIndex = 3;
+            this.RightRange.Text = "0";
+            this.RightRange.TextChanged += new System.EventHandler(this.RightRange_TextChanged);
+            // 
             // LayerListItem
             // 
             this.AllowDrop = true;
@@ -97,13 +108,13 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.RightRange);
+            this.Controls.Add(this.LeftRange);
             this.Controls.Add(this.DeleteLayer);
-            this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.isInvert);
             this.Controls.Add(this.LayName);
             this.Name = "LayerListItem";
             this.Size = new System.Drawing.Size(206, 69);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -111,9 +122,10 @@
 
         #endregion
         private System.Windows.Forms.RadioButton isInvert;
-        private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         public System.Windows.Forms.Label LayName;
         public System.Windows.Forms.Button DeleteLayer;
+        public System.Windows.Forms.TextBox LeftRange;
+        public System.Windows.Forms.TextBox RightRange;
     }
 }

@@ -14,6 +14,8 @@ namespace CropProd
         public Dictionary<string, Bitmap> Tiles;
         public string Lat;
         public string Lon;
+        public string Min;
+        public string Max;
         public string FileName;
     }
 
@@ -21,10 +23,8 @@ namespace CropProd
     {
         Image img;
         int left;
-        int right;        
-        int width;
+        int right;   
         int top;      
-        int height;
         int bottom;     
         int clickx;
         int clicky;
@@ -125,10 +125,6 @@ namespace CropProd
                 img = Image.FromStream(myStream);
                 myStream.Close();
             }
-            width = img.Width;
-            height = img.Height;/*
-            width = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
-            height = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));*/
             pictureBox1.Invalidate();
         }
     }

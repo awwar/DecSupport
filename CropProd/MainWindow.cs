@@ -14,6 +14,7 @@ namespace CropProd
         private DecisionSupport<MainWindow> decisionSupport;
         private readonly Pen pen = new Pen(Color.Red, 1f);
         private readonly Pen pen2 = new Pen(Color.Green, 4f);
+        private readonly Pen pen3 = new Pen(Color.Orange, 2f);
 
         private List<LayerListItem> layerlist = new List<LayerListItem>();
 
@@ -21,9 +22,6 @@ namespace CropProd
         {
             InitializeComponent();
             decisionSupport = new DecisionSupport<MainWindow>(this);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer |
-                ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.UserPaint, true);
 
             UpdateStyles();
 
@@ -39,9 +37,9 @@ namespace CropProd
             onOpenProject.Click += OnOpenProject_Click;
             onSaveProject.Click += OnSaveProject_Click;
             onLayerCreate.Click += OnLayerCreate_Click;
-            KeyDown += MainWindow_KeyPress;
-            KeyUp += MainWindow_KeyUp;
-            AcceptDecision.Click += AcceptDecision_Click;
+            RegionDecision.Click += AcceptDecision_Click;
+            CancelDecision.Click += CancelDecision_Click;
+            BeginDecision.Click += BeginDecision_Click;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
@@ -52,7 +50,6 @@ namespace CropProd
                 decisionSupport.OnOpenProject(args[0]);
             }
         }
-
 
         public Vector2 GetDrawableSize()
         {
@@ -147,6 +144,8 @@ namespace CropProd
                 Tiles = null,
                 Lat = null,
                 Lon = null,
+                Min = null,
+                Max = null,
                 FileName = null
             };
 
@@ -170,6 +169,8 @@ namespace CropProd
                             data.Tiles = layerMaker.tiles;
                             data.Lat = layerMaker.LatInput.Text;
                             data.Lon = layerMaker.LonInput.Text;
+                            data.Min = layerMaker.MinInput.Text;
+                            data.Max = layerMaker.MaxInput.Text;
                             data.FileName = sfd.FileName;
                         }
                     }
