@@ -13,6 +13,8 @@ namespace Models
         public string Hash { get; set; }
         public int Id { get; set; }
         [NonSerialized()] public Data[] Datas = new Data[] { };
+        [NonSerialized()] public float setMin = 0;
+        [NonSerialized()] public float setMax = 1;
 
         public void Dispose()
         {

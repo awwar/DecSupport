@@ -49,7 +49,7 @@ namespace CropProd
             right = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
             bottom = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));
             left =  e.X % 256;
-            top  =  e.Y % 256; ;
+            top  =  e.Y % 256;
 
             pictureBox1.Invalidate();
         }
@@ -62,13 +62,13 @@ namespace CropProd
             int tile = Settings.Settings.TileSize;
             int clicktileX = (int)Math.Ceiling((double)(clickx / tile));
             int clicktileY = (int)Math.Ceiling((double)(clicky / tile));
-            for (int x = 0; x <= bottom; x++)
+            for (int i = 0; i <= bottom; i++)
             {
-                for (int y = 0; y <= right; y++)
+                for (int j = 0; j <= right + 1; j++)
                 {
-                    Rectangle tileBounds = new Rectangle(y * tile - left, x * tile - top, tile, tile);
+                    Rectangle tileBounds = new Rectangle((j - 1) * tile + left, (i - 1) * tile + top, tile, tile);
                     Bitmap target = new Bitmap(tile, tile);
-                    string filename = String.Format("{0}_{1}", y - clicktileX, x - clicktileY);
+                    string filename = String.Format("{0}_{1}",j - clicktileX-1, i - clicktileY - 1);
                     using (Graphics graphics = Graphics.FromImage(target))
                     {
                         graphics.Clear(Color.Transparent);
@@ -103,12 +103,12 @@ namespace CropProd
                 pictureBox1.Image = img;
                 for (int i = 0; i <= bottom; i++)
                 {
-                    for (int j = 0; j <= right; j++)
+                    for (int j = 0; j <= right + 1; j++)
                     {
                         e.Graphics.DrawRectangle(
                             pen,
-                            j * tile - left,
-                            i * tile - top,
+                            (j - 1) * tile + left,
+                            (i - 1) * tile + top,
                             tile,
                             tile
                         );

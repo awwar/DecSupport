@@ -12,11 +12,11 @@ namespace CropProd
     public partial class MainWindow : Form, IUserForm
     {
         private DecisionSupport<MainWindow> decisionSupport;
-        private readonly Pen pen = new Pen(Color.Red, 1f);
-        private readonly Pen pen2 = new Pen(Color.Green, 4f);
         private readonly Pen pen3 = new Pen(Color.Orange, 2f);
 
         private List<LayerListItem> layerlist = new List<LayerListItem>();
+
+        bool isdraw = false;
 
         public MainWindow(string[] args)
         {
@@ -42,12 +42,13 @@ namespace CropProd
             BeginDecision.Click += BeginDecision_Click;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
+            scene.Invalidated += Scene_Invalidated;
 
 
             if (args.Length > 0)
             {
                 MessageBox.Show("Открыть: " + args[0] + "?");
-                decisionSupport.OnOpenProject(args[0]);
+                OnOpenProject_Click(args[0]);
             }
         }
 
@@ -192,7 +193,17 @@ namespace CropProd
 
         private void OnNeedRedraw()
         {
-            scene.Refresh();
+            if (!isdraw)
+            {
+                isdraw = true;
+                scene.Invalidate(true);                
+            }
+        }
+
+
+        private void Scene_Invalidated(object sender, InvalidateEventArgs e)
+        {
+            isdraw = false;
         }
 
         /*

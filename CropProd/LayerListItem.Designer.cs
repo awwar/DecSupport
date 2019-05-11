@@ -58,7 +58,6 @@
             this.isInvert.TabStop = true;
             this.isInvert.Text = "Is Invert";
             this.isInvert.UseVisualStyleBackColor = true;
-            this.isInvert.CheckedChanged += new System.EventHandler(this.IsInvert_CheckedChanged);
             // 
             // notifyIcon1
             // 

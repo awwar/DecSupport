@@ -17,6 +17,7 @@ namespace CropProd
         Vector2 delta;
         Vector2 Position { get; set; } = new Vector2(0, 0);
         HatchBrush myBrush = new HatchBrush(HatchStyle.Horizontal, Color.Blue, Color.FromArgb(90, 0, 0, 100));
+        SolidBrush myBrush2 = new SolidBrush(Color.Red);
 
         private void Scene_MouseMove(object sender, MouseEventArgs e)
         {
@@ -53,11 +54,18 @@ namespace CropProd
             for (int i = 0; i < layerlist.Count; i++)
             {
                 layers[i] = layerlist[i].Layer;
-                layers[i].Max = layerlist[i].Max;
-                layers[i].Min = layerlist[i].Min;
+                layers[i].setMax = layerlist[i].Max;
+                layers[i].setMin = layerlist[i].Min;
             }
 
-            decisionSupport.OnBeginDecision(layers, points.ToArray());
+            PointF[] pointarray = points.ToArray();
+            for (int i = 0; i < pointarray.Length; i++)
+            {
+                pointarray[i].X -= Position.X;
+                pointarray[i].Y -= Position.Y;
+            }
+
+            decisionSupport.OnBeginDecision(layers, pointarray);
         }
 
         private void CancelDecision_Click(object sender, EventArgs e)
@@ -109,10 +117,20 @@ namespace CropProd
 
         private void OnOpenProject_Click(object sender, EventArgs e)
         {
+            OnOpenProject_Click();
+        }
+
+        private void OnOpenProject_Click()
+        { 
+            string filename = ShowOpenFileDialog();
+            OnOpenProject_Click(filename);
+        }
+
+        private void OnOpenProject_Click(string filename)
+        {
             try
             {
                 Status.Text = "Открываю проект";
-                string filename = ShowOpenFileDialog();
                 Project proj = decisionSupport.OnOpenProject(filename);
                 RedrawLayerItem(proj.Layers);
                 Text = proj.Name;
@@ -123,6 +141,7 @@ namespace CropProd
             }
             Status.Text = "Ok";
         }
+
 
         private void OnNewProject_Click(object sender, EventArgs e)
         {
@@ -149,7 +168,7 @@ namespace CropProd
         }
 
         private void Scene_Paint(object sender, PaintEventArgs e)
-        {
+        { 
             Frame[] frames = decisionSupport.OnDraw();
             e.Graphics.Clear(Color.Black);
 
@@ -158,20 +177,17 @@ namespace CropProd
 
                 foreach (Frame frame in frames)
                 {
-                    try
-                    {
-                        e.Graphics.DrawImage(
-                            frame.Image,
-                            frame.Screenposition.X,
-                            frame.Screenposition.Y,
-                            frame.Size.X,
-                            frame.Size.Y + 1
-                        );
-                    }
-                    catch
-                    {
-                        Console.WriteLine("image error");
-                    }
+                    e.Graphics.DrawImage(
+                        frame.Image,
+                        frame.Screenposition.X,
+                        frame.Screenposition.Y,
+                        frame.Size.X,
+                        frame.Size.Y + 1
+                    );
+                    e.Graphics.DrawString(frame.Screenposition.ToString(), new Font("Areal", 12), myBrush2, frame.Screenposition.X,
+                         frame.Screenposition.Y);
+                    e.Graphics.DrawString((frame.Screenposition + new Vector2(256,256)).ToString(), new Font("Areal", 12), myBrush2, frame.Screenposition.X + 244,
+                        frame.Screenposition.Y + 244);
                 }
             }
 
@@ -193,6 +209,7 @@ namespace CropProd
                             graphPath.AddLine(x, y, points[i + 1].X + Position.X, points[i + 1].Y + Position.Y);
                         }
                         DrawXmark(pen3, ref e, x, y);
+                        e.Graphics.DrawString(String.Format("{0}_{1}", x, y), new Font("Areal", 12), myBrush2, x,y);
                     }
                     e.Graphics.FillPath(myBrush, graphPath);
                 } else
@@ -204,10 +221,9 @@ namespace CropProd
                 }
 
             }
-            e.Graphics.DrawString(Position.ToString(), new Font("Times new Roman", 12), myBrush, 0, 0);
-
+            /*
             DrawXmark(pen, ref e, decisionSupport.Scene.Position.X, decisionSupport.Scene.Position.Y);
-            DrawXmark(pen2, ref e, decisionSupport.Scene.Size.X / 2, decisionSupport.Scene.Size.Y / 2);
+            DrawXmark(pen2, ref e, decisionSupport.Scene.Size.X / 2, decisionSupport.Scene.Size.Y / 2);*/
         }
         private void MainWindow_DragEnter(object sender, DragEventArgs e)
         {
@@ -226,8 +242,7 @@ namespace CropProd
                 switch (ext)
                 {
                     case ".cpproj":
-                        Project proj = decisionSupport.OnOpenProject(file);
-                        Text = proj.Name;
+                        OnOpenProject_Click(file);
                         break;
                     case ".cplay":
                         RedrawLayerItem(

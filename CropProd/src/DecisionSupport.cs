@@ -3,7 +3,9 @@ using Handlers;
 using Interfaces;
 using Models;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -19,13 +21,12 @@ namespace DSCore
 
         internal event Action OnNeedRedraw;
 
-        private T form;
+        private readonly T form;
         private Scene scene;
-        private Vector2 first = new Vector2(0, 0);
-        private Vector2 delta = new Vector2(0, 0);
-        private Vector2 last = new Vector2(0, 0);
+        private Vector2 first   = new Vector2(0, 0);
+        private Vector2 delta   = new Vector2(0, 0);
+        private Vector2 last    = new Vector2(0, 0);
         private readonly Thread TileThread;
-        Frame[] frames = new Frame[] { };
 
         public DecisionSupport(T myform)
         {
@@ -58,21 +59,69 @@ namespace DSCore
 
         public void OnBeginDecision(Layer[] layers, PointF[] points)
         {
+            float maxX = points[0].X, minX = points[0].X, maxY = points[0].Y, minY = points[0].Y;
+            List<Data> newlist = new List<Data>();
+            foreach (PointF item in points)
+            {
+                if(item.X > maxX)
+                {
+                    maxX = item.X;
+                }
+                else
+                if (item.X < minX)
+                {
+                    minX = item.X;
+                }
+                if (item.Y > maxY)
+                {
+                    maxY = item.Y;
+                }
+                else
+                if (item.Y < minY)
+                {
+                    minY = item.Y;
+                }
+            }
 
+            foreach (Layer layer in layers)
+            {
+                foreach (Data data in layer.Datas)
+                {
+                    if(
+                       ((data.Screenposition.X < maxX ||  data.Screenposition.X + 255 < maxX) && (data.Screenposition.X > minX || data.Screenposition.X + 255 > minX)) ||
+                       ((data.Screenposition.Y < maxY || data.Screenposition.Y + 255 < maxY) && (data.Screenposition.Y > minY || data.Screenposition.Y + 255 > minY))
+                    )
+                    {
+                        newlist.Add(data);
+                    }
+                }
+            }
+
+            Bitmap bitmap = new Bitmap(Convert.ToInt32(maxX), Convert.ToInt32(maxY), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Graphics g = Graphics.FromImage(bitmap);
+
+            // Add drawing commands here
+            g.Clear(Color.White);
+
+            foreach (Data item in newlist)
+            {
+                g.DrawImage(item.Image, item.Screenposition.X - minX, item.Screenposition.Y - maxY, 256, 256);
+            }
+            bitmap.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\test.png", ImageFormat.Png);
+            /*ReportLoader report = new ReportLoader();
+            report.Start(layers[0].Datas[3].Image);*/
         }
 
         public Frame[] OnDraw()
         {
             scene.Update(delta);
-
+            Frame[] frames = new Frame[] { };
             //Если поток не 
             if (TileHandler != null || DataHandler != null)
             {
-
                 frames = TileHandler.Handle();
 
                 frames = frames.Concat(DataHandler.Handle()).ToArray();
-
             }
 
             return frames;

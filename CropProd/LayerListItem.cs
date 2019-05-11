@@ -16,6 +16,14 @@ namespace CropProd
         {
             InitializeComponent();
             DeleteLayer.Click += DeleteLayer_Click;
+            isInvert.Click += IsInvert_Click;
+            this.isInvert.Checked = Invert;
+        }
+
+        private void IsInvert_Click(object sender, EventArgs e)
+        {
+            Invert = !Invert;
+            this.isInvert.Checked = Invert;
         }
 
         private void DeleteLayer_Click(object sender, EventArgs e)
@@ -31,11 +39,6 @@ namespace CropProd
         private void LeftRange_TextChanged(object sender, EventArgs e)
         {
             Min = float.Parse(LeftRange.Text);
-        }
-
-        private void IsInvert_CheckedChanged(object sender, EventArgs e)
-        {
-            Invert = !Invert;
         }
     }
 }
