@@ -272,6 +272,8 @@ namespace CropProd
                 item.Parent = LayerList;
                 item.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                 item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
+                item.LeftRange.Text = layers[i].Min.ToString();
+                item.RightRange.Text = layers[i].Max.ToString();
                 item.Layer = layers[i];
                 item.LayName.Text = layers[i].Name;
                 item.LayerDelete += DeleteLayer_Click;

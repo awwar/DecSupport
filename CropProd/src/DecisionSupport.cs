@@ -18,6 +18,7 @@ namespace DSCore
     {
         internal TileHandler TileHandler { get; private set; }
         internal LayerLoader DataHandler { get; private set; }
+        internal ReportHandler ReportHandler { get; private set; }
         internal Scene Scene { get => scene; }
 
         internal event Action OnNeedRedraw;
@@ -46,6 +47,7 @@ namespace DSCore
         {
             TileHandler = new TileHandler(ref scene);
             DataHandler = new LayerLoader(ref scene);
+            ReportHandler = new ReportHandler();
             TileHandler.Redraw += OnNeedRedraw;
             DataHandler.Redraw += OnNeedRedraw;
         }
@@ -60,74 +62,15 @@ namespace DSCore
 
         public void OnBeginDecision(Layer[] layers, PointF[] points)
         {
-            float maxX = points[0].X, minX = points[0].X, maxY = points[0].Y, minY = points[0].Y;
-            List<Data> newlist = new List<Data>();
-            foreach (PointF item in points)
+            // Границы установленные пользователем - нативные, числовые а нам нужно перебить их в цветовой эквивалент
+            for (int i = 0; i < layers.Length; i++)
             {
-                if(item.X > maxX)
-                {
-                    maxX = item.X;
-                }
-                else
-                if (item.X < minX)
-                {
-                    minX = item.X;
-                }
-                if (item.Y > maxY)
-                {
-                    maxY = item.Y;
-                }
-                else
-                if (item.Y < minY)
-                {
-                    minY = item.Y;
-                }
+                layers[i].setMax = ((layers[i].setMax - layers[i].Min) * 65025) / (layers[i].Max - layers[i].Min);
+                layers[i].setMin = ((layers[i].setMin - layers[i].Min) * 65025) / (layers[i].Max - layers[i].Min);
             }
-            Bitmap bitmap;
-            Graphics g;
-            foreach (Layer layer in layers)
-            {
-                bitmap = new Bitmap(Convert.ToInt32(maxX - minX), Convert.ToInt32(maxY - minY));
-                g = Graphics.FromImage(bitmap);
-                // Add drawing commands here
-                g.Clear(Color.Transparent);
-                foreach (Data data in layer.Datas)
-                {
-                    if(
-                       ((data.Screenposition.X < maxX ||  data.Screenposition.X + 255 < maxX) && (data.Screenposition.X > minX || data.Screenposition.X + 255 > minX)) ||
-                       ((data.Screenposition.Y < maxY || data.Screenposition.Y + 255 < maxY) && (data.Screenposition.Y > minY || data.Screenposition.Y + 255 > minY))
-                    )
-                    {
-                        g.DrawImage(data.Image, (float)Math.Floor(data.Screenposition.X - minX), (float)Math.Floor(data.Screenposition.Y - minY), 256, 256);
-                    }
-                }
-                bitmap.Save(String.Format(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\{0}.png", layer.Hash), ImageFormat.Png);
-            }
-            bitmap = new Bitmap(Convert.ToInt32(maxX - minX), Convert.ToInt32(maxY - minY));
-            g = Graphics.FromImage(bitmap);
-            // Add drawing commands here
-            g.Clear(Color.Transparent);
 
-            GraphicsPath graphPath = new GraphicsPath();
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                float x = points[i].X;
-                float y = points[i].Y;
-                if (i == points.Length - 1)
-                {
-                    graphPath.AddLine(x, y, points[0].X, points[0].Y );
-                }
-                else
-                {
-                    graphPath.AddLine(x, y, points[i + 1].X, points[i + 1].Y);
-                }
-            }
-            g.FillPath(new SolidBrush(Color.Red), graphPath);
-
-            bitmap.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\cut.png", ImageFormat.Png);
-            /*ReportLoader report = new ReportLoader();
-            report.MakePDF(img);*/
+            Frame[] tiles = TileHandler.Handle();
+            ReportHandler.PrepareReport(layers, points, tiles);
         }
 
         public Frame[] OnDraw()
@@ -206,8 +149,8 @@ namespace DSCore
                 data.Tiles,
                 data.Lat,
                 data.Lon,
-                data.Max,
                 data.Min,
+                data.Max,
                 data.FileName
             );
         }
