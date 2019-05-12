@@ -5,6 +5,7 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -82,9 +83,14 @@ namespace DSCore
                     minY = item.Y;
                 }
             }
-
+            Bitmap bitmap;
+            Graphics g;
             foreach (Layer layer in layers)
             {
+                bitmap = new Bitmap(Convert.ToInt32(maxX - minX), Convert.ToInt32(maxY - minY));
+                g = Graphics.FromImage(bitmap);
+                // Add drawing commands here
+                g.Clear(Color.Transparent);
                 foreach (Data data in layer.Datas)
                 {
                     if(
@@ -92,24 +98,36 @@ namespace DSCore
                        ((data.Screenposition.Y < maxY || data.Screenposition.Y + 255 < maxY) && (data.Screenposition.Y > minY || data.Screenposition.Y + 255 > minY))
                     )
                     {
-                        newlist.Add(data);
+                        g.DrawImage(data.Image, (float)Math.Floor(data.Screenposition.X - minX), (float)Math.Floor(data.Screenposition.Y - minY), 256, 256);
                     }
                 }
+                bitmap.Save(String.Format(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\{0}.png", layer.Hash), ImageFormat.Png);
             }
-
-            Bitmap bitmap = new Bitmap(Convert.ToInt32(maxX), Convert.ToInt32(maxY), System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            Graphics g = Graphics.FromImage(bitmap);
-
+            bitmap = new Bitmap(Convert.ToInt32(maxX - minX), Convert.ToInt32(maxY - minY));
+            g = Graphics.FromImage(bitmap);
             // Add drawing commands here
-            g.Clear(Color.White);
+            g.Clear(Color.Transparent);
 
-            foreach (Data item in newlist)
+            GraphicsPath graphPath = new GraphicsPath();
+
+            for (int i = 0; i < points.Length; i++)
             {
-                g.DrawImage(item.Image, item.Screenposition.X - minX, item.Screenposition.Y - maxY, 256, 256);
+                float x = points[i].X;
+                float y = points[i].Y;
+                if (i == points.Length - 1)
+                {
+                    graphPath.AddLine(x, y, points[0].X, points[0].Y );
+                }
+                else
+                {
+                    graphPath.AddLine(x, y, points[i + 1].X, points[i + 1].Y);
+                }
             }
-            bitmap.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\test.png", ImageFormat.Png);
+            g.FillPath(new SolidBrush(Color.Red), graphPath);
+
+            bitmap.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\cut.png", ImageFormat.Png);
             /*ReportLoader report = new ReportLoader();
-            report.Start(layers[0].Datas[3].Image);*/
+            report.MakePDF(img);*/
         }
 
         public Frame[] OnDraw()

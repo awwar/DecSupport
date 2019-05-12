@@ -61,8 +61,8 @@ namespace CropProd
             PointF[] pointarray = points.ToArray();
             for (int i = 0; i < pointarray.Length; i++)
             {
-                pointarray[i].X -= Position.X;
-                pointarray[i].Y -= Position.Y;
+                pointarray[i].X += Position.X;
+                pointarray[i].Y += Position.Y;
             }
 
             decisionSupport.OnBeginDecision(layers, pointarray);
@@ -179,10 +179,10 @@ namespace CropProd
                 {
                     e.Graphics.DrawImage(
                         frame.Image,
-                        frame.Screenposition.X,
-                        frame.Screenposition.Y,
+                        (float)Math.Floor(frame.Screenposition.X),
+                        (float)Math.Floor(frame.Screenposition.Y),
                         frame.Size.X,
-                        frame.Size.Y + 1
+                        frame.Size.Y
                     );
                     e.Graphics.DrawString(frame.Screenposition.ToString(), new Font("Areal", 12), myBrush2, frame.Screenposition.X,
                          frame.Screenposition.Y);

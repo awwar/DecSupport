@@ -112,6 +112,7 @@
     <Compile Include="src\Handlers\LayerHandler.cs" />
     <Compile Include="src\DecisionSupport.cs" />
     <Compile Include="src\Handlers\LayerLoader.cs" />
+    <Compile Include="src\Handlers\ReportHandler.cs" />
     <Compile Include="src\Handlers\ReportLoader.cs" />
     <Compile Include="src\Handlers\TileLoader.cs" />
     <Compile Include="src\Handlers\TileHandler.cs" />

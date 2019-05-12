@@ -6,7 +6,7 @@ namespace Handlers
 {
     class ReportLoader
     {
-        public void Start(Image img)
+        public void MakePDF(Image img)
         {
             var document = new iTextSharp.text.Document();
             using (var writer = PdfWriter.GetInstance(document, new FileStream(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\result.pdf", FileMode.Create)))
@@ -14,6 +14,11 @@ namespace Handlers
                 document.Open();
 
                 iTextSharp.text.Image pic = iTextSharp.text.Image.GetInstance(img, System.Drawing.Imaging.ImageFormat.Png);
+                float height = 500;
+                float width = img.Width * (height / img.Height);
+                pic.ScaleToFit(width, height);
+                pic.SetAbsolutePosition(0, document.PageSize.Height - height);
+            
 
                 document.Add(pic);
                 iTextSharp.text.Font helvetica = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.HELVETICA, 12);
