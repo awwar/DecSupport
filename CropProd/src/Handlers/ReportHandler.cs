@@ -16,6 +16,13 @@ namespace Handlers
 
         public void PrepareReport(Layer[] layers, PointF[] points, Frame[] tiles)
         {
+            // Границы установленные пользователем - нативные, числовые а нам нужно перебить их в цветовой эквивалент
+            for (int i = 0; i < layers.Length; i++)
+            {
+                float layerpower = (layers[i].ColorMax - layers[i].ColorMin) / (layers[i].Max - layers[i].Min);
+                layers[i].setMax = layers[i].Min + (layers[i].setMax - layers[i].Min) * layerpower;
+                layers[i].setMin = layers[i].Min + (layers[i].setMin - layers[i].Min) * layerpower;
+            }
 
             Dictionary<Layer, Bitmap> compileLayer = new Dictionary<Layer, Bitmap>();
             // Вычисляем границы области 
@@ -115,6 +122,8 @@ namespace Handlers
                 int x, y;
                 Color cutcolor;
                 Color laycolor;
+
+                int laycount = compileLayer.Count();
                 // Loop through the images pixels to reset color.
                 for (x = 0; x < newimg.Width; x++)
                 {
@@ -123,26 +132,49 @@ namespace Handlers
                         cutcolor = cutoutimage.GetPixel(x, y);
                         if(cutcolor.A != 0)
                         {
+                            float newlaypower = 0;
                             foreach (KeyValuePair<Layer, Bitmap> item in compileLayer)
                             {
                                 Layer lay = item.Key;
                                 Bitmap img = item.Value;
                                 laycolor = img.GetPixel(x, y);
-                                float gate = lay.setMax - lay.setMin;
-                                float colorpower = (laycolor.G * laycolor.B);
-                                if (colorpower >= lay.setMin && colorpower <= lay.setMax)
+                                if(laycolor.A != 0)
                                 {
-                                    newimg.SetPixel(x, y, Color.FromArgb(0, 0, 255));
+                                    float gate = lay.setMax - lay.setMin;
+                                    int r = (laycolor.R == 0) ? 1 : laycolor.R;
+                                    int g = (laycolor.G == 0) ? 1 : laycolor.G;
+                                    int b = (laycolor.B == 0) ? 1 : laycolor.B;
+                                    float colorpower = (r * g * b) - 3;
+                                    float layerpower = lay.ColorMax - lay.ColorMin;
+                                    if (colorpower >= lay.setMin && colorpower <= lay.setMax)
+                                    {
+                                        newlaypower += (colorpower - lay.ColorMin) / layerpower;
+                                    }
+                                    else
+                                    {
+                                        newlaypower = 0;
+                                        break;
+                                    }
                                 }
                                 else
                                 {
-                                    newimg.SetPixel(x, y, Color.FromArgb(0, 0, 0, 0));
-                                }
+                                    newlaypower += 1;
+                                }                                
                             }
+                            if(newlaypower != 0)
+                            {
+                                newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (newlaypower / laycount)), 0,0));
+                            }
+                            else
+                            {
+                                newimg.SetPixel(x, y, Color.FromArgb(0, 0, 0, 0));
+                            }
+
                         }
                         else
                         {
-                            newimg.SetPixel(x, y, Color.FromArgb(0,0,0,0));
+                            newimg.SetPixel(x, y, Color.FromArgb(0, 0, 0, 0));
+
                         }
                     }
                 }

@@ -111,11 +111,45 @@ namespace Handlers
 
         public void CreateLayer(Dictionary<string, Bitmap> img, string Lat, string Lon, string Min, string Max, string Filename)
         {
+
+            int colormin = 255 * 255 * 255;
+            int colormax = 0;
+
             double[] tilelatlon = TileCoordinate.Convert(
                 double.Parse(Lat, CultureInfo.InvariantCulture),
                 double.Parse(Lon, CultureInfo.InvariantCulture),
                 18
             );
+
+            //высчитываем минимальную и максимальную границу цвета для данного слоя
+            Color pix;
+
+            foreach (Bitmap item in img.Values)
+            {
+                for (int i = 0; i < item.Height; i++)
+                {
+                    for (int j = 0; i < item.Width; i++)
+                    {
+                        pix = item.GetPixel(i, j);
+                        int r = (pix.R == 0) ? 1 : pix.R;
+                        int g = (pix.G == 0) ? 1 : pix.G;
+                        int b = (pix.B == 0) ? 1 : pix.B;
+                        int pixpower = r * g * b;
+                        if(pix.A == 0)
+                        {
+                            continue;
+                        }
+                        if (pixpower > colormax)
+                        {
+                            colormax = pixpower;
+                        }
+                        if (pixpower < colormin)
+                        {
+                            colormin = pixpower;
+                        }
+                    }
+                }
+            }
 
             Layer layer = new Layer()
             {
@@ -123,6 +157,8 @@ namespace Handlers
                 Lon = tilelatlon[1],
                 Min = float.Parse(Min),
                 Max = float.Parse(Max),
+                ColorMin = colormin,
+                ColorMax = colormax,
                 Name = Path.GetFileNameWithoutExtension(Filename)
             };
 

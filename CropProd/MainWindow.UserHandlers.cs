@@ -164,7 +164,7 @@ namespace CropProd
 
         private void Scene_Resize(object sender, EventArgs e)
         {
-            decisionSupport.OnResize();
+            Position = decisionSupport.OnResize();
         }
 
         private void Scene_Paint(object sender, PaintEventArgs e)

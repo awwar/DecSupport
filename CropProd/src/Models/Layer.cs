@@ -10,6 +10,8 @@ namespace Models
         public double Lon { get; set; }
         public float Min { get; set; } = 0;
         public float Max { get; set; } = 1;
+        public float ColorMin { get; set; } = 0;
+        public float ColorMax { get; set; } = 1;
         public string Hash { get; set; }
         public int Id { get; set; }
         [NonSerialized()] public Data[] Datas = new Data[] { };

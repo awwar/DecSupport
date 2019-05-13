@@ -19,9 +19,10 @@ namespace Models
             Position = Vector2.Add(Position, Size / 2);
         }
 
-        public void Update(Vector2 delta)
+        public Vector2 Update(Vector2 delta)
         {
             Position = Vector2.Add(Position, delta);
+            return Position;
         }
 
         public void SetTileCenter(Vector2 center)
@@ -29,11 +30,12 @@ namespace Models
             Coordinate = center;
         }
 
-        public void Resize(Vector2 size)
+        public Vector2 Resize(Vector2 size)
         {
             Position = Vector2.Subtract(Position, Size / 2);
             Size = size;
             Position = Vector2.Add(Position, size / 2);
+            return Position;
         }
 
         public void AppendProject(Project proj)

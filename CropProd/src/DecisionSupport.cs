@@ -17,7 +17,7 @@ namespace DSCore
     public class DecisionSupport<T> where T : IUserForm
     {
         internal TileHandler TileHandler { get; private set; }
-        internal LayerLoader DataHandler { get; private set; }
+        internal LayerLoader LayerHandler { get; private set; }
         internal ReportHandler ReportHandler { get; private set; }
         internal Scene Scene { get => scene; }
 
@@ -46,29 +46,23 @@ namespace DSCore
         private void Start()
         {
             TileHandler = new TileHandler(ref scene);
-            DataHandler = new LayerLoader(ref scene);
+            LayerHandler = new LayerLoader(ref scene);
             ReportHandler = new ReportHandler();
             TileHandler.Redraw += OnNeedRedraw;
-            DataHandler.Redraw += OnNeedRedraw;
+            LayerHandler.Redraw += OnNeedRedraw;
         }
 
-        public void OnResize()
+        public Vector2 OnResize()
         {
-            scene.Resize(form.GetDrawableSize());
+            Vector2 pos = scene.Resize(form.GetDrawableSize());
             TileHandler.Update();
             OnNeedRedraw();
+            return pos;
         }
 
 
         public void OnBeginDecision(Layer[] layers, PointF[] points)
         {
-            // Границы установленные пользователем - нативные, числовые а нам нужно перебить их в цветовой эквивалент
-            for (int i = 0; i < layers.Length; i++)
-            {
-                layers[i].setMax = ((layers[i].setMax - layers[i].Min) * 65025) / (layers[i].Max - layers[i].Min);
-                layers[i].setMin = ((layers[i].setMin - layers[i].Min) * 65025) / (layers[i].Max - layers[i].Min);
-            }
-
             Frame[] tiles = TileHandler.Handle();
             ReportHandler.PrepareReport(layers, points, tiles);
         }
@@ -78,11 +72,11 @@ namespace DSCore
             scene.Update(delta);
             Frame[] frames = new Frame[] { };
             //Если поток не 
-            if (TileHandler != null || DataHandler != null)
+            if (TileHandler != null || LayerHandler != null)
             {
                 frames = TileHandler.Handle();
 
-                frames = frames.Concat(DataHandler.Handle()).ToArray();
+                frames = frames.Concat(LayerHandler.Handle()).ToArray();
             }
 
             return frames;
@@ -111,7 +105,7 @@ namespace DSCore
 
         public Project OnOpenProject(string file)
         {
-            Project proj = DataHandler.OpenProject(file);
+            Project proj = LayerHandler.OpenProject(file);
             scene.AppendProject(proj);
             TileHandler.Update();
             OnNeedRedraw();
@@ -120,12 +114,12 @@ namespace DSCore
 
         public Layer[] OnLayerDrop(string file)
         {
-            return DataHandler.LoadLayer(file); ;
+            return LayerHandler.LoadLayer(file); ;
         }
 
         public void OnSaveProject(string file = null)
         {
-            bool rez = DataHandler.SaveProject(file);
+            bool rez = LayerHandler.SaveProject(file);
             if (!rez)
             {
                 throw new IOException();
@@ -134,7 +128,7 @@ namespace DSCore
 
         public Project OnNewProject(CreateProjDialogData createProj)
         {
-            Project proj = DataHandler.CreateProject(
+            Project proj = LayerHandler.CreateProject(
                             createProj.Name,
                             createProj.Lat,
                             createProj.Lon);
@@ -145,7 +139,7 @@ namespace DSCore
 
         public void OnLayerCreate(LayerMakerDialogData data)
         {
-            DataHandler.CreateLayer(
+            LayerHandler.CreateLayer(
                 data.Tiles,
                 data.Lat,
                 data.Lon,
@@ -157,7 +151,7 @@ namespace DSCore
 
         public Layer[] OnLayerDelete(Layer layer)
         {
-            return DataHandler.DeleteLayer(layer);
+            return LayerHandler.DeleteLayer(layer);
         }
     }
 }
