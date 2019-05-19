@@ -10,20 +10,20 @@ namespace CropProd
         public Action<Layer> LayerDelete;
         public float Min;
         public float Max;
-        public bool Invert = false;
 
-        public LayerListItem()
+        public LayerListItem(Layer lay)
         {
             InitializeComponent();
+            Layer = lay;
             DeleteLayer.Click += DeleteLayer_Click;
             isInvert.Click += IsInvert_Click;
-            this.isInvert.Checked = Invert;
+            isInvert.Checked = Layer.invert;
         }
 
         private void IsInvert_Click(object sender, EventArgs e)
         {
-            Invert = !Invert;
-            this.isInvert.Checked = Invert;
+            Layer.invert = !Layer.invert;
+            isInvert.Checked = Layer.invert;
         }
 
         private void DeleteLayer_Click(object sender, EventArgs e)

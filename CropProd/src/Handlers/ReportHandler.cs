@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Handlers
 {
@@ -53,8 +50,12 @@ namespace Handlers
                 compileLayer[layer] = CompileFrames(layer.Datas, maxX, minX, maxY, minY);
             }
             Bitmap cutoutimage = CompileCutOut(points, maxX, minX, maxY, minY);
+            Bitmap cutouframe = CompileCutOut(points, maxX, minX, maxY, minY, false);
             Bitmap tileimage = CompileFrames(tiles, maxX, minX, maxY, minY);
-            Readimg(compileLayer, cutoutimage);
+            Bitmap newimg = Readimg(compileLayer, cutoutimage);
+            tileimage.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\back.png");
+            newimg.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\rezult.png");
+            report.MakePDF(tileimage, newimg, cutouframe);
         }
 
         private bool isTileInRect(float x, float y, float maxX, float minX, float maxY, float minY)
@@ -84,7 +85,7 @@ namespace Handlers
             return bitmap;
         }
 
-        private Bitmap CompileCutOut(PointF[] points, float maxX, float minX, float maxY, float minY)
+        private Bitmap CompileCutOut(PointF[] points, float maxX, float minX, float maxY, float minY, bool isfill = true)
         {
             Bitmap bitmap = new Bitmap(Convert.ToInt32(maxX - minX), Convert.ToInt32(maxY - minY));
             Graphics g = Graphics.FromImage(bitmap);
@@ -109,12 +110,15 @@ namespace Handlers
                     graphPath.AddLine(x, y, points[i + 1].X - minX, points[i + 1].Y - minY);
                 }
             }
-            g.FillPath(new SolidBrush(Color.Red), graphPath);
+            if (isfill)
+            {
+                g.FillPath(new SolidBrush(Color.Blue), graphPath);
+            }
 
             return bitmap;
         }
 
-        private void Readimg(Dictionary<Layer, Bitmap> compileLayer, Bitmap cutoutimage)
+        private Bitmap Readimg(Dictionary<Layer, Bitmap> compileLayer, Bitmap cutoutimage)
         {
             Bitmap newimg = new Bitmap(cutoutimage.Width, cutoutimage.Height);
             try
@@ -130,7 +134,7 @@ namespace Handlers
                     for (y = 0; y < newimg.Height; y++)
                     {
                         cutcolor = cutoutimage.GetPixel(x, y);
-                        if(cutcolor.A != 0)
+                        if (cutcolor.A != 0)
                         {
                             float newlaypower = 0;
                             foreach (KeyValuePair<Layer, Bitmap> item in compileLayer)
@@ -138,15 +142,15 @@ namespace Handlers
                                 Layer lay = item.Key;
                                 Bitmap img = item.Value;
                                 laycolor = img.GetPixel(x, y);
-                                if(laycolor.A != 0)
+                                if (laycolor.A != 0)
                                 {
                                     float gate = lay.setMax - lay.setMin;
                                     int r = (laycolor.R == 0) ? 1 : laycolor.R;
                                     int g = (laycolor.G == 0) ? 1 : laycolor.G;
                                     int b = (laycolor.B == 0) ? 1 : laycolor.B;
-                                    float colorpower = (r * g * b) - 3;
+                                    float colorpower = (r * g * b) - 1;
                                     float layerpower = lay.ColorMax - lay.ColorMin;
-                                    if (colorpower >= lay.setMin && colorpower <= lay.setMax)
+                                    if (colorpower >= lay.setMin && colorpower <= lay.setMax && lay.invert == false)
                                     {
                                         newlaypower += (colorpower - lay.ColorMin) / layerpower;
                                     }
@@ -159,11 +163,11 @@ namespace Handlers
                                 else
                                 {
                                     newlaypower += 1;
-                                }                                
+                                }
                             }
-                            if(newlaypower != 0)
+                            if (newlaypower != 0)
                             {
-                                newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (newlaypower / laycount)), 0,0));
+                                newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (newlaypower / laycount)), 0, 0));
                             }
                             else
                             {
@@ -183,9 +187,9 @@ namespace Handlers
             }
             catch (ArgumentException)
             {
-              
+
             }
-            newimg.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\rezult.png");
+            return newimg;
         }
 
     }

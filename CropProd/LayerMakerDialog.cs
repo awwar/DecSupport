@@ -1,6 +1,4 @@
-﻿using DSCore;
-using Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,23 +7,13 @@ using System.Windows.Forms;
 
 namespace CropProd
 {
-    public struct LayerMakerDialogData
-    {
-        public Dictionary<string, Bitmap> Tiles;
-        public string Lat;
-        public string Lon;
-        public string Min;
-        public string Max;
-        public string FileName;
-    }
-
     public partial class LayerMakerDialog : Form
     {
         Image img;
         int left;
-        int right;   
-        int top;      
-        int bottom;     
+        int right;
+        int top;
+        int bottom;
         int clickx;
         int clicky;
         Pen pen = new Pen(Color.Red, 1f);
@@ -48,8 +36,8 @@ namespace CropProd
             clicky = e.Y;
             right = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
             bottom = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));
-            left =  e.X % 256;
-            top  =  e.Y % 256;
+            left = e.X % 256;
+            top = e.Y % 256;
 
             pictureBox1.Invalidate();
         }
@@ -68,7 +56,7 @@ namespace CropProd
                 {
                     Rectangle tileBounds = new Rectangle((j - 1) * tile + left, (i - 1) * tile + top, tile, tile);
                     Bitmap target = new Bitmap(tile, tile);
-                    string filename = String.Format("{0}_{1}",j - clicktileX-1, i - clicktileY - 1);
+                    string filename = String.Format("{0}_{1}", j - clicktileX - 1, i - clicktileY - 1);
                     using (Graphics graphics = Graphics.FromImage(target))
                     {
                         graphics.Clear(Color.Transparent);
@@ -82,7 +70,6 @@ namespace CropProd
                 }
             }
             ms.Close();
-            ms.Dispose();
         }
 
         private void LayerMaker_DragEnter(object sender, DragEventArgs e)
@@ -123,7 +110,6 @@ namespace CropProd
             using (FileStream myStream = new FileStream(files[0], FileMode.Open, FileAccess.Read))
             {
                 img = Image.FromStream(myStream);
-                myStream.Close();
             }
             pictureBox1.Invalidate();
         }

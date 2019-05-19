@@ -1,12 +1,8 @@
 ﻿using CropProd;
 using Handlers;
-using Interfaces;
 using Models;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -14,27 +10,23 @@ using System.Threading;
 
 namespace DSCore
 {
-    public class DecisionSupport<T> where T : IUserForm
+    public class DecisionSupport
     {
         internal TileHandler TileHandler { get; private set; }
         internal LayerLoader LayerHandler { get; private set; }
         internal ReportHandler ReportHandler { get; private set; }
-        internal Scene Scene { get => scene; }
 
         internal event Action OnNeedRedraw;
 
-        private readonly T form;
         private Scene scene;
-        private Vector2 first   = new Vector2(0, 0);
-        private Vector2 delta   = new Vector2(0, 0);
-        private Vector2 last    = new Vector2(0, 0);
+        private Vector2 first = new Vector2(0, 0);
+        private Vector2 delta = new Vector2(0, 0);
+        private Vector2 last = new Vector2(0, 0);
         private readonly Thread TileThread;
 
-        public DecisionSupport(T myform)
+        public DecisionSupport()
         {
-            form = myform;
-            scene = new Scene(form.GetDrawableSize());
-            form.ChangeTitle(scene.Name);
+            scene = new Scene();
 
             TileThread = new Thread(Start)
             {
@@ -52,10 +44,13 @@ namespace DSCore
             LayerHandler.Redraw += OnNeedRedraw;
         }
 
-        public Vector2 OnResize()
+        public Vector2 OnResize(Vector2 size)
         {
-            Vector2 pos = scene.Resize(form.GetDrawableSize());
-            TileHandler.Update();
+            Vector2 pos = scene.Resize(size);
+            if (TileHandler != null)
+            {
+                TileHandler.Update();
+            }
             OnNeedRedraw();
             return pos;
         }
@@ -114,7 +109,7 @@ namespace DSCore
 
         public Layer[] OnLayerDrop(string file)
         {
-            return LayerHandler.LoadLayer(file); ;
+            return LayerHandler.LoadLayer(file);
         }
 
         public void OnSaveProject(string file = null)

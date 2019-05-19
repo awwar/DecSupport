@@ -38,7 +38,7 @@ namespace Handlers
             {
                 foreach (Layer item in cureentProject.Layers)
                 {
-                    if(item.Datas != null)
+                    if (item.Datas != null)
                     {
                         foreach (Data data in item.Datas)
                         {
@@ -135,7 +135,7 @@ namespace Handlers
                         int g = (pix.G == 0) ? 1 : pix.G;
                         int b = (pix.B == 0) ? 1 : pix.B;
                         int pixpower = r * g * b;
-                        if(pix.A == 0)
+                        if (pix.A == 0)
                         {
                             continue;
                         }

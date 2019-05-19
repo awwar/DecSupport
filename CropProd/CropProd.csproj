@@ -118,10 +118,11 @@
     <Compile Include="src\Handlers\TileHandler.cs" />
     <Compile Include="src\Events\ImageLoadArgs.cs" />
     <Compile Include="src\Interfaces\IHandler.cs" />
-    <Compile Include="src\Interfaces\IUserForm.cs" />
+    <Compile Include="src\Models\CreateProjectDialogData.cs" />
     <Compile Include="src\Models\Data.cs" />
     <Compile Include="src\Models\Frame.cs" />
     <Compile Include="src\Models\Layer.cs" />
+    <Compile Include="src\Models\LayerMakerDialogData.cs" />
     <Compile Include="src\Models\Project.cs" />
     <Compile Include="src\Models\Scene.cs" />
     <Compile Include="src\Models\Tile.cs" />

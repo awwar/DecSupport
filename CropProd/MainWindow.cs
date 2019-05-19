@@ -1,5 +1,4 @@
 ﻿using DSCore;
-using Interfaces;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -9,9 +8,9 @@ using System.Windows.Forms;
 
 namespace CropProd
 {
-    public partial class MainWindow : Form, IUserForm
+    public partial class MainWindow : Form
     {
-        private DecisionSupport<MainWindow> decisionSupport;
+        private DecisionSupport decisionSupport;
         private readonly Pen pen3 = new Pen(Color.Orange, 2f);
 
         private List<LayerListItem> layerlist = new List<LayerListItem>();
@@ -21,7 +20,7 @@ namespace CropProd
         public MainWindow(string[] args)
         {
             InitializeComponent();
-            decisionSupport = new DecisionSupport<MainWindow>(this);
+            decisionSupport = new DecisionSupport();
 
             UpdateStyles();
 
@@ -29,22 +28,23 @@ namespace CropProd
 
             scene.Paint += Scene_Paint;
             scene.Resize += Scene_Resize;
+            scene.MouseDown += Scene_MouseDown;
+            scene.Invalidated += Scene_Invalidated;
             DragDrop += MainWindow_DragDrop;
             DragEnter += MainWindow_DragEnter;
-            scene.MouseDown += Scene_MouseDown;
             scene.MouseMove += Scene_MouseMove;
             onNewProject.Click += OnNewProject_Click;
             onOpenProject.Click += OnOpenProject_Click;
             onSaveProject.Click += OnSaveProject_Click;
             onLayerCreate.Click += OnLayerCreate_Click;
+            BeginDecision.Click += BeginDecision_Click;
             RegionDecision.Click += AcceptDecision_Click;
             CancelDecision.Click += CancelDecision_Click;
-            BeginDecision.Click += BeginDecision_Click;
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
-            scene.Invalidated += Scene_Invalidated;
 
 
+            decisionSupport.OnResize(new Vector2(scene.Size.Width, scene.Size.Height));
             if (args.Length > 0)
             {
                 MessageBox.Show("Открыть: " + args[0] + "?");
@@ -176,7 +176,8 @@ namespace CropProd
                         }
                     }
                 }
-            } else
+            }
+            else
             {
                 throw new Exception("Layer not created");
             }
@@ -196,7 +197,7 @@ namespace CropProd
             if (!isdraw)
             {
                 isdraw = true;
-                scene.Invalidate(true);                
+                scene.Invalidate(true);
             }
         }
 
@@ -206,7 +207,7 @@ namespace CropProd
             isdraw = false;
         }
 
-       
+
     }
 
 }

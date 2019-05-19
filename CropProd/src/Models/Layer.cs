@@ -17,10 +17,11 @@ namespace Models
         [NonSerialized()] public Data[] Datas = new Data[] { };
         [NonSerialized()] public float setMin = 0;
         [NonSerialized()] public float setMax = 1;
+        [NonSerialized()] public bool invert = false;
 
         public void Dispose()
         {
-            if(Datas != null)
+            if (Datas != null)
             {
                 foreach (Data item in Datas)
                 {

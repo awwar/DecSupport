@@ -1,5 +1,4 @@
-﻿using Interfaces;
-using Models;
+﻿using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,7 +9,7 @@ using System.Windows.Forms;
 
 namespace CropProd
 {
-    public partial class MainWindow : Form, IUserForm
+    public partial class MainWindow : Form
     {
         private bool IsDecisionMode { get; set; } = false;
         private List<PointF> points = new List<PointF>() { };
@@ -77,10 +76,17 @@ namespace CropProd
 
         private void DeleteLayer_Click(Layer layer)
         {
-            RedrawLayerItem(
+            try
+            {
+                RedrawLayerItem(
                 decisionSupport.OnLayerDelete(layer)
-            );
-            decisionSupport.OnSaveProject();
+                );
+                decisionSupport.OnSaveProject();
+            }
+            catch (Exception exc)
+            {
+                ShowBouble(exc.Message);
+            }
         }
 
         private void OnLayerCreate_Click(object sender, EventArgs e)
@@ -121,9 +127,16 @@ namespace CropProd
         }
 
         private void OnOpenProject_Click()
-        { 
-            string filename = ShowOpenFileDialog();
-            OnOpenProject_Click(filename);
+        {
+            try
+            {
+                string filename = ShowOpenFileDialog();
+                OnOpenProject_Click(filename);
+            }
+            catch (Exception exc)
+            {
+                ShowBouble(exc.Message);
+            }
         }
 
         private void OnOpenProject_Click(string filename)
@@ -164,11 +177,13 @@ namespace CropProd
 
         private void Scene_Resize(object sender, EventArgs e)
         {
-            Position = decisionSupport.OnResize();
+            Position = decisionSupport.OnResize(
+                new Vector2(scene.Size.Width, scene.Size.Width)
+            );
         }
 
         private void Scene_Paint(object sender, PaintEventArgs e)
-        { 
+        {
             Frame[] frames = decisionSupport.OnDraw();
             e.Graphics.Clear(Color.Black);
 
@@ -184,35 +199,33 @@ namespace CropProd
                         frame.Size.X,
                         frame.Size.Y
                     );
-                    e.Graphics.DrawString(frame.Screenposition.ToString(), new Font("Areal", 12), myBrush2, frame.Screenposition.X,
-                         frame.Screenposition.Y);
-                    e.Graphics.DrawString((frame.Screenposition + new Vector2(256,256)).ToString(), new Font("Areal", 12), myBrush2, frame.Screenposition.X + 244,
-                        frame.Screenposition.Y + 244);
                 }
             }
 
             if (IsDecisionMode)
             {
                 GraphicsPath graphPath = new GraphicsPath();
-                if(points.Count > 2)
+                if (points.Count > 2)
                 {
 
                     for (int i = 0; i < points.Count; i++)
                     {
                         float x = points[i].X + Position.X;
                         float y = points[i].Y + Position.Y;
-                        if(i == points.Count - 1)
+                        if (i == points.Count - 1)
                         {
                             graphPath.AddLine(x, y, points[0].X + Position.X, points[0].Y + Position.Y);
-                        } else
+                        }
+                        else
                         {
                             graphPath.AddLine(x, y, points[i + 1].X + Position.X, points[i + 1].Y + Position.Y);
                         }
                         DrawXmark(pen3, ref e, x, y);
-                        e.Graphics.DrawString(String.Format("{0}_{1}", x, y), new Font("Areal", 12), myBrush2, x,y);
+                        e.Graphics.DrawString(String.Format("{0}_{1}", x, y), new Font("Areal", 12), myBrush2, x, y);
                     }
                     e.Graphics.FillPath(myBrush, graphPath);
-                } else
+                }
+                else
                 {
                     foreach (PointF item in points)
                     {
@@ -221,9 +234,7 @@ namespace CropProd
                 }
 
             }
-            /*
-            DrawXmark(pen, ref e, decisionSupport.Scene.Position.X, decisionSupport.Scene.Position.Y);
-            DrawXmark(pen2, ref e, decisionSupport.Scene.Size.X / 2, decisionSupport.Scene.Size.Y / 2);*/
+            DrawXmark(pen3, ref e, scene.Size.Width / 2, scene.Size.Height / 2);
         }
         private void MainWindow_DragEnter(object sender, DragEventArgs e)
         {
@@ -267,14 +278,13 @@ namespace CropProd
             layerlist.Clear();
             for (int i = 0; i < layers.Length; i++)
             {
-                LayerListItem item = new LayerListItem();
+                LayerListItem item = new LayerListItem(layers[i]);
                 item.CreateControl();
                 item.Parent = LayerList;
                 item.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                 item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
                 item.LeftRange.Text = layers[i].Min.ToString();
                 item.RightRange.Text = layers[i].Max.ToString();
-                item.Layer = layers[i];
                 item.LayName.Text = layers[i].Name;
                 item.LayerDelete += DeleteLayer_Click;
                 item.Location = new Point(item.Parent.Padding.Left, item.Parent.Padding.Top + item.Height * i + 10);

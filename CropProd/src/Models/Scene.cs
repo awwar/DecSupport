@@ -13,6 +13,10 @@ namespace Models
         public Vector2 Coordinate { get; set; } = new Vector2(0, 0);
         public int Zoom { get; set; } = 18;
 
+        public Scene() : this(new Vector2(0, 0))
+        {
+        }
+
         public Scene(Vector2 size)
         {
             Size = size;
