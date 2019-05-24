@@ -49,6 +49,7 @@ namespace CropProd
 
         private void BeginDecision_Click(object sender, EventArgs e)
         {
+            Status.Text = "Принимаю решение...";
             Layer[] layers = new Layer[layerlist.Count];
             for (int i = 0; i < layerlist.Count; i++)
             {
@@ -63,8 +64,15 @@ namespace CropProd
                 pointarray[i].X += Position.X;
                 pointarray[i].Y += Position.Y;
             }
-
-            decisionSupport.OnBeginDecision(layers, pointarray);
+            try
+            {
+                decisionSupport.OnBeginDecision(layers, pointarray);
+            }
+            catch (Exception ex)
+            {
+                ShowBouble(ex.Message);
+            }
+            Status.Text = "Ок";
         }
 
         private void CancelDecision_Click(object sender, EventArgs e)
@@ -76,6 +84,7 @@ namespace CropProd
 
         private void DeleteLayer_Click(Layer layer)
         {
+            Status.Text = "Удаление слоя...";
             try
             {
                 RedrawLayerItem(
@@ -87,6 +96,7 @@ namespace CropProd
             {
                 ShowBouble(exc.Message);
             }
+            Status.Text = "Ок";
         }
 
         private void OnLayerCreate_Click(object sender, EventArgs e)
@@ -128,6 +138,7 @@ namespace CropProd
 
         private void OnOpenProject_Click()
         {
+            Status.Text = "Открываю проект";
             try
             {
                 string filename = ShowOpenFileDialog();
@@ -137,13 +148,13 @@ namespace CropProd
             {
                 ShowBouble(exc.Message);
             }
+            Status.Text = "Ok";
         }
 
         private void OnOpenProject_Click(string filename)
         {
             try
             {
-                Status.Text = "Открываю проект";
                 Project proj = decisionSupport.OnOpenProject(filename);
                 RedrawLayerItem(proj.Layers);
                 Text = proj.Name;
@@ -152,7 +163,6 @@ namespace CropProd
             {
                 ShowBouble(exc.Message);
             }
-            Status.Text = "Ok";
         }
 
 

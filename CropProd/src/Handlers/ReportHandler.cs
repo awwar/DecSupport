@@ -55,7 +55,14 @@ namespace Handlers
             Bitmap newimg = Readimg(compileLayer, cutoutimage);
             tileimage.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\back.png");
             newimg.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\rezult.png");
-            report.MakePDF(tileimage, newimg, cutouframe);
+            try
+            {
+                report.MakePDF(tileimage, newimg, cutouframe);
+            }
+            catch (Exception)
+            {
+                throw new Exception("PDF create error!");
+            }
         }
 
         private bool isTileInRect(float x, float y, float maxX, float minX, float maxY, float minY)

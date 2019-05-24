@@ -33,12 +33,25 @@ namespace CropProd
 
         private void RightRange_TextChanged(object sender, EventArgs e)
         {
-            Max = float.Parse(RightRange.Text);
+            try
+            {
+                Max = float.Parse(RightRange.Text);
+            }
+            catch (Exception)
+            {
+                
+            }
         }
 
         private void LeftRange_TextChanged(object sender, EventArgs e)
         {
-            Min = float.Parse(LeftRange.Text);
+            try
+            {
+                Min = float.Parse(LeftRange.Text);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

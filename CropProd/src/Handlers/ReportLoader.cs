@@ -23,8 +23,8 @@ namespace Handlers
                 document.Open();
 
                 iTextSharp.text.Image pic = iTextSharp.text.Image.GetInstance(img, System.Drawing.Imaging.ImageFormat.Png);
-                float height = 500;
-                float width = img.Width * (height / img.Height);
+                float width = writer.PageSize.Width;
+                float height = img.Height * (width / img.Width);
                 pic.ScaleToFit(width, height);
                 pic.SetAbsolutePosition(0, document.PageSize.Height - height);
 

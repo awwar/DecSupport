@@ -69,9 +69,14 @@ namespace DSCore
             //Если поток не 
             if (TileHandler != null || LayerHandler != null)
             {
-                frames = TileHandler.Handle();
-
-                frames = frames.Concat(LayerHandler.Handle()).ToArray();
+                try
+                {
+                    frames = TileHandler.Handle();
+                    frames = frames.Concat(LayerHandler.Handle()).ToArray();
+                }
+                catch (Exception)
+                {
+                }
             }
 
             return frames;
