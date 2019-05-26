@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using DSCore;
+
 
 namespace Models
 {
@@ -14,11 +16,11 @@ namespace Models
 
         public Tile(Vector2 coordinate, string url, string path, Image image = null)
         {
-            Size = new Vector2(Settings.Settings.TileSize, Settings.Settings.TileSize);
+            Size = new Vector2(Settings.TileSize, Settings.TileSize);
             Image = image;
             if (Image == null)
             {
-                Image = CropProd.Properties.Resources.def;
+                Image = Settings.DefaultImage;
             }
             Coordinate = coordinate;
             Url = url;

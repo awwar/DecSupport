@@ -53,11 +53,9 @@ namespace Handlers
             Bitmap cutouframe = CompileCutOut(points, maxX, minX, maxY, minY, false);
             Bitmap tileimage = CompileFrames(tiles, maxX, minX, maxY, minY);
             Bitmap newimg = Readimg(compileLayer, cutoutimage);
-            tileimage.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\back.png");
-            newimg.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\rezult.png");
             try
             {
-                report.MakePDF(tileimage, newimg, cutouframe);
+                report.SaveBitmaps(tileimage, newimg, cutouframe);
             }
             catch (Exception)
             {

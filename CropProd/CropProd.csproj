@@ -51,12 +51,12 @@
     <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
     </Reference>
-    <Reference Include="Reports, Version=0.9.5821.33857, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Report.NET.0.09.06\lib\net461\Reports.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
+    <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -110,24 +110,6 @@
     <Compile Include="obj\Release\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Handlers\LayerHandler.cs" />
-    <Compile Include="src\DecisionSupport.cs" />
-    <Compile Include="src\Handlers\LayerLoader.cs" />
-    <Compile Include="src\Handlers\ReportHandler.cs" />
-    <Compile Include="src\Handlers\ReportLoader.cs" />
-    <Compile Include="src\Handlers\TileLoader.cs" />
-    <Compile Include="src\Handlers\TileHandler.cs" />
-    <Compile Include="src\Events\ImageLoadArgs.cs" />
-    <Compile Include="src\Interfaces\IHandler.cs" />
-    <Compile Include="src\Models\CreateProjectDialogData.cs" />
-    <Compile Include="src\Models\Data.cs" />
-    <Compile Include="src\Models\Frame.cs" />
-    <Compile Include="src\Models\Layer.cs" />
-    <Compile Include="src\Models\LayerMakerDialogData.cs" />
-    <Compile Include="src\Models\Project.cs" />
-    <Compile Include="src\Models\Scene.cs" />
-    <Compile Include="src\Models\Tile.cs" />
-    <Compile Include="src\Settings\Settings.cs" />
     <Compile Include="LayerListItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -196,12 +178,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LatLonToTile\LatLonToTile.csproj">
-      <Project>{34cfc13a-6bfd-46ff-a345-0255f205d835}</Project>
-      <Name>LatLonToTile</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="bin\Debug\def.png" />
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +189,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="obj\Release\TempPE\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DecisionSupport\DecisionSupport.csproj">
+      <Project>{5e3e46d0-938b-439e-816b-9abd296b4524}</Project>
+      <Name>DecisionSupport</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Events;
+using DSCore;
 using Interfaces;
 using Models;
 using System;
@@ -13,32 +14,18 @@ namespace Handlers
     class TileHandler : IHandler
     {
         public Action Redraw { set; get; }
-        private string basePath = "";
-        private string name = "google";
-        private int tilesize = Settings.Settings.TileSize;
 
-        private readonly Random rnd;
+        private int tilesize = Settings.TileSize;
+
         private Scene scene;
         private TileLoader Loader;
         private readonly Thread ImgLoader;
         private List<Tile> tiles = new List<Tile>();
 
-
-        private readonly Dictionary<string, string> distrib = new Dictionary<string, string>
-        {
-            {"openstrmap"   ,"https://a.tile.openstreetmap.org/{2}/{0}/{1}.png "},
-            {"googleS"      ,"http://mt2.google.com/vt/lyrs=s&x={0}&y={1}&z={2}" },
-            {"PaintMap"     ,"http://c.tile.stamen.com/watercolor/{2}/{0}/{1}.jpg" },
-            {"google"       ,"https://khms1.googleapis.com/kh?v=821&x={0}&y={1}&z={2}"},
-            {"twogis"       ,"https://tile1.maps.2gis.com/tiles?x={0}&y={1}&z={2}&v=1.5&r=g&ts=online_sd" },
-            {"yandex"       ,"https://sat01.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU"}
-        };
-
         public TileHandler(ref Scene scene)
         {
             this.scene = scene;
-            rnd = new Random();
-            basePath = Path.GetTempPath() + "CropPod/tiles";
+
             ImgLoader = new Thread(() =>
             {
                 Loader = new TileLoader();
@@ -100,42 +87,10 @@ namespace Handlers
 
         private void GetTileAt(Vector2 leftop)
         {
-            double tx = leftop.X + scene.Coordinate.X;
-            double ty = leftop.Y + scene.Coordinate.Y;
-
-            string url = string.Format(distrib[name], tx, ty, scene.Zoom, rnd.Next(1, 3));
-            string filename = $"{tx.ToString()}_{ty.ToString()}.jpeg";
-            string query = string.Format(@"{0}\{1}\{2}\", basePath, name, scene.Zoom);
-            string fullpath = query + filename;
-
-            if (!File.Exists(fullpath))
-            {
-                Tile tile = new Tile(
-                    leftop,
-                    url,
-                    fullpath
-                );
-                Loader.AddFrame(tile);
-                AddTile(tile);
-            }
-            else
-            {
-                Image img;
-                try
-                {
-                    FileStream myStream = new FileStream(fullpath, FileMode.Open, FileAccess.Read);
-                    img = Image.FromStream(myStream);
-                    myStream.Close();
-                }
-                catch (Exception)
-                {
-                    img = null;
-                }
-                AddTile(new Tile(
-                    leftop,
-                    img
-                ));
-            }
+            double X = leftop.X + scene.Coordinate.X;
+            double Y = leftop.Y + scene.Coordinate.Y;
+            Tile tile = Loader.ReserveTile(X, Y, scene.Zoom, leftop);
+            AddTile(tile);
         }
 
         private void AddTile(Tile tile)

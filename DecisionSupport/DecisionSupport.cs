@@ -1,5 +1,4 @@
-﻿using CropProd;
-using Handlers;
+﻿using Handlers;
 using Models;
 using System;
 using System.Drawing;
@@ -16,7 +15,7 @@ namespace DSCore
         internal LayerLoader LayerHandler { get; private set; }
         internal ReportHandler ReportHandler { get; private set; }
 
-        internal event Action OnNeedRedraw;
+        public event Action OnNeedRedraw;
 
         private Scene scene;
         private Vector2 first = new Vector2(0, 0);

@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using DSCore;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,7 +18,11 @@ namespace Handlers
 
         public DataLoader()
         {
-            basepath = Path.GetTempPath() + "CropPod/projects/";
+            basepath = Settings.TempPath + "CropPod/projects/";
+            if (!Directory.Exists(basepath))
+            {
+                Directory.CreateDirectory(basepath);
+            }
         }
 
         public void CreateProject(Project project)
@@ -60,7 +65,7 @@ namespace Handlers
         public void CreateLayer(Dictionary<string, Bitmap> tiles, Layer layer, string Filename)
         {
             layer.Hash = GetHashName(layer.Name);
-            string layerpath = Path.GetTempPath() + "CropPod/layers/" + layer.Hash + "/";
+            string layerpath = Settings.TempPath + "CropPod/layers/" + layer.Hash + "/";
 
             Directory.CreateDirectory(layerpath);
             foreach (KeyValuePair<string, Bitmap> tile in tiles)

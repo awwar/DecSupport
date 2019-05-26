@@ -1,4 +1,5 @@
-﻿using Interfaces;
+﻿using DSCore;
+using Interfaces;
 using LatLonToTile;
 using Models;
 using System;
@@ -21,7 +22,7 @@ namespace Handlers
         public LayerLoader(ref Scene scene)
         {
             Scene = scene;
-            TileCoordinate = new TileCoordinate(Settings.Settings.TileSize);
+            TileCoordinate = new TileCoordinate(Settings.TileSize);
             Loader = new DataLoader();
         }
 

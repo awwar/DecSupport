@@ -1,4 +1,5 @@
 ﻿using System;
+using DSCore;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -34,8 +35,8 @@ namespace CropProd
         {
             clickx = e.X;
             clicky = e.Y;
-            right = (int)Math.Ceiling((double)(img.Width / Settings.Settings.TileSize));
-            bottom = (int)Math.Ceiling((double)(img.Height / Settings.Settings.TileSize));
+            right = (int)Math.Ceiling((double)(img.Width / Settings.TileSize));
+            bottom = (int)Math.Ceiling((double)(img.Height / Settings.TileSize));
             left = e.X % 256;
             top = e.Y % 256;
 
@@ -47,7 +48,7 @@ namespace CropProd
             MemoryStream ms = new MemoryStream();
             pictureBox1.Image.Save(ms, ImageFormat.Png);
             Image img = Image.FromStream(ms);
-            int tile = Settings.Settings.TileSize;
+            int tile = Settings.TileSize;
             int clicktileX = (int)Math.Ceiling((double)(clickx / tile));
             int clicktileY = (int)Math.Ceiling((double)(clicky / tile));
             for (int i = 0; i <= bottom; i++)
@@ -83,7 +84,7 @@ namespace CropProd
         private void PictureBox1_Paint(object sender, PaintEventArgs e)
         {
             System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
-            int tile = Settings.Settings.TileSize;
+            int tile = Settings.TileSize;
             e.Graphics.FillRectangle(myBrush, new Rectangle(clickx - 5, clicky - 5, 10, 10));
             if (img != null)
             {

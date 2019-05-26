@@ -1,4 +1,5 @@
-﻿using Events;
+﻿using DSCore;
+using Events;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -6,22 +7,32 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 
 namespace Handlers
 {
     class TileLoader
     {
         private readonly WebClient client;
-
+        private string basepath = "";
         public delegate void ImageLoadHandler(object sender, ImageLoadArgs e);
         public event ImageLoadHandler OnImageLoad;
 
+        private readonly Random rnd;
         private Dictionary<string, Tile> data = new Dictionary<string, Tile>();
         private bool isLoading = false;
 
 
         public TileLoader()
         {
+            rnd = new Random();
+            basepath = Settings.TempPath + "CropPod/tiles";
+
+            if (!Directory.Exists(basepath))
+            {
+                Directory.CreateDirectory(basepath);
+            }
+
             client = new WebClient
             {
                 Proxy = null
@@ -30,6 +41,55 @@ namespace Handlers
             client.DownloadFileCompleted += Client_DownloadFileCompleted;
         }
 
+        /**
+         * ищем тайл или в папке или пытаемся его скачать
+         */
+        public Tile ReserveTile(double X, double Y, double Z, Vector2 leftop)
+        {
+            Tile tile;
+            string url = string.Format(
+                Settings.DistributorSrc,
+                X,
+                Y,
+                Z,
+                rnd.Next(1, 3));
+            string filename = $"{X.ToString()}_{Y.ToString()}.jpeg";
+            string query = string.Format(
+                @"{0}\{1}\{2}\",
+                basepath,
+                Settings.DistributorName,
+                Z);
+            string fullpath = query + filename;
+
+            if (!File.Exists(fullpath))
+            {
+                tile = new Tile(
+                    leftop,
+                    url,
+                    fullpath
+                );
+                AddFrame(tile);
+            }
+            else
+            {
+                Image img;
+                try
+                {
+                    FileStream myStream = new FileStream(fullpath, FileMode.Open, FileAccess.Read);
+                    img = Image.FromStream(myStream);
+                    myStream.Close();
+                }
+                catch (Exception)
+                {
+                    img = null;
+                }
+                tile = new Tile(
+                    leftop,
+                    img
+                );
+            }
+            return tile;
+        }
 
         /*
          *  Когда загрузка завершена (успешно или нет???) пытаемся запустить другие

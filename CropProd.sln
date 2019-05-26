@@ -4,8 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.28822.285
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CropProd", "CropProd\CropProd.csproj", "{C6699703-893C-4BF6-9AAF-D8F8DF26A2F4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E3E46D0-938B-439E-816B-9ABD296B4524} = {5E3E46D0-938B-439E-816B-9ABD296B4524}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LatLonToTile", "LatLonToTile\LatLonToTile.csproj", "{34CFC13A-6BFD-46FF-A345-0255F205D835}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecisionSupport", "DecisionSupport\DecisionSupport.csproj", "{5E3E46D0-938B-439E-816B-9ABD296B4524}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{34CFC13A-6BFD-46FF-A345-0255F205D835}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34CFC13A-6BFD-46FF-A345-0255F205D835}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34CFC13A-6BFD-46FF-A345-0255F205D835}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E3E46D0-938B-439E-816B-9ABD296B4524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E3E46D0-938B-439E-816B-9ABD296B4524}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E3E46D0-938B-439E-816B-9ABD296B4524}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E3E46D0-938B-439E-816B-9ABD296B4524}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

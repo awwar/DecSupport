@@ -3,6 +3,7 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Numerics;
 using System.Windows.Forms;
 
@@ -20,11 +21,24 @@ namespace CropProd
         public MainWindow(string[] args)
         {
             InitializeComponent();
-            decisionSupport = new DecisionSupport();
 
             UpdateStyles();
 
-            Settings.Settings.TileSize = 256;
+            Settings.TempPath = Path.GetTempPath();
+            Settings.TileSize = 256;
+            Settings.DefaultImage = CropProd.Properties.Resources.def;
+            Settings.DistributorName = "Google";
+            Settings.DistributorSrc = "http://mt2.google.com/vt/lyrs=s&x={0}&y={1}&z={2}";
+            /*
+            * https://a.tile.openstreetmap.org/{2}/{0}/{1}.png
+            * http://mt2.google.com/vt/lyrs=s&x={0}&y={1}&z={2}
+            * http://c.tile.stamen.com/watercolor/{2}/{0}/{1}.jpg
+            * https://khms1.googleapis.com/kh?v=821&x={0}&y={1}&z={2}
+            * https://tile1.maps.2gis.com/tiles?x={0}&y={1}&z={2}&v=1.5&r=g&ts=online_sd
+            * https://sat01.maps.yandex.net/tiles?l=sat&v=3.449.0&x={0}&y={1}&z={2}&lang=ru_RU
+            */
+
+            decisionSupport = new DecisionSupport();
 
             scene.Paint += Scene_Paint;
             scene.Resize += Scene_Resize;
