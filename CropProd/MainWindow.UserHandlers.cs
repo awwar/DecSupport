@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 
@@ -194,9 +195,10 @@ namespace CropProd
 
         private void Scene_Paint(object sender, PaintEventArgs e)
         {
-            Frame[] frames = decisionSupport.OnDraw();
-            e.Graphics.Clear(Color.Black);
+            Frame[] frames = decisionSupport.OnDrawTile();
+            frames = frames.Concat(decisionSupport.OnDrawLayer()).ToArray();
 
+            e.Graphics.Clear(Color.Black);
             if (frames != null)
             {
 

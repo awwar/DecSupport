@@ -3,7 +3,6 @@ using Models;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Threading;
 
@@ -61,17 +60,33 @@ namespace DSCore
             ReportHandler.PrepareReport(layers, points, tiles);
         }
 
-        public Frame[] OnDraw()
+        public Frame[] OnDrawTile()
         {
-            scene.Update(delta);
             Frame[] frames = new Frame[] { };
-            //Если поток не 
-            if (TileHandler != null || LayerHandler != null)
+
+            if (TileHandler != null)
             {
                 try
                 {
                     frames = TileHandler.Handle();
-                    frames = frames.Concat(LayerHandler.Handle()).ToArray();
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            return frames;
+        }
+
+        public Frame[] OnDrawLayer()
+        {
+            Frame[] frames = new Frame[] { };
+
+            if (LayerHandler != null)
+            {
+                try
+                {
+                    frames = LayerHandler.Handle();
                 }
                 catch (Exception)
                 {
@@ -85,6 +100,7 @@ namespace DSCore
         {
             first = new Vector2(x, y);
             delta = Vector2.Subtract(last, first);
+            scene.Update(delta);
             last = first;
             return delta;
         }
@@ -113,7 +129,9 @@ namespace DSCore
 
         public Layer[] OnLayerDrop(string file)
         {
-            return LayerHandler.LoadLayer(file);
+            Layer[] layers = LayerHandler.LoadLayer(file);
+            OnNeedRedraw();
+            return layers;
         }
 
         public void OnSaveProject(string file = null)
@@ -150,7 +168,9 @@ namespace DSCore
 
         public Layer[] OnLayerDelete(Layer layer)
         {
-            return LayerHandler.DeleteLayer(layer);
+            Layer[] layers = LayerHandler.DeleteLayer(layer);
+            OnNeedRedraw();
+            return layers;
         }
     }
 }
