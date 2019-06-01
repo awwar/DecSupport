@@ -4,74 +4,26 @@ namespace LatLonToTile
 {
     public class TileCoordinate
     {
-        private readonly int tileSize;
-        private readonly double originShift;
 
-        public TileCoordinate(int tileSize)
+        public int[] ConvertWorldToTile(double lat, double lon, int zoom)
         {
-            this.tileSize = tileSize;
-            originShift = 2 * Math.PI * 6378137 / 2.0;
+            int[] p = new int[2];
+            p[0] = (int)((lon + 180.0) / 360.0 * (1 << zoom));
+            p[1] = (int)((1.0 - Math.Log(Math.Tan(lat * Math.PI / 180.0) +
+                1.0 / Math.Cos(lat * Math.PI / 180.0)) / Math.PI) / 2.0 * (1 << zoom));
+
+            return p;
         }
 
-        public double[] Convert(double lat, double lon, int zoom)
+        public double[] ConvertTileToWorld(double tile_x, double tile_y, int zoom)
         {
-            return LatLonToMeters(lat, lon, zoom);
-        }
+            double[] p = new double[2];
+            double n = Math.PI - ((2.0 * Math.PI * tile_y) / Math.Pow(2.0, zoom));
 
-        private double Clip(double n, double minValue, double maxValue)
-        {
-            return Math.Min(Math.Max(n, minValue), maxValue);
-        }
-        public uint MapSize(int levelOfDetail)
-        {
-            return (uint)256 << levelOfDetail;
-        }
+            p[0] = (tile_x / Math.Pow(2.0, zoom) * 360.0) - 180.0;
+            p[1] = (180.0 / Math.PI * Math.Atan(Math.Sinh(n)));
 
-        public void PixelXYToLatLong(float pixelX, float pixelY, out double latitude, out double longitude)
-        {
-            double mapSize = MapSize(10);
-            double x = (Clip(pixelX, 0, mapSize - 1) / mapSize) - 0.5;
-            double y = 0.5 - (Clip(pixelY, 0, mapSize - 1) / mapSize);
-
-            latitude = 90 - 360 * Math.Atan(Math.Exp(-y * 2 * Math.PI)) / Math.PI;
-            longitude = 360 * x;
-        }
-
-        private double[] LatLonToMeters(double lat, double lon, int zoom)
-        {
-            double mx = lon * originShift / 180.0;
-            double my = Math.Log(Math.Tan((90 + lat) * Math.PI / 360.0)) / (Math.PI / 180.0);
-
-            my = my * originShift / 180.0;
-
-            double[] rez = MetersToPixels(mx, my, zoom);
-
-            return rez;
-        }
-
-        private double[] MetersToPixels(double mx, double my, int zoom)
-        {
-            double res = Resolution(zoom);
-            double px = (mx + originShift) / res;
-            double py = (my + originShift) / res;
-            return PixelsToTile(px, py, zoom);
-        }
-
-        private double[] PixelsToTile(double px, double py, int zoom)
-        {
-            double tx = Math.Ceiling(px / tileSize) - 1;
-            double ty = Math.Ceiling(py / tileSize) - 1;
-            return GoogleTile(tx, ty, zoom);
-        }
-
-        private double Resolution(int zoom)
-        {
-            return (2 * Math.PI * 6378137 / tileSize) / Math.Pow(2, zoom);
-        }
-
-        private double[] GoogleTile(double tx, double ty, int zoom)
-        {
-            return new double[2] { tx, (Math.Pow(2, zoom) - 1) - ty };
+            return p;
         }
     }
 }

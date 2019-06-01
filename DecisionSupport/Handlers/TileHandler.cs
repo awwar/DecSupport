@@ -1,17 +1,15 @@
-﻿using Events;
-using DSCore;
+﻿using DSCore;
+using Events;
 using Interfaces;
 using Models;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Numerics;
 using System.Threading;
 
 namespace Handlers
 {
-    class TileHandler : IHandler
+    class TileHandler : IHandler<Tile>
     {
         public Action Redraw { set; get; }
 
@@ -37,7 +35,7 @@ namespace Handlers
             ImgLoader.Start();
         }
 
-        public Frame[] Handle()
+        public Tile[] Handle()
         {
             Tile[] tileA = tiles.ToArray();
             foreach (Tile tile in tileA)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace Models
 {
@@ -26,6 +27,18 @@ namespace Models
                 foreach (Data item in Datas)
                 {
                     item.Image.Dispose();
+                }
+            }
+
+        }
+
+        public void Draw(Vector2 position)
+        {
+            if (Datas != null)
+            {
+                foreach (Data item in Datas)
+                {
+                    item.Draw(position);
                 }
             }
 

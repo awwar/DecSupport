@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using Interfaces;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,9 +8,14 @@ using System.Linq;
 
 namespace Handlers
 {
-    class ReportHandler
+    class ReportHandler : IHandler<Report>
     {
-        private ReportLoader report = new ReportLoader();
+        private ReportLoader Loader = new ReportLoader();
+        List<Report> Reports = new List<Report>();
+        private Pen pen = new Pen(Color.Blue, 2f);
+        private Brush brush = new SolidBrush(Color.Blue);
+
+        public Action Redraw { get; set; }
 
         public void PrepareReport(Layer[] layers, PointF[] points, Frame[] tiles)
         {
@@ -55,7 +61,7 @@ namespace Handlers
             Bitmap newimg = Readimg(compileLayer, cutoutimage);
             try
             {
-                report.SaveBitmaps(tileimage, newimg, cutouframe);
+                Loader.SaveBitmaps(tileimage, newimg, cutouframe);
             }
             catch (Exception)
             {
@@ -102,13 +108,11 @@ namespace Handlers
             // чтоб их залить правильно
             for (int i = 0; i < points.Length; i++)
             {
-                points[i].X -= minX;
-                points[i].Y -= minY;
-                float x = points[i].X;
-                float y = points[i].Y;
+                float x = points[i].X - minX;
+                float y = points[i].Y - minY;
                 if (i == points.Length - 1)
                 {
-                    graphPath.AddLine(x, y, points[0].X, points[0].Y);
+                    graphPath.AddLine(x, y, points[0].X - minX, points[0].Y - minY);
                 }
                 else
                 {
@@ -117,21 +121,23 @@ namespace Handlers
             }
             if (isfill)
             {
-                g.FillPath(new SolidBrush(Color.Blue), graphPath);
+                g.FillPath(brush, graphPath);
             }
-
+            g.DrawPath(pen, graphPath);
+            graphPath.Dispose();
             return bitmap;
         }
 
         private Bitmap Readimg(Dictionary<Layer, Bitmap> compileLayer, Bitmap cutoutimage)
         {
+            cutoutimage.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\cuto.png");
             Bitmap newimg = new Bitmap(cutoutimage.Width, cutoutimage.Height);
             try
             {
                 int x, y;
                 Color cutcolor;
                 Color laycolor;
-
+                string colorhex;
                 int laycount = compileLayer.Count();
                 // Loop through the images pixels to reset color.
                 for (x = 0; x < newimg.Width; x++)
@@ -147,13 +153,11 @@ namespace Handlers
                                 Layer lay = item.Key;
                                 Bitmap img = item.Value;
                                 laycolor = img.GetPixel(x, y);
-                                if (laycolor.A != 0)
+                                if (laycolor.A > 0)
                                 {
                                     float gate = lay.setMax - lay.setMin;
-                                    int r = (laycolor.R == 0) ? 1 : laycolor.R;
-                                    int g = (laycolor.G == 0) ? 1 : laycolor.G;
-                                    int b = (laycolor.B == 0) ? 1 : laycolor.B;
-                                    float colorpower = (r * g * b) - 1;
+                                    colorhex = string.Format("0x{0:X2}{1:X2}{2:X2}", laycolor.R, laycolor.G, laycolor.B);
+                                    float colorpower = Convert.ToInt32(colorhex, 16);
                                     float layerpower = lay.ColorMax - lay.ColorMin;
                                     if (colorpower >= lay.setMin && colorpower <= lay.setMax && lay.invert == false)
                                     {
@@ -197,5 +201,9 @@ namespace Handlers
             return newimg;
         }
 
+        public Report[] Handle()
+        {
+            return Reports.ToArray();
+        }
     }
 }

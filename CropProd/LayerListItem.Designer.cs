@@ -35,28 +35,28 @@
             this.DeleteLayer = new System.Windows.Forms.Button();
             this.LeftRange = new System.Windows.Forms.TextBox();
             this.RightRange = new System.Windows.Forms.TextBox();
+            this.ButtonHide = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // LayName
             // 
-            this.LayName.Location = new System.Drawing.Point(3, 4);
+            this.LayName.Location = new System.Drawing.Point(3, 3);
             this.LayName.Name = "LayName";
-            this.LayName.Size = new System.Drawing.Size(101, 19);
+            this.LayName.Size = new System.Drawing.Size(97, 40);
             this.LayName.TabIndex = 0;
             this.LayName.Text = "label1";
             // 
             // isInvert
             // 
-            this.isInvert.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.isInvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.isInvert.AutoSize = true;
-            this.isInvert.Location = new System.Drawing.Point(93, 6);
+            this.isInvert.Location = new System.Drawing.Point(92, 6);
             this.isInvert.Name = "isInvert";
             this.isInvert.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.isInvert.Size = new System.Drawing.Size(63, 17);
+            this.isInvert.Size = new System.Drawing.Size(52, 17);
             this.isInvert.TabIndex = 1;
             this.isInvert.TabStop = true;
-            this.isInvert.Text = "Is Invert";
+            this.isInvert.Text = "Invert";
             this.isInvert.UseVisualStyleBackColor = true;
             // 
             // notifyIcon1
@@ -83,7 +83,7 @@
             // LeftRange
             // 
             this.LeftRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.LeftRange.Location = new System.Drawing.Point(6, 46);
+            this.LeftRange.Location = new System.Drawing.Point(6, 40);
             this.LeftRange.Name = "LeftRange";
             this.LeftRange.Size = new System.Drawing.Size(94, 20);
             this.LeftRange.TabIndex = 2;
@@ -92,12 +92,24 @@
             // 
             // RightRange
             // 
-            this.RightRange.Location = new System.Drawing.Point(106, 46);
+            this.RightRange.Location = new System.Drawing.Point(106, 40);
             this.RightRange.Name = "RightRange";
             this.RightRange.Size = new System.Drawing.Size(93, 20);
             this.RightRange.TabIndex = 3;
             this.RightRange.Text = "0";
             this.RightRange.TextChanged += new System.EventHandler(this.RightRange_TextChanged);
+            // 
+            // ButtonHide
+            // 
+            this.ButtonHide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonHide.BackColor = System.Drawing.Color.Aqua;
+            this.ButtonHide.Location = new System.Drawing.Point(150, 3);
+            this.ButtonHide.Name = "ButtonHide";
+            this.ButtonHide.Size = new System.Drawing.Size(23, 23);
+            this.ButtonHide.TabIndex = 4;
+            this.ButtonHide.Text = "_";
+            this.ButtonHide.UseVisualStyleBackColor = false;
+            this.ButtonHide.Click += new System.EventHandler(this.ButtonHide_Click);
             // 
             // LayerListItem
             // 
@@ -107,13 +119,14 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.ButtonHide);
             this.Controls.Add(this.RightRange);
             this.Controls.Add(this.LeftRange);
             this.Controls.Add(this.DeleteLayer);
             this.Controls.Add(this.isInvert);
             this.Controls.Add(this.LayName);
             this.Name = "LayerListItem";
-            this.Size = new System.Drawing.Size(206, 69);
+            this.Size = new System.Drawing.Size(206, 63);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -126,5 +139,6 @@
         public System.Windows.Forms.Button DeleteLayer;
         public System.Windows.Forms.TextBox LeftRange;
         public System.Windows.Forms.TextBox RightRange;
+        private System.Windows.Forms.Button ButtonHide;
     }
 }

@@ -195,31 +195,38 @@ namespace CropProd
 
         private void Scene_Paint(object sender, PaintEventArgs e)
         {
-            Frame[] frames = decisionSupport.OnDrawTile();
-            frames = frames.Concat(decisionSupport.OnDrawLayer()).ToArray();
+            Tile[] tiles = decisionSupport.OnDrawTile();
+            Layer[] layers = decisionSupport.OnDrawLayer();
 
             e.Graphics.Clear(Color.Black);
-            if (frames != null)
-            {
 
-                foreach (Frame frame in frames)
-                {
-                    e.Graphics.DrawImage(
-                        frame.Image,
-                        (float)Math.Floor(frame.Screenposition.X),
-                        (float)Math.Floor(frame.Screenposition.Y),
-                        frame.Size.X,
-                        frame.Size.Y
-                    );
-                }
+            foreach (Frame frame in tiles)
+            {
+                DrawFrame(frame, ref e);
             }
+
+            foreach (LayerListItem item in layerlist)
+            {
+                if (item.isHide)
+                {
+                    continue;
+                }
+                Layer layer = Array.Find(layers, x => x.Hash == item.Layer.Hash);
+
+                if (layer != null)
+                {
+                    foreach (Frame frame in layer.Datas)
+                    {
+                        DrawFrame(frame, ref e);
+                    }
+                }                
+            }            
 
             if (IsDecisionMode)
             {
                 GraphicsPath graphPath = new GraphicsPath();
                 if (points.Count > 2)
                 {
-
                     for (int i = 0; i < points.Count; i++)
                     {
                         float x = points[i].X + Position.X;
@@ -248,6 +255,7 @@ namespace CropProd
             }
             DrawXmark(pen3, ref e, scene.Size.Width / 2, scene.Size.Height / 2);
         }
+
         private void MainWindow_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -293,6 +301,7 @@ namespace CropProd
                 LayerListItem item = new LayerListItem(layers[i]);
                 item.CreateControl();
                 item.Parent = LayerList;
+                item.Redaraw += OnNeedRedraw; 
                 item.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                 item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
                 item.LeftRange.Text = layers[i].Min.ToString();

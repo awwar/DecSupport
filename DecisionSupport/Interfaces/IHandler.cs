@@ -3,9 +3,9 @@ using System;
 
 namespace Interfaces
 {
-    internal interface IHandler
+    internal interface IHandler <T>
     {
         Action Redraw { get; set; }
-        Frame[] Handle();
+        T[] Handle();
     }
 }

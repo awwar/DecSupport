@@ -1,11 +1,11 @@
-﻿using System.Drawing;
+﻿using DSCore;
+using System.Drawing;
 using System.Numerics;
-using DSCore;
 
 
 namespace Models
 {
-    internal class Tile : Frame
+    public class Tile : Frame
     {
         public string Url { get; set; }
         public string Path { get; set; }

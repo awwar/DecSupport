@@ -8,8 +8,10 @@ namespace CropProd
     {
         public Layer Layer;
         public Action<Layer> LayerDelete;
+        public Action Redaraw;
         public float Min;
         public float Max;
+        public bool isHide = false;
 
         public LayerListItem(Layer lay)
         {
@@ -52,6 +54,13 @@ namespace CropProd
             catch (Exception)
             {
             }
+        }
+
+        private void ButtonHide_Click(object sender, EventArgs e)
+        {
+            isHide = !isHide;
+            this.ButtonHide.Text = ((isHide) ? "+" : "_");
+            Redaraw();
         }
     }
 }

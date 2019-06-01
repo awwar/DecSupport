@@ -60,9 +60,9 @@ namespace DSCore
             ReportHandler.PrepareReport(layers, points, tiles);
         }
 
-        public Frame[] OnDrawTile()
+        public Tile[] OnDrawTile()
         {
-            Frame[] frames = new Frame[] { };
+            Tile[] frames = new Tile[] { };
 
             if (TileHandler != null)
             {
@@ -78,22 +78,22 @@ namespace DSCore
             return frames;
         }
 
-        public Frame[] OnDrawLayer()
+        public Layer[] OnDrawLayer()
         {
-            Frame[] frames = new Frame[] { };
+            Layer[] layers = new Layer[] { };
 
             if (LayerHandler != null)
             {
                 try
                 {
-                    frames = LayerHandler.Handle();
+                    layers = LayerHandler.Handle();
                 }
                 catch (Exception)
                 {
                 }
             }
 
-            return frames;
+            return layers;
         }
 
         public Vector2 OnMouseMoove(int x, int y)

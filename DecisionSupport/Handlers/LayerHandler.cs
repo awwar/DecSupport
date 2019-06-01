@@ -1,5 +1,4 @@
-﻿using DSCore;
-using Interfaces;
+﻿using Interfaces;
 using LatLonToTile;
 using Models;
 using System;
@@ -10,7 +9,7 @@ using System.IO;
 
 namespace Handlers
 {
-    class LayerLoader : IHandler
+    class LayerLoader : IHandler<Layer>
     {
         public Action Redraw { set; get; }
         private readonly Scene Scene;
@@ -22,7 +21,7 @@ namespace Handlers
         public LayerLoader(ref Scene scene)
         {
             Scene = scene;
-            TileCoordinate = new TileCoordinate(Settings.TileSize);
+            TileCoordinate = new TileCoordinate();
             Loader = new DataLoader();
         }
 
@@ -32,20 +31,17 @@ namespace Handlers
             cureentProject.AddLayer(layer);
         }
 
-        public Frame[] Handle()
+        public Layer[] Handle()
         {
-            List<Data> retdata = new List<Data>() { };
+            List<Layer> retdata = new List<Layer>() { };
             if (cureentProject != null)
             {
                 foreach (Layer item in cureentProject.Layers)
                 {
                     if (item.Datas != null)
                     {
-                        foreach (Data data in item.Datas)
-                        {
-                            data.Draw(Scene.Position);
-                            retdata.Add(data);
-                        }
+                        item.Draw(Scene.Position);
+                        retdata.Add(item);
                     }
 
                 }
@@ -55,7 +51,7 @@ namespace Handlers
 
         public Project CreateProject(string name, string lat, string lon)
         {
-            double[] tilelatlon = TileCoordinate.Convert(
+            int[] tilelatlon = TileCoordinate.ConvertWorldToTile(
                 double.Parse(lat, CultureInfo.InvariantCulture),
                 double.Parse(lon, CultureInfo.InvariantCulture),
                 18
@@ -113,10 +109,10 @@ namespace Handlers
         public void CreateLayer(Dictionary<string, Bitmap> img, string Lat, string Lon, string Min, string Max, string Filename)
         {
 
-            int colormin = 255 * 255 * 255;
+            int colormin = 256 * 256 * 256;
             int colormax = 0;
 
-            double[] tilelatlon = TileCoordinate.Convert(
+            int[] tilelatlon = TileCoordinate.ConvertWorldToTile(
                 double.Parse(Lat, CultureInfo.InvariantCulture),
                 double.Parse(Lon, CultureInfo.InvariantCulture),
                 18
@@ -124,6 +120,7 @@ namespace Handlers
 
             //высчитываем минимальную и максимальную границу цвета для данного слоя
             Color pix;
+            string colorhex;
 
             foreach (Bitmap item in img.Values)
             {
@@ -132,14 +129,10 @@ namespace Handlers
                     for (int j = 0; i < item.Width; i++)
                     {
                         pix = item.GetPixel(i, j);
-                        int r = (pix.R == 0) ? 1 : pix.R;
-                        int g = (pix.G == 0) ? 1 : pix.G;
-                        int b = (pix.B == 0) ? 1 : pix.B;
-                        int pixpower = r * g * b;
-                        if (pix.A == 0)
-                        {
-                            continue;
-                        }
+
+                        colorhex = string.Format("0x{0:X2}{1:X2}{2:X2}", pix.R, pix.G, pix.B);
+                        int pixpower = Convert.ToInt32(colorhex, 16);
+
                         if (pixpower > colormax)
                         {
                             colormax = pixpower;
@@ -147,6 +140,11 @@ namespace Handlers
                         if (pixpower < colormin)
                         {
                             colormin = pixpower;
+                        }
+
+                        if (pix.A == 0)
+                        {
+                            continue;
                         }
                     }
                 }

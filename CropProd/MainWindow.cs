@@ -206,6 +206,17 @@ namespace CropProd
             e.Graphics.DrawLine(pen, x, y - 10, x, y + 10);
         }
 
+        private void DrawFrame(Frame frame, ref PaintEventArgs e)
+        {
+            e.Graphics.DrawImage(
+                frame.Image,
+                (float)Math.Floor(frame.Screenposition.X),
+                (float)Math.Floor(frame.Screenposition.Y),
+                frame.Size.X,
+                frame.Size.Y
+            );
+        }
+
         private void OnNeedRedraw()
         {
             if (!isdraw)

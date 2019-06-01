@@ -1,7 +1,6 @@
-﻿using iTextSharp.text.pdf;
+﻿using DSCore;
 using System.Drawing;
 using System.IO;
-using DSCore;
 
 namespace Handlers
 {
@@ -67,6 +66,7 @@ namespace Handlers
             tile.Save(basepath + "back.png");
             rezult.Save(basepath + "rezult.png");
             compile.Save(basepath + "compile.png");
+            cutout.Save(basepath + "Cut.png");
         }
 
     }
