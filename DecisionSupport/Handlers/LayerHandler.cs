@@ -27,7 +27,7 @@ namespace Handlers
 
         public void AddLayer(Layer layer)
         {
-            layer.Datas = Loader.ReadLayerData(cureentProject.Hash, layer.Hash);
+            layer.DataLayers = Loader.ReadLayerData(cureentProject.Hash, layer.Hash);
             cureentProject.AddLayer(layer);
         }
 
@@ -38,7 +38,7 @@ namespace Handlers
             {
                 foreach (Layer item in cureentProject.Layers)
                 {
-                    if (item.Datas != null)
+                    if (item.DataLayers != null)
                     {
                         item.Draw(Scene.Position);
                         retdata.Add(item);
@@ -49,18 +49,18 @@ namespace Handlers
             return retdata.ToArray();
         }
 
-        public Project CreateProject(string name, string lat, string lon)
+        public Project CreateProject(CreateProjDialogData createProj)
         {
             int[] tilelatlon = TileCoordinate.ConvertWorldToTile(
-                double.Parse(lat, CultureInfo.InvariantCulture),
-                double.Parse(lon, CultureInfo.InvariantCulture),
+                double.Parse(createProj.Lat, CultureInfo.InvariantCulture),
+                double.Parse(createProj.Lon, CultureInfo.InvariantCulture),
                 18
             );
             cureentProject = new Project()
             {
-                Name = name,
-                Lat = tilelatlon[0],
-                Lon = tilelatlon[1]
+                Name = createProj.Name,
+                TileX = tilelatlon[0],
+                TileY = tilelatlon[1]
             };
             Loader.CreateProject(cureentProject);
             Scene.AppendProject(cureentProject);
@@ -106,15 +106,15 @@ namespace Handlers
             throw new Exception("Project not opened");
         }
 
-        public void CreateLayer(Dictionary<string, Bitmap> img, string Lat, string Lon, string Min, string Max, string Filename)
+        public void CreateLayer(LayerMakerDialogData data)
         {
 
             int colormin = 256 * 256 * 256;
             int colormax = 0;
 
             int[] tilelatlon = TileCoordinate.ConvertWorldToTile(
-                double.Parse(Lat, CultureInfo.InvariantCulture),
-                double.Parse(Lon, CultureInfo.InvariantCulture),
+                double.Parse(data.Lat, CultureInfo.InvariantCulture),
+                double.Parse(data.Lon, CultureInfo.InvariantCulture),
                 18
             );
 
@@ -122,7 +122,7 @@ namespace Handlers
             Color pix;
             string colorhex;
 
-            foreach (Bitmap item in img.Values)
+            foreach (Bitmap item in data.Tiles.Values)
             {
                 for (int i = 0; i < item.Height; i++)
                 {
@@ -152,19 +152,20 @@ namespace Handlers
 
             Layer layer = new Layer()
             {
-                Lat = tilelatlon[0],
-                Lon = tilelatlon[1],
-                Min = float.Parse(Min),
-                Max = float.Parse(Max),
+                TileX = tilelatlon[0],
+                TileY = tilelatlon[1],
+                Min = float.Parse(data.Min),
+                Max = float.Parse(data.Max),
                 ColorMin = colormin,
                 ColorMax = colormax,
-                Name = Path.GetFileNameWithoutExtension(Filename)
+                Name = Path.GetFileNameWithoutExtension(data.FilePath),
+                ValueType = data.ValueType
             };
 
-            Loader.CreateLayer(img, layer, Filename);
+            Loader.CreateLayer(data.Tiles, layer, data.FilePath);
         }
 
-        public Layer[] LoadLayer(string path)
+        public Layer[] OpenLayer(string path)
         {
             if (cureentProject != null)
             {

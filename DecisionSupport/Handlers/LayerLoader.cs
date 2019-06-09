@@ -125,13 +125,13 @@ namespace Handlers
                 using (FileStream myStream = new FileStream(files[i], FileMode.Open, FileAccess.Read))
                 {
                     Image img = Image.FromStream(myStream);
-                    data[i] = ConvertDatafileToData(img, files[i], layername);
+                    data[i] = ConvertDatafileToData(img, files[i]);
                 }
             }
             return data;
         }
 
-        private Data ConvertDatafileToData(Image img, string filepath, string layerhash)
+        private Data ConvertDatafileToData(Image img, string filepath)
         {
             string name = Path.GetFileNameWithoutExtension(filepath);
 
@@ -144,7 +144,7 @@ namespace Handlers
                 Int32.Parse(xy[1])
                 );
 
-            return new Data(coords, img, layerhash);
+            return new Data(coords, img);
         }
 
         private T ReadFileData<T>(string path)

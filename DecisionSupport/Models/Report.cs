@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
+﻿using System.Drawing;
 
 namespace Models
 {
-    class Report
+    public class Report
     {
-        public Bitmap compiledata;
-        public Bitmap cutdata;
-        public Bitmap background;
-        public Bitmap cutframe;
-        public string description;
+        public Bitmap CompileData;
+        public Bitmap CutData;
+        public Bitmap Background;
+        public Bitmap CutFrame;
+        public string Description;
     }
 }

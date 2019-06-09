@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 
@@ -215,12 +214,12 @@ namespace CropProd
 
                 if (layer != null)
                 {
-                    foreach (Frame frame in layer.Datas)
+                    foreach (Frame frame in layer.DataLayers)
                     {
                         DrawFrame(frame, ref e);
                     }
-                }                
-            }            
+                }
+            }
 
             if (IsDecisionMode)
             {
@@ -277,7 +276,7 @@ namespace CropProd
                         break;
                     case ".cplay":
                         RedrawLayerItem(
-                            decisionSupport.OnLayerDrop(file)
+                            decisionSupport.OnOpenLayer(file)
                         );
                         break;
                     default:
@@ -301,12 +300,13 @@ namespace CropProd
                 LayerListItem item = new LayerListItem(layers[i]);
                 item.CreateControl();
                 item.Parent = LayerList;
-                item.Redaraw += OnNeedRedraw; 
+                item.Redaraw += OnNeedRedraw;
                 item.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
                 item.Width = item.Parent.Width - item.Parent.Padding.Left * 2;
                 item.LeftRange.Text = layers[i].Min.ToString();
                 item.RightRange.Text = layers[i].Max.ToString();
                 item.LayName.Text = layers[i].Name;
+                item.ValueType.Text = layers[i].ValueType;
                 item.LayerDelete += DeleteLayer_Click;
                 item.Location = new Point(item.Parent.Padding.Left, item.Parent.Padding.Top + item.Height * i + 10);
                 item.Show();

@@ -7,24 +7,24 @@ namespace Models
     public class Layer : IDisposable
     {
         public string Name { get; set; }
-        public double Lat { get; set; }
-        public double Lon { get; set; }
+        public double TileX { get; set; }
+        public double TileY { get; set; }
         public float Min { get; set; } = 0;
         public float Max { get; set; } = 1;
         public float ColorMin { get; set; } = 0;
         public float ColorMax { get; set; } = 1;
+        public string ValueType { get; set; } = "";
         public string Hash { get; set; }
-        public int Id { get; set; }
-        [NonSerialized()] public Data[] Datas = new Data[] { };
+        [NonSerialized()] public Data[] DataLayers = new Data[] { };
         [NonSerialized()] public float setMin = 0;
         [NonSerialized()] public float setMax = 1;
         [NonSerialized()] public bool invert = false;
 
         public void Dispose()
         {
-            if (Datas != null)
+            if (DataLayers != null)
             {
-                foreach (Data item in Datas)
+                foreach (Data item in DataLayers)
                 {
                     item.Image.Dispose();
                 }
@@ -34,9 +34,9 @@ namespace Models
 
         public void Draw(Vector2 position)
         {
-            if (Datas != null)
+            if (DataLayers != null)
             {
-                foreach (Data item in Datas)
+                foreach (Data item in DataLayers)
                 {
                     item.Draw(position);
                 }

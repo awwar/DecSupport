@@ -42,6 +42,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.ValueTypeInput = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +77,8 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.ValueTypeInput);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.MaxInput);
@@ -178,6 +182,22 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Lat";
             // 
+            // ValueTypeInput
+            // 
+            this.ValueTypeInput.Location = new System.Drawing.Point(6, 233);
+            this.ValueTypeInput.Name = "ValueTypeInput";
+            this.ValueTypeInput.Size = new System.Drawing.Size(100, 20);
+            this.ValueTypeInput.TabIndex = 12;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 217);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(57, 13);
+            this.label6.TabIndex = 13;
+            this.label6.Text = "Value type";
+            // 
             // LayerMakerDialog
             // 
             this.AllowDrop = true;
@@ -211,5 +231,7 @@
         private System.Windows.Forms.Label label4;
         public System.Windows.Forms.TextBox MaxInput;
         public System.Windows.Forms.TextBox MinInput;
+        private System.Windows.Forms.Label label6;
+        public System.Windows.Forms.TextBox ValueTypeInput;
     }
 }

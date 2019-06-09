@@ -1,4 +1,5 @@
-﻿using Interfaces;
+﻿using DSCore;
+using Interfaces;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,11 @@ namespace Handlers
         private Brush brush = new SolidBrush(Color.Blue);
 
         public Action Redraw { get; set; }
+
+        public Report[] Handle()
+        {
+            return Reports.ToArray();
+        }
 
         public void PrepareReport(Layer[] layers, PointF[] points, Frame[] tiles)
         {
@@ -53,7 +59,7 @@ namespace Handlers
             }
             foreach (Layer layer in layers)
             {
-                compileLayer[layer] = CompileFrames(layer.Datas, maxX, minX, maxY, minY);
+                compileLayer[layer] = CompileFrames(layer.DataLayers, maxX, minX, maxY, minY);
             }
             Bitmap cutoutimage = CompileCutOut(points, maxX, minX, maxY, minY);
             Bitmap cutouframe = CompileCutOut(points, maxX, minX, maxY, minY, false);
@@ -61,7 +67,7 @@ namespace Handlers
             Bitmap newimg = Readimg(compileLayer, cutoutimage);
             try
             {
-                Loader.SaveBitmaps(tileimage, newimg, cutouframe);
+                Reports.Add(Loader.SaveBitmaps(tileimage, newimg, cutouframe));
             }
             catch (Exception)
             {
@@ -88,9 +94,9 @@ namespace Handlers
             g.Clear(Color.Transparent);
             foreach (Frame data in framse)
             {
-                if (isTileInRect(data.Screenposition.X, data.Screenposition.Y, maxX, minX, maxY, minY))
+                if (isTileInRect(data.ScreenPosition.X, data.ScreenPosition.Y, maxX, minX, maxY, minY))
                 {
-                    g.DrawImage(data.Image, (float)Math.Floor(data.Screenposition.X - minX), (float)Math.Floor(data.Screenposition.Y - minY), 256, 256);
+                    g.DrawImage(data.Image, (float)Math.Floor(data.ScreenPosition.X - minX), (float)Math.Floor(data.ScreenPosition.Y - minY), 256, 256);
                 }
             }
             return bitmap;
@@ -147,7 +153,7 @@ namespace Handlers
                         cutcolor = cutoutimage.GetPixel(x, y);
                         if (cutcolor.A != 0)
                         {
-                            float newlaypower = 0;
+                            float layerpower = 0;
                             foreach (KeyValuePair<Layer, Bitmap> item in compileLayer)
                             {
                                 Layer lay = item.Key;
@@ -158,25 +164,24 @@ namespace Handlers
                                     float gate = lay.setMax - lay.setMin;
                                     colorhex = string.Format("0x{0:X2}{1:X2}{2:X2}", laycolor.R, laycolor.G, laycolor.B);
                                     float colorpower = Convert.ToInt32(colorhex, 16);
-                                    float layerpower = lay.ColorMax - lay.ColorMin;
                                     if (colorpower >= lay.setMin && colorpower <= lay.setMax && lay.invert == false)
                                     {
-                                        newlaypower += (colorpower - lay.ColorMin) / layerpower;
+                                        layerpower += GetLayerPower(lay.setMax, lay.setMin, colorpower);
                                     }
                                     else
                                     {
-                                        newlaypower = 0;
+                                        layerpower = 0;
                                         break;
                                     }
                                 }
                                 else
                                 {
-                                    newlaypower += 1;
+                                    layerpower += 1;
                                 }
                             }
-                            if (newlaypower != 0)
+                            if (layerpower > 0)
                             {
-                                newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (newlaypower / laycount)), 0, 0));
+                                newimg.SetPixel(x, y, Color.FromArgb((int)(256 * (layerpower / laycount)), 0, 0));
                             }
                             else
                             {
@@ -201,9 +206,27 @@ namespace Handlers
             return newimg;
         }
 
-        public Report[] Handle()
+        private float GetLayerPower(float max, float min, float current)
         {
-            return Reports.ToArray();
+            float power = 0f;
+            float origin = 0f;
+            switch (Settings.RezPaitRulе)
+            {
+                case RezultRules.Middle: // если отклонение от центра
+                    origin = (max - min) / 2;
+                    power = 1 - (Math.Abs(current - origin) / origin);
+                    break;
+                case RezultRules.Min: // если отклонение от минимального
+                    origin = max - min;
+                    power = 1 - (current / origin);
+                    break;
+                case RezultRules.Max: // если отклонение от максимального
+                    origin = max - min;
+                    power = current / origin;
+                    break;
+            }
+            return power;
         }
+
     }
 }

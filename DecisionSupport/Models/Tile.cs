@@ -20,7 +20,7 @@ namespace Models
             Image = image;
             if (Image == null)
             {
-                Image = Settings.DefaultImage;
+                Image = Settings.DefaultTileImage;
             }
             Coordinate = coordinate;
             Url = url;

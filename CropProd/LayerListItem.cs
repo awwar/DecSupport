@@ -41,7 +41,7 @@ namespace CropProd
             }
             catch (Exception)
             {
-                
+
             }
         }
 
@@ -59,7 +59,7 @@ namespace CropProd
         private void ButtonHide_Click(object sender, EventArgs e)
         {
             isHide = !isHide;
-            this.ButtonHide.Text = ((isHide) ? "+" : "_");
+            ButtonHide.Text = ((isHide) ? "+" : "_");
             Redaraw();
         }
     }

@@ -29,11 +29,6 @@ namespace Models
             return Position;
         }
 
-        public void SetTileCenter(Vector2 center)
-        {
-            Coordinate = center;
-        }
-
         public Vector2 Resize(Vector2 size)
         {
             Position = Vector2.Subtract(Position, Size / 2);
@@ -45,7 +40,7 @@ namespace Models
         public void AppendProject(Project proj)
         {
             Name = proj.Name;
-            Coordinate = new Vector2((float)proj.Lat, (float)proj.Lon);
+            Coordinate = new Vector2((float)proj.TileX, (float)proj.TileY);
         }
     }
 }

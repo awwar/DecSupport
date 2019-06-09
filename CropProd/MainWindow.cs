@@ -26,7 +26,7 @@ namespace CropProd
 
             Settings.TempPath = Path.GetTempPath();
             Settings.TileSize = 256;
-            Settings.DefaultImage = CropProd.Properties.Resources.def;
+            Settings.DefaultTileImage = CropProd.Properties.Resources.def;
             Settings.DistributorName = "Google";
             Settings.DistributorSrc = "http://mt2.google.com/vt/lyrs=s&x={0}&y={1}&z={2}";
             /*
@@ -161,7 +161,7 @@ namespace CropProd
                 Lon = null,
                 Min = null,
                 Max = null,
-                FileName = null
+                FilePath = null
             };
 
             if (layerMaker.ShowDialog() == DialogResult.OK)
@@ -186,7 +186,8 @@ namespace CropProd
                             data.Lon = layerMaker.LonInput.Text;
                             data.Min = layerMaker.MinInput.Text;
                             data.Max = layerMaker.MaxInput.Text;
-                            data.FileName = sfd.FileName;
+                            data.ValueType = layerMaker.ValueTypeInput.Text;
+                            data.FilePath = sfd.FileName;
                         }
                     }
                 }
@@ -210,8 +211,8 @@ namespace CropProd
         {
             e.Graphics.DrawImage(
                 frame.Image,
-                (float)Math.Floor(frame.Screenposition.X),
-                (float)Math.Floor(frame.Screenposition.Y),
+                (float)Math.Floor(frame.ScreenPosition.X),
+                (float)Math.Floor(frame.ScreenPosition.Y),
                 frame.Size.X,
                 frame.Size.Y
             );

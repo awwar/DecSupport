@@ -128,23 +128,23 @@ namespace Handlers
 
         private void UpdateTile(Tile tile)
         {
-            if (tile.Screenposition.Y < -tilesize * 2 || tile.Screenposition.Y > scene.Size.Y + tilesize)
+            if (tile.ScreenPosition.Y < -tilesize * 2 || tile.ScreenPosition.Y > scene.Size.Y + tilesize)
             {
                 GetTileAt(
                     new Vector2(
                         tile.Coordinate.X,
-                        (tile.Screenposition.Y < -tilesize * 2)
+                        (tile.ScreenPosition.Y < -tilesize * 2)
                             ? tile.Coordinate.Y + (int)scene.Size.Y / (tilesize) + 3
                             : tile.Coordinate.Y - (int)scene.Size.Y / (tilesize) - 3
                     )
                 );
                 RemoveTile(tile);
             }
-            else if (tile.Screenposition.X < -tilesize * 2 || tile.Screenposition.X > scene.Size.X + tilesize)
+            else if (tile.ScreenPosition.X < -tilesize * 2 || tile.ScreenPosition.X > scene.Size.X + tilesize)
             {
                 GetTileAt(
                     new Vector2(
-                        (tile.Screenposition.X < -tilesize * 2)
+                        (tile.ScreenPosition.X < -tilesize * 2)
                             ? tile.Coordinate.X + (int)scene.Size.X / (tilesize) + 3
                             : tile.Coordinate.X - (int)scene.Size.X / (tilesize) - 3,
                         tile.Coordinate.Y

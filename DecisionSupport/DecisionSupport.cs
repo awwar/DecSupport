@@ -10,9 +10,9 @@ namespace DSCore
 {
     public class DecisionSupport
     {
-        internal TileHandler TileHandler { get; private set; }
-        internal LayerLoader LayerHandler { get; private set; }
-        internal ReportHandler ReportHandler { get; private set; }
+        internal TileHandler TileHandler;
+        internal LayerLoader LayerHandler;
+        internal ReportHandler ReportHandler;
 
         public event Action OnNeedRedraw;
 
@@ -20,17 +20,17 @@ namespace DSCore
         private Vector2 first = new Vector2(0, 0);
         private Vector2 delta = new Vector2(0, 0);
         private Vector2 last = new Vector2(0, 0);
-        private readonly Thread TileThread;
+        private readonly Thread HandlersThread;
 
         public DecisionSupport()
         {
             scene = new Scene();
 
-            TileThread = new Thread(Start)
+            HandlersThread = new Thread(Start)
             {
                 IsBackground = true
             };
-            TileThread.Start();
+            HandlersThread.Start();
         }
 
         private void Start()
@@ -58,6 +58,11 @@ namespace DSCore
         {
             Frame[] tiles = TileHandler.Handle();
             ReportHandler.PrepareReport(layers, points, tiles);
+        }
+
+        public Report[] OnGetDecision()
+        {
+            return ReportHandler.Handle();
         }
 
         public Tile[] OnDrawTile()
@@ -127,9 +132,9 @@ namespace DSCore
             return proj;
         }
 
-        public Layer[] OnLayerDrop(string file)
+        public Layer[] OnOpenLayer(string file)
         {
-            Layer[] layers = LayerHandler.LoadLayer(file);
+            Layer[] layers = LayerHandler.OpenLayer(file);
             OnNeedRedraw();
             return layers;
         }
@@ -145,10 +150,7 @@ namespace DSCore
 
         public Project OnNewProject(CreateProjDialogData createProj)
         {
-            Project proj = LayerHandler.CreateProject(
-                            createProj.Name,
-                            createProj.Lat,
-                            createProj.Lon);
+            Project proj = LayerHandler.CreateProject(createProj);
             TileHandler.Update();
             OnNeedRedraw();
             return proj;
@@ -156,14 +158,7 @@ namespace DSCore
 
         public void OnLayerCreate(LayerMakerDialogData data)
         {
-            LayerHandler.CreateLayer(
-                data.Tiles,
-                data.Lat,
-                data.Lon,
-                data.Min,
-                data.Max,
-                data.FileName
-            );
+            LayerHandler.CreateLayer(data);
         }
 
         public Layer[] OnLayerDelete(Layer layer)

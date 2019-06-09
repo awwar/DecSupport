@@ -1,4 +1,5 @@
 ﻿using DSCore;
+using Models;
 using System.Drawing;
 using System.IO;
 
@@ -51,7 +52,7 @@ namespace Handlers
             }*/
         }
 
-        public void SaveBitmaps(Bitmap tile, Bitmap rezult, Bitmap cutout)
+        public Report SaveBitmaps(Bitmap tile, Bitmap rezult, Bitmap cutout)
         {
             Image compile = new Bitmap(tile.Width, tile.Height);
             Graphics g = Graphics.FromImage(compile);
@@ -67,6 +68,14 @@ namespace Handlers
             rezult.Save(basepath + "rezult.png");
             compile.Save(basepath + "compile.png");
             cutout.Save(basepath + "Cut.png");
+            Report report = new Report()
+            {
+                Background = tile,
+                CutData = rezult,
+                CompileData = (Bitmap)compile,
+                CutFrame = cutout
+            };
+            return report;
         }
 
     }

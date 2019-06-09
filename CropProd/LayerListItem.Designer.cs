@@ -36,6 +36,7 @@
             this.LeftRange = new System.Windows.Forms.TextBox();
             this.RightRange = new System.Windows.Forms.TextBox();
             this.ButtonHide = new System.Windows.Forms.Button();
+            this.ValueType = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // LayName
@@ -85,16 +86,16 @@
             this.LeftRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.LeftRange.Location = new System.Drawing.Point(6, 40);
             this.LeftRange.Name = "LeftRange";
-            this.LeftRange.Size = new System.Drawing.Size(94, 20);
+            this.LeftRange.Size = new System.Drawing.Size(65, 20);
             this.LeftRange.TabIndex = 2;
             this.LeftRange.Text = "0";
             this.LeftRange.TextChanged += new System.EventHandler(this.LeftRange_TextChanged);
             // 
             // RightRange
             // 
-            this.RightRange.Location = new System.Drawing.Point(106, 40);
+            this.RightRange.Location = new System.Drawing.Point(77, 40);
             this.RightRange.Name = "RightRange";
-            this.RightRange.Size = new System.Drawing.Size(93, 20);
+            this.RightRange.Size = new System.Drawing.Size(67, 20);
             this.RightRange.TabIndex = 3;
             this.RightRange.Text = "0";
             this.RightRange.TextChanged += new System.EventHandler(this.RightRange_TextChanged);
@@ -111,6 +112,14 @@
             this.ButtonHide.UseVisualStyleBackColor = false;
             this.ButtonHide.Click += new System.EventHandler(this.ButtonHide_Click);
             // 
+            // ValueType
+            // 
+            this.ValueType.AutoSize = true;
+            this.ValueType.Location = new System.Drawing.Point(150, 43);
+            this.ValueType.Name = "ValueType";
+            this.ValueType.Size = new System.Drawing.Size(0, 13);
+            this.ValueType.TabIndex = 5;
+            // 
             // LayerListItem
             // 
             this.AllowDrop = true;
@@ -119,6 +128,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.ValueType);
             this.Controls.Add(this.ButtonHide);
             this.Controls.Add(this.RightRange);
             this.Controls.Add(this.LeftRange);
@@ -140,5 +150,6 @@
         public System.Windows.Forms.TextBox LeftRange;
         public System.Windows.Forms.TextBox RightRange;
         private System.Windows.Forms.Button ButtonHide;
+        public System.Windows.Forms.Label ValueType;
     }
 }
