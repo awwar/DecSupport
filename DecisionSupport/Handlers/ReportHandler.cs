@@ -137,6 +137,11 @@ namespace Handlers
         private Bitmap Readimg(Dictionary<Layer, Bitmap> compileLayer, Bitmap cutoutimage)
         {
             cutoutimage.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\cuto.png");
+            int i = 0;
+            foreach (var item in compileLayer)
+            {
+                item.Value.Save(String.Format(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\coml\{0}.png", i++));
+            }
             Bitmap newimg = new Bitmap(cutoutimage.Width, cutoutimage.Height);
             try
             {
@@ -164,7 +169,8 @@ namespace Handlers
                                     float gate = lay.setMax - lay.setMin;
                                     colorhex = string.Format("0x{0:X2}{1:X2}{2:X2}", laycolor.R, laycolor.G, laycolor.B);
                                     float colorpower = Convert.ToInt32(colorhex, 16);
-                                    if (colorpower >= lay.setMin && colorpower <= lay.setMax && lay.invert == false)
+                                    bool value = (colorpower >= lay.setMin && colorpower <= lay.setMax);
+                                    if ((lay.invert) ? !value : value)
                                     {
                                         layerpower += GetLayerPower(lay.setMax, lay.setMin, colorpower);
                                     }
@@ -181,7 +187,7 @@ namespace Handlers
                             }
                             if (layerpower > 0)
                             {
-                                newimg.SetPixel(x, y, Color.FromArgb((int)(256 * (layerpower / laycount)), 0, 0));
+                                newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (layerpower / laycount)), 0, 0));
                             }
                             else
                             {

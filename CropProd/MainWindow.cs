@@ -57,6 +57,7 @@ namespace CropProd
 
             decisionSupport.OnNeedRedraw += OnNeedRedraw;
 
+            ChangeTitle("Проект принятия решения");
 
             decisionSupport.OnResize(new Vector2(scene.Size.Width, scene.Size.Height));
             if (args.Length > 0)

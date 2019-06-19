@@ -12,11 +12,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Handlers
 {
-    class DataLoader
+    class LayerLoader
     {
         private string basepath = "";
 
-        public DataLoader()
+        public LayerLoader()
         {
             basepath = Settings.TempPath + "CropPod/projects/";
             if (!Directory.Exists(basepath))
@@ -62,7 +62,7 @@ namespace Handlers
             return project;
         }
 
-        public void CreateLayer(Dictionary<string, Bitmap> tiles, Layer layer, string Filename)
+        public Layer CreateLayer(Dictionary<string, Bitmap> tiles, Layer layer, string Filename)
         {
             layer.Hash = GetHashName(layer.Name);
             string layerpath = Settings.TempPath + "CropPod/layers/" + layer.Hash + "/";
@@ -75,6 +75,7 @@ namespace Handlers
             Serilize(layer, layerpath);
 
             ZipFile.CreateFromDirectory(layerpath, Filename);
+            return layer;
         }
 
         public Layer AddLayer(string path, string prodname)

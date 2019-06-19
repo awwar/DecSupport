@@ -9,20 +9,20 @@ using System.IO;
 
 namespace Handlers
 {
-    class LayerLoader : IHandler<Layer>
+    class LayerHandler : IHandler<Layer>
     {
         public Action Redraw { set; get; }
         private readonly Scene Scene;
         private readonly TileCoordinate TileCoordinate;
-        private readonly DataLoader Loader;
+        private readonly LayerLoader Loader;
 
         private Project cureentProject;
 
-        public LayerLoader(ref Scene scene)
+        public LayerHandler(ref Scene scene)
         {
             Scene = scene;
             TileCoordinate = new TileCoordinate();
-            Loader = new DataLoader();
+            Loader = new LayerLoader();
         }
 
         public void AddLayer(Layer layer)
@@ -106,7 +106,7 @@ namespace Handlers
             throw new Exception("Project not opened");
         }
 
-        public void CreateLayer(LayerMakerDialogData data)
+        public Layer CreateLayer(LayerMakerDialogData data)
         {
 
             int colormin = 256 * 256 * 256;
@@ -162,7 +162,7 @@ namespace Handlers
                 ValueType = data.ValueType
             };
 
-            Loader.CreateLayer(data.Tiles, layer, data.FilePath);
+            return Loader.CreateLayer(data.Tiles, layer, data.FilePath);
         }
 
         public Layer[] OpenLayer(string path)

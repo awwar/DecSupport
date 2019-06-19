@@ -157,7 +157,7 @@ namespace CropProd
             {
                 Project proj = decisionSupport.OnOpenProject(filename);
                 RedrawLayerItem(proj.Layers);
-                Text = proj.Name;
+                ChangeTitle(proj.Name);
             }
             catch (Exception exc)
             {
@@ -175,7 +175,7 @@ namespace CropProd
                 Project proj = decisionSupport.OnNewProject(createProj);
                 string filename = ShowSaveFileDialog(proj.Name);
                 decisionSupport.OnSaveProject(filename);
-                Text = proj.Name;
+                ChangeTitle(proj.Name);
                 ShowBouble($"Проект {proj.Name} успешно создан!");
             }
             catch (Exception exc)

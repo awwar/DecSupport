@@ -11,7 +11,7 @@ namespace DSCore
     public class DecisionSupport
     {
         internal TileHandler TileHandler;
-        internal LayerLoader LayerHandler;
+        internal LayerHandler LayerHandler;
         internal ReportHandler ReportHandler;
 
         public event Action OnNeedRedraw;
@@ -36,7 +36,7 @@ namespace DSCore
         private void Start()
         {
             TileHandler = new TileHandler(ref scene);
-            LayerHandler = new LayerLoader(ref scene);
+            LayerHandler = new LayerHandler(ref scene);
             ReportHandler = new ReportHandler();
             TileHandler.Redraw += OnNeedRedraw;
             LayerHandler.Redraw += OnNeedRedraw;
@@ -156,9 +156,9 @@ namespace DSCore
             return proj;
         }
 
-        public void OnLayerCreate(LayerMakerDialogData data)
+        public Layer OnLayerCreate(LayerMakerDialogData data)
         {
-            LayerHandler.CreateLayer(data);
+            return LayerHandler.CreateLayer(data);
         }
 
         public Layer[] OnLayerDelete(Layer layer)
