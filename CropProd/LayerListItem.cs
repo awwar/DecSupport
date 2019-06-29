@@ -62,5 +62,16 @@ namespace CropProd
             ButtonHide.Text = ((isHide) ? "+" : "_");
             Redaraw();
         }
+
+        private void NonAlpha_Click(object sender, EventArgs e)
+        {
+            Layer.nonAlpha = !Layer.nonAlpha;
+            Strict.Checked = Layer.nonAlpha;
+        }
+
+        private void NonAlpha_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

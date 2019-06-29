@@ -19,6 +19,7 @@ namespace Models
         [NonSerialized()] public float setMin = 0;
         [NonSerialized()] public float setMax = 1;
         [NonSerialized()] public bool invert = false;
+        [NonSerialized()] public bool nonAlpha = false;
 
         public void Dispose()
         {

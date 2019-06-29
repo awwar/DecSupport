@@ -37,13 +37,14 @@
             this.RightRange = new System.Windows.Forms.TextBox();
             this.ButtonHide = new System.Windows.Forms.Button();
             this.ValueType = new System.Windows.Forms.Label();
+            this.Strict = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // LayName
             // 
             this.LayName.Location = new System.Drawing.Point(3, 3);
             this.LayName.Name = "LayName";
-            this.LayName.Size = new System.Drawing.Size(97, 40);
+            this.LayName.Size = new System.Drawing.Size(95, 34);
             this.LayName.TabIndex = 0;
             this.LayName.Text = "label1";
             // 
@@ -51,9 +52,9 @@
             // 
             this.isInvert.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.isInvert.AutoSize = true;
-            this.isInvert.Location = new System.Drawing.Point(92, 6);
+            this.isInvert.Location = new System.Drawing.Point(104, 1);
             this.isInvert.Name = "isInvert";
-            this.isInvert.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.isInvert.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.isInvert.Size = new System.Drawing.Size(52, 17);
             this.isInvert.TabIndex = 1;
             this.isInvert.TabStop = true;
@@ -73,7 +74,7 @@
             this.DeleteLayer.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.DeleteLayer.FlatAppearance.BorderColor = System.Drawing.Color.Red;
             this.DeleteLayer.ForeColor = System.Drawing.Color.White;
-            this.DeleteLayer.Location = new System.Drawing.Point(176, 3);
+            this.DeleteLayer.Location = new System.Drawing.Point(183, 0);
             this.DeleteLayer.Margin = new System.Windows.Forms.Padding(0);
             this.DeleteLayer.Name = "DeleteLayer";
             this.DeleteLayer.Size = new System.Drawing.Size(23, 23);
@@ -104,7 +105,7 @@
             // 
             this.ButtonHide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ButtonHide.BackColor = System.Drawing.Color.Aqua;
-            this.ButtonHide.Location = new System.Drawing.Point(150, 3);
+            this.ButtonHide.Location = new System.Drawing.Point(157, 0);
             this.ButtonHide.Name = "ButtonHide";
             this.ButtonHide.Size = new System.Drawing.Size(23, 23);
             this.ButtonHide.TabIndex = 4;
@@ -120,6 +121,21 @@
             this.ValueType.Size = new System.Drawing.Size(0, 13);
             this.ValueType.TabIndex = 5;
             // 
+            // Strict
+            // 
+            this.Strict.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.Strict.AutoSize = true;
+            this.Strict.Location = new System.Drawing.Point(104, 17);
+            this.Strict.Name = "Strict";
+            this.Strict.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.Strict.Size = new System.Drawing.Size(49, 17);
+            this.Strict.TabIndex = 6;
+            this.Strict.TabStop = true;
+            this.Strict.Text = "Strict";
+            this.Strict.UseVisualStyleBackColor = true;
+            this.Strict.CheckedChanged += new System.EventHandler(this.NonAlpha_CheckedChanged);
+            this.Strict.Click += new System.EventHandler(this.NonAlpha_Click);
+            // 
             // LayerListItem
             // 
             this.AllowDrop = true;
@@ -128,6 +144,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Controls.Add(this.Strict);
             this.Controls.Add(this.ValueType);
             this.Controls.Add(this.ButtonHide);
             this.Controls.Add(this.RightRange);
@@ -151,5 +168,6 @@
         public System.Windows.Forms.TextBox RightRange;
         private System.Windows.Forms.Button ButtonHide;
         public System.Windows.Forms.Label ValueType;
+        public System.Windows.Forms.RadioButton Strict;
     }
 }

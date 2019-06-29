@@ -136,12 +136,6 @@ namespace Handlers
 
         private Bitmap Readimg(Dictionary<Layer, Bitmap> compileLayer, Bitmap cutoutimage)
         {
-            cutoutimage.Save(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\cuto.png");
-            int i = 0;
-            foreach (var item in compileLayer)
-            {
-                item.Value.Save(String.Format(@"C:\Users\awwar\AppData\Local\Temp\CropPod\reports\coml\{0}.png", i++));
-            }
             Bitmap newimg = new Bitmap(cutoutimage.Width, cutoutimage.Height);
             try
             {
@@ -149,7 +143,7 @@ namespace Handlers
                 Color cutcolor;
                 Color laycolor;
                 string colorhex;
-                int laycount = compileLayer.Count();
+                int laycount = 0;
                 // Loop through the images pixels to reset color.
                 for (x = 0; x < newimg.Width; x++)
                 {
@@ -164,6 +158,11 @@ namespace Handlers
                                 Layer lay = item.Key;
                                 Bitmap img = item.Value;
                                 laycolor = img.GetPixel(x, y);
+                                if(laycolor.A == 0 && lay.nonAlpha)
+                                {
+                                    layerpower = 0;
+                                    break;
+                                }
                                 if (laycolor.A > 0)
                                 {
                                     float gate = lay.setMax - lay.setMin;
@@ -173,6 +172,7 @@ namespace Handlers
                                     if ((lay.invert) ? !value : value)
                                     {
                                         layerpower += GetLayerPower(lay.setMax, lay.setMin, colorpower);
+                                        laycount += 1;
                                     }
                                     else
                                     {
@@ -183,6 +183,7 @@ namespace Handlers
                                 else
                                 {
                                     layerpower += 1;
+                                    laycount += 1;
                                 }
                             }
                             if (layerpower > 0)
@@ -193,12 +194,12 @@ namespace Handlers
                             {
                                 newimg.SetPixel(x, y, Color.FromArgb(0, 0, 0, 0));
                             }
+                            laycount = 0;
 
                         }
                         else
                         {
                             newimg.SetPixel(x, y, Color.FromArgb(0, 0, 0, 0));
-
                         }
                     }
                 }
@@ -219,15 +220,15 @@ namespace Handlers
             switch (Settings.RezPaitRulе)
             {
                 case RezultRules.Middle: // если отклонение от центра
-                    origin = (max - min) / 2;
+                    origin = (max - min) + 1 / 2;
                     power = 1 - (Math.Abs(current - origin) / origin);
                     break;
                 case RezultRules.Min: // если отклонение от минимального
-                    origin = max - min;
+                    origin = max - min + 1;
                     power = 1 - (current / origin);
                     break;
                 case RezultRules.Max: // если отклонение от максимального
-                    origin = max - min;
+                    origin = max - min + 1;
                     power = current / origin;
                     break;
             }

@@ -88,7 +88,7 @@ namespace CropProd
             try
             {
                 RedrawLayerItem(
-                decisionSupport.OnLayerDelete(layer)
+                    decisionSupport.OnLayerDelete(layer)
                 );
                 decisionSupport.OnSaveProject();
             }
@@ -275,9 +275,8 @@ namespace CropProd
                         OnOpenProject_Click(file);
                         break;
                     case ".cplay":
-                        RedrawLayerItem(
-                            decisionSupport.OnOpenLayer(file)
-                        );
+                        Layer[] layer = decisionSupport.OnOpenLayer(file);
+                        RedrawLayerItem(layer);
                         break;
                     default:
                         MessageBox.Show("Неизвестное расширение проекта!");
