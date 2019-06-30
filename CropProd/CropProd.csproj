@@ -186,6 +186,7 @@
     <Content Include="obj\Debug\CropProd.pdb" />
     <Content Include="obj\Debug\Default.JPG" />
     <Content Include="obj\Debug\TempPE\Properties.Resources.Designer.cs.dll" />
+    <None Include="Resources\Image1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="obj\Release\TempPE\" />

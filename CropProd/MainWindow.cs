@@ -26,7 +26,7 @@ namespace CropProd
 
             Settings.TempPath = Path.GetTempPath();
             Settings.TileSize = 256;
-            Settings.DefaultTileImage = CropProd.Properties.Resources.def;
+            Settings.DefaultTileImage = CropProd.Properties.Resources.Image1;
             Settings.DistributorName = "Google";
             Settings.DistributorSrc = "http://mt2.google.com/vt/lyrs=s&x={0}&y={1}&z={2}";
             /*

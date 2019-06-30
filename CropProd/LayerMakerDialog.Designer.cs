@@ -32,6 +32,8 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.ValueTypeInput = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.MaxInput = new System.Windows.Forms.TextBox();
@@ -42,8 +44,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.ValueTypeInput = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -97,6 +97,22 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Create Layer";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 217);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(57, 13);
+            this.label6.TabIndex = 13;
+            this.label6.Text = "Value type";
+            // 
+            // ValueTypeInput
+            // 
+            this.ValueTypeInput.Location = new System.Drawing.Point(6, 233);
+            this.ValueTypeInput.Name = "ValueTypeInput";
+            this.ValueTypeInput.Size = new System.Drawing.Size(100, 20);
+            this.ValueTypeInput.TabIndex = 12;
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -137,7 +153,6 @@
             this.NameInput.Name = "NameInput";
             this.NameInput.Size = new System.Drawing.Size(127, 20);
             this.NameInput.TabIndex = 7;
-            this.NameInput.Text = "MIIGAIK TERRITORY";
             // 
             // LonInput
             // 
@@ -145,7 +160,7 @@
             this.LonInput.Name = "LonInput";
             this.LonInput.Size = new System.Drawing.Size(127, 20);
             this.LonInput.TabIndex = 6;
-            this.LonInput.Text = "37.663053";
+            this.LonInput.TextChanged += new System.EventHandler(this.LonInput_TextChanged);
             // 
             // LatInput
             // 
@@ -153,7 +168,6 @@
             this.LatInput.Name = "LatInput";
             this.LatInput.Size = new System.Drawing.Size(127, 20);
             this.LatInput.TabIndex = 5;
-            this.LatInput.Text = "55.763582";
             // 
             // label3
             // 
@@ -182,22 +196,6 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Lat";
             // 
-            // ValueTypeInput
-            // 
-            this.ValueTypeInput.Location = new System.Drawing.Point(6, 233);
-            this.ValueTypeInput.Name = "ValueTypeInput";
-            this.ValueTypeInput.Size = new System.Drawing.Size(100, 20);
-            this.ValueTypeInput.TabIndex = 12;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 217);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(57, 13);
-            this.label6.TabIndex = 13;
-            this.label6.Text = "Value type";
-            // 
             // LayerMakerDialog
             // 
             this.AllowDrop = true;
@@ -208,6 +206,7 @@
             this.Controls.Add(this.pictureBox1);
             this.DoubleBuffered = true;
             this.Name = "LayerMakerDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "LayerMaker";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);

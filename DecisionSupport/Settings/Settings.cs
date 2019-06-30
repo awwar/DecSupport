@@ -10,6 +10,6 @@ namespace DSCore
         public static string DistributorName { set; get; } = "";
         public static string DistributorSrc { set; get; } = "";
         public static string TempPath { set; get; } = @"C:\Users\Default\AppData\Local\Temp\";
-        public static RezultRules RezPaitRulе { set; get; } = RezultRules.Middle;
+        public static RezultRules RezPaitRulе { set; get; } = RezultRules.Max;
     }
 }

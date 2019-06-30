@@ -114,5 +114,10 @@ namespace CropProd
             }
             pictureBox1.Invalidate();
         }
+
+        private void LonInput_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

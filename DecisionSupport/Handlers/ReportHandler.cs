@@ -188,7 +188,13 @@ namespace Handlers
                             }
                             if (layerpower > 0)
                             {
-                                newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (layerpower / laycount)), 0, 0));
+                                try
+                                {
+                                    newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (layerpower / laycount)), 0, 0));
+                                } catch(Exception e)
+                                {
+                                    Console.WriteLine( e);
+                                }
                             }
                             else
                             {
@@ -221,15 +227,15 @@ namespace Handlers
             {
                 case RezultRules.Middle: // если отклонение от центра
                     origin = (max - min) + 1 / 2;
-                    power = 1 - (Math.Abs(current - origin) / origin);
+                    power = 1 - (Math.Abs((current - min) - origin) / origin*2);
                     break;
                 case RezultRules.Min: // если отклонение от минимального
                     origin = max - min + 1;
-                    power = 1 - (current / origin);
+                    power = 1 - ((current - min) / origin);
                     break;
                 case RezultRules.Max: // если отклонение от максимального
                     origin = max - min + 1;
-                    power = current / origin;
+                    power = (current - min) / origin;
                     break;
             }
             return power;
