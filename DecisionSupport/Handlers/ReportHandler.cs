@@ -29,8 +29,8 @@ namespace Handlers
             for (int i = 0; i < layers.Length; i++)
             {
                 float layerpower = (layers[i].ColorMax - layers[i].ColorMin) / (layers[i].Max - layers[i].Min);
-                layers[i].setMax = layers[i].Min + (layers[i].setMax - layers[i].Min) * layerpower;
-                layers[i].setMin = layers[i].Min + (layers[i].setMin - layers[i].Min) * layerpower;
+                layers[i].setMax = layers[i].ColorMin + (layers[i].setMax - layers[i].Min) * layerpower;
+                layers[i].setMin = layers[i].ColorMin + (layers[i].setMin - layers[i].Min) * layerpower;
             }
 
             Dictionary<Layer, Bitmap> compileLayer = new Dictionary<Layer, Bitmap>();
@@ -137,8 +137,6 @@ namespace Handlers
         private Bitmap Readimg(Dictionary<Layer, Bitmap> compileLayer, Bitmap cutoutimage)
         {
             Bitmap newimg = new Bitmap(cutoutimage.Width, cutoutimage.Height);
-            try
-            {
                 int x, y;
                 Color cutcolor;
                 Color laycolor;
@@ -165,13 +163,12 @@ namespace Handlers
                                 }
                                 if (laycolor.A > 0)
                                 {
-                                    float gate = lay.setMax - lay.setMin;
                                     colorhex = string.Format("0x{0:X2}{1:X2}{2:X2}", laycolor.R, laycolor.G, laycolor.B);
-                                    float colorpower = Convert.ToInt32(colorhex, 16);
+                                    int colorpower = Convert.ToInt32(colorhex, 16);
                                     bool value = (colorpower >= lay.setMin && colorpower <= lay.setMax);
                                     if ((lay.invert) ? !value : value)
                                     {
-                                        layerpower += GetLayerPower(lay.setMax, lay.setMin, colorpower);
+                                        layerpower += GetLayerPower(lay.setMax, lay.setMin, colorpower);                                        
                                         laycount += 1;
                                     }
                                     else
@@ -190,6 +187,10 @@ namespace Handlers
                             {
                                 try
                                 {
+                                    if(layerpower > laycount)
+                                    {
+                                        layerpower = laycount;
+                                    }
                                     newimg.SetPixel(x, y, Color.FromArgb((int)(255 * (layerpower / laycount)), 0, 0));
                                 } catch(Exception e)
                                 {
@@ -209,13 +210,6 @@ namespace Handlers
                         }
                     }
                 }
-
-
-            }
-            catch (ArgumentException)
-            {
-
-            }
             return newimg;
         }
 

@@ -109,8 +109,8 @@ namespace Handlers
         public Layer CreateLayer(LayerMakerDialogData data)
         {
 
-            int colormin = 256 * 256 * 256;
-            int colormax = 0;
+            float colormin = 255 * 255 * 255;
+            float colormax = 0;
 
             int[] tilelatlon = TileCoordinate.ConvertWorldToTile(
                 double.Parse(data.Lat, CultureInfo.InvariantCulture),
@@ -124,27 +124,26 @@ namespace Handlers
 
             foreach (Bitmap item in data.Tiles.Values)
             {
-                for (int i = 0; i < item.Height; i++)
+                for (int i = 0; i < item.Width; i++)
                 {
-                    for (int j = 0; i < item.Width; i++)
+                    for (int j = 0; j < item.Height; j++)
                     {
                         pix = item.GetPixel(i, j);
 
                         colorhex = string.Format("0x{0:X2}{1:X2}{2:X2}", pix.R, pix.G, pix.B);
-                        int pixpower = Convert.ToInt32(colorhex, 16);
+                        float pixpower = Convert.ToInt32(colorhex, 16);
 
-                        if (pixpower > colormax)
+                        if(pix.A > 0)
                         {
-                            colormax = pixpower;
-                        }
-                        if (pixpower < colormin)
-                        {
-                            colormin = pixpower;
-                        }
-
-                        if (pix.A == 0)
-                        {
-                            continue;
+                            if (pixpower > colormax)
+                            {
+                                colormax = pixpower;
+                            }
+                            else
+                            if (pixpower < colormin)
+                            {
+                                colormin = pixpower;
+                            }
                         }
                     }
                 }

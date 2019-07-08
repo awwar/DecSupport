@@ -112,6 +112,7 @@
             this.ValueTypeInput.Name = "ValueTypeInput";
             this.ValueTypeInput.Size = new System.Drawing.Size(100, 20);
             this.ValueTypeInput.TabIndex = 12;
+            this.ValueTypeInput.Text = "%";
             // 
             // label5
             // 
@@ -137,7 +138,7 @@
             this.MaxInput.Name = "MaxInput";
             this.MaxInput.Size = new System.Drawing.Size(100, 20);
             this.MaxInput.TabIndex = 9;
-            this.MaxInput.Text = "1";
+            this.MaxInput.Text = "100";
             // 
             // MinInput
             // 
@@ -153,6 +154,7 @@
             this.NameInput.Name = "NameInput";
             this.NameInput.Size = new System.Drawing.Size(127, 20);
             this.NameInput.TabIndex = 7;
+            this.NameInput.Text = "water";
             // 
             // LonInput
             // 
@@ -160,6 +162,7 @@
             this.LonInput.Name = "LonInput";
             this.LonInput.Size = new System.Drawing.Size(127, 20);
             this.LonInput.TabIndex = 6;
+            this.LonInput.Text = "1.2163215000533683";
             this.LonInput.TextChanged += new System.EventHandler(this.LonInput_TextChanged);
             // 
             // LatInput
@@ -168,6 +171,7 @@
             this.LatInput.Name = "LatInput";
             this.LatInput.Size = new System.Drawing.Size(127, 20);
             this.LatInput.TabIndex = 5;
+            this.LatInput.Text = "44.807384512875515";
             // 
             // label3
             // 
