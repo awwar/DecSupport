@@ -142,6 +142,7 @@ namespace Handlers
                 Color laycolor;
                 string colorhex;
                 int laycount = 0;
+            Settings.RezPaitRulе = RezultRules.Min;
                 // Loop through the images pixels to reset color.
                 for (x = 0; x < newimg.Width; x++)
                 {

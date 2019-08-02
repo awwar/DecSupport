@@ -121,20 +121,20 @@
             // RegionDecision
             // 
             this.RegionDecision.Name = "RegionDecision";
-            this.RegionDecision.Size = new System.Drawing.Size(180, 22);
+            this.RegionDecision.Size = new System.Drawing.Size(120, 22);
             this.RegionDecision.Text = "Область";
             this.RegionDecision.Click += new System.EventHandler(this.AcceptDecision_Click);
             // 
             // BeginDecision
             // 
             this.BeginDecision.Name = "BeginDecision";
-            this.BeginDecision.Size = new System.Drawing.Size(180, 22);
+            this.BeginDecision.Size = new System.Drawing.Size(120, 22);
             this.BeginDecision.Text = "Начать";
             // 
             // CancelDecision
             // 
             this.CancelDecision.Name = "CancelDecision";
-            this.CancelDecision.Size = new System.Drawing.Size(180, 22);
+            this.CancelDecision.Size = new System.Drawing.Size(120, 22);
             this.CancelDecision.Text = "Отмена";
             // 
             // LayerList
@@ -205,7 +205,6 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MainWindow";
-            this.TransparencyKey = System.Drawing.Color.Silver;
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.scene)).EndInit();
